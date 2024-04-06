@@ -15,6 +15,7 @@ class Board
     @pieces = pieces || place_pieces
     @cursor = [BOARD_SIZE / 2, BOARD_SIZE / 2]
     @player_team = player_team
+    @dir_facing = (player_team == :black ? -1 : 1)
     @ai_team = switch player_team
     @turn = turn
     @selected = nil
@@ -191,6 +192,43 @@ class Board
     !@legal_moves[switch color].values.flatten.select { |mv| mv.other_piece.is_a?(King) }.empty?
   end
 
+  def is_insuff_material_stalemate?
+    all_remaining = self.pieces.values.flatten.find_all{|pc| !pc.taken }
+    insufficient = false
+    if all_remaining.size <= 4
+      dbg = "REMAINING: \n" + all_remaining.map{|r| "#{r.color} #{r.notation} #{r.position}, taken=#{r.taken}\n" }.join("") + "****\n"
+      self.set_status(dbg, :global)
+      [:black, :white].each do |color|
+        my_remaining = all_remaining.find_all{|pc| pc.color == color}
+        their_remaining = all_remaining.find_all{|pc| pc.color == switch(color)}
+
+        lone_king = (my_remaining.size == 1)
+
+        king_bishop_or_knight = (my_remaining.size == 2 &&
+                [Knight, Bishop].include?(my_remaining.select { |pc| !pc.is_a? King }.first.class))
+
+        vs_king_bishop_or_knight = (their_remaining.size == 2 &&
+                [Knight, Bishop].include?(their_remaining.select { |pc| !pc.is_a? King }.first.class))
+
+        two_opposing_knights = (their_remaining.select { |pc| pc.is_a? Knight }.size == 2)
+
+        insufficient = true if (lone_king && vs_king_bishop_or_knight) ||
+                               (lone_king && two_opposing_knights) ||
+                               (king_bishop_or_knight && vs_king_bishop_or_knight)
+      end
+    end
+  end
+
+
+  def is_nomoves_stalemate?(color)
+    self.legal_moves[color].values.flatten.empty? && !self.is_king_checked? color
+  end
+
+
+  def is_checkmate?(color)
+    self.legal_moves[color].values.flatten.empty? && self.is_king_checked? color
+  end
+
   def get_pawn_attacks(pawn)
     attacks = []
     pawn.pawn_attack_dirs.each do |dir|
@@ -344,6 +382,26 @@ class Board
     keep_in_bounds @cursor
   end
 
+  def move_cursor_left
+    @cursor[0] += dir_facing * -1
+    keep_in_bounds @cursor
+  end
+
+  def move_cursor_right
+    @cursor[0] += dir_facing
+    keep_in_bounds @cursor
+  end
+
+  def move_cursor_up
+    @cursor[1] += dir_facing
+    keep_in_bounds @cursor
+  end
+
+  def move_cursor_down
+    @cursor[1] += dir_facing * -1
+    keep_in_bounds @cursor
+  end
+
   
   def draw_piece(col, row)
     piece = self.get(col, row)
@@ -362,7 +420,7 @@ class Board
   end
 
 # returns a move if one is selected
-  def select_square
+  def get_selected_move
     piece = self.get(@cursor[0], @cursor[1])
     if @selected_moves && @selected_moves.map{ |mv| mv.get_coords }.include?(@cursor)
 

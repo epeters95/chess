@@ -78,89 +78,62 @@ class Game
     restart = false
 
     while true && !restart
-      # Insufficient material stalemate
-      all_remaining = @board.pieces.values.flatten.find_all{|pc| !pc.taken }
-      insufficient = false
-      if all_remaining.size <= 4
-        dbg = "REMAINING: \n" + all_remaining.map{|r| "#{r.color} #{r.notation} #{r.position}, taken=#{r.taken}\n" }.join("") + "****\n"
-        @board.set_status(dbg, :global)
-        [:black, :white].each do |color|
-          my_remaining = all_remaining.find_all{|pc| pc.color == color}
-          their_remaining = all_remaining.find_all{|pc| pc.color == switch(color)}
-
-          lone_king = (my_remaining.size == 1)
-
-          king_bishop_or_knight = (my_remaining.size == 2 &&
-                  [Knight, Bishop].include?(my_remaining.select { |pc| !pc.is_a? King }.first.class))
-
-          vs_king_bishop_or_knight = (their_remaining.size == 2 &&
-                  [Knight, Bishop].include?(their_remaining.select { |pc| !pc.is_a? King }.first.class))
-
-          two_opposing_knights = (their_remaining.select { |pc| pc.is_a? Knight }.size == 2)
-
-          insufficient = true if (lone_king && vs_king_bishop_or_knight) ||
-                                 (lone_king && two_opposing_knights) ||
-                                 (king_bishop_or_knight && vs_king_bishop_or_knight)
-        end
-      end
-
-      if insufficient
+      
+      if @board.is_insuff_material_stalemate?
         @board.set_status("The outcome of this draw is a game due to insufficient mating material.", :global)
         restart = true
         draw
-      elsif @board.turn == @team
-        if @board.legal_moves[@team].values.flatten.empty?
-          if @board.is_king_checked?(@team)
-            @board.set_status("You have been checkmated by your opponent. You LOSE this game.", :global)
-          else
-            @board.set_status("It looks like you have survived by stalemate!", :global)
-          end
+      elsif @board.is_checkmate?(@team)
+        @board.set_status("You have been checkmated by your opponent. You LOSE this game.", :global)
+        restart = true
+        draw
+      elsif @board.is_nomoves_stalemate?(@team)
+        @board.set_status("It looks like you have survived by stalemate!", :global)
+        restart = true
+        draw
+      else
+        if @board.legal_moves[@team].size == 1
+          @board.selected_moves = @board.legal_moves[@team].values.flatten
+          @board.selected = @board.selected_moves[0].piece
+        end
+        ch =  STDIN.getch.chr.downcase
+        case ch
+        when 'q'
+          break
+        when 'm'
           restart = true
-          draw
-        else
-          if @board.legal_moves[@team].size == 1
-            @board.selected_moves = @board.legal_moves[@team].values.flatten
-            @board.selected = @board.selected_moves[0].piece
-          end
-          ch =  STDIN.getch.chr.downcase
-          case ch
-          when 'q'
-            break
-          when 'm'
-            restart = true
-            break
-          when 'a'
-            @board.move_cursor [-1 * i, 0]
-          when 'd'
-            @board.move_cursor [i, 0]
-          when 'w'
-            @board.move_cursor [0, i]
-          when 's'
-            @board.move_cursor [0, -1 * i]
-          when "\r"
-            move = @board.select_square
-            unless move.nil?
-              if move.move_type == :promotion || move.move_type == :attack_promotion
-                move.promotion_choice = prompt_promotion_choice
-              end
-              result = @board.play_move(move)
-              status_string = "made move #{move.get_notation}"
-              status_string += ", check" if result
-              @board.set_status(status_string, switch(@board.turn))
+          break
+        when 'a'
+          @board.move_cursor_left
+        when 'd'
+          @board.move_cursor_right
+        when 'w'
+          @board.move_cursor_up
+        when 's'
+          @board.move_cursor_down
+        when "\r"
+          move = @board.get_selected_move
+          unless move.nil?
+            if move.move_type == :promotion || move.move_type == :attack_promotion
+              move.promotion_choice = prompt_promotion_choice
             end
+            result = @board.play_move(move)
+            status_string = "made move #{move.get_notation}"
+            status_string += ", check" if result
+            @board.set_status(status_string, switch(@board.turn))
           end
         end
       else
-        move = @ai.get_move
-        if move.nil?
+        if @board.is_checkmate?(@board.turn)
+          @board.set_status("Congratulations, you have forced checkmate!", :global)
           restart = true
-          if @board.is_king_checked?(@board.turn)
-            @board.set_status("Congratulations, you have forced checkmate!", :global)
-          else
-            @board.set_status("The result of this match is a stalemate.", :global)
-          end
+          draw
+        elsif @board.is_nomoves_stalemate?(@board.turn)
+          @board.set_status("The result of this match is a stalemate.", :global)
+          restart = true
           draw
         else
+          move = @ai.get_move
           result = @board.play_move move
           status_string = "made move #{move.get_notation}"
           status_string += ", check" if result
