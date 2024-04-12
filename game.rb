@@ -10,12 +10,24 @@ require 'pry-nav'
 include HighLine::SystemExtensions
 
 class Game
+
   CHESSTR_1 = "\nCHESS"
   CHESSTR_2 = "\tv0.99"
 
-  def initialize(debug_mode=false)
+  def initialize(color=nil, debug_mode=false)
     @mode = :cursor # :notate
     @debug = debug_mode
+
+    if color.nil?
+      prompt_teams
+    else
+      @team = color
+    end
+    @board = Board.new(@team)
+    @board.generate_legal_moves
+
+    @ai = Ai.new(@board, switch(@team))
+    puts "Loading..."
     system 'cls'
     puts "#{CHESSTR_1.yellow}#{CHESSTR_2.cyan}"
     puts
@@ -66,13 +78,6 @@ class Game
   end
 
   def play
-    prompt_teams
-    @board = Board.new(@team)
-    @board.generate_legal_moves
-
-    @ai = Ai.new(@board, switch(@team))
-    puts "Loading..."
-
     ch = ''
     i = (@team == :black ? -1 : 1)
     restart = false
@@ -91,7 +96,7 @@ class Game
         @board.set_status("It looks like you have survived by stalemate!", :global)
         restart = true
         draw
-      else
+      elsif @board.turn == @team
         if @board.legal_moves[@team].size == 1
           @board.selected_moves = @board.legal_moves[@team].values.flatten
           @board.selected = @board.selected_moves[0].piece
@@ -203,5 +208,3 @@ class Game
     end
   end
 end
-
-Game.new()

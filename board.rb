@@ -217,16 +217,17 @@ class Board
                                (king_bishop_or_knight && vs_king_bishop_or_knight)
       end
     end
+    insufficient
   end
 
 
   def is_nomoves_stalemate?(color)
-    self.legal_moves[color].values.flatten.empty? && !self.is_king_checked? color
+    self.legal_moves[color].values.flatten.empty? && !self.is_king_checked?(color)
   end
 
 
   def is_checkmate?(color)
-    self.legal_moves[color].values.flatten.empty? && self.is_king_checked? color
+    self.legal_moves[color].values.flatten.empty? && self.is_king_checked?(color)
   end
 
   def get_pawn_attacks(pawn)
