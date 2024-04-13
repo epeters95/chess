@@ -1,13 +1,5 @@
-require './piece'
-require 'io/console'
-require './util'
-require './move'
-require 'pry'
-require 'pry-nav'
-
-CHARS = {empty: "  ", pawn: "\u265f ", rook: "\u265c ", knight: "\u265e ", bishop: "\u265d ", queen: "\u265b ", king: "\u265a "}
-
 class Board
+  include Util
   attr_accessor :turn, :status_bar, :pieces, :played_moves, :legal_moves, :selected_moves, :selected, :move_count
 
   def initialize(player_team, turn=:white, files=nil, pieces=nil)
@@ -409,7 +401,7 @@ class Board
     ch = "?"
     (color = :black) && (ch = CHARS[:empty]) if piece.nil?
     (color = piece.color) && (ch = piece.char) if !piece.nil?
-    print ch.encode("utf-8").colorize(color: color, background: self.get_bg(col, row))
+    # print ch.encode("utf-8").colorize(color: color, background: self.get_bg(col, row))
   end
 
   def get_bg(col, row)

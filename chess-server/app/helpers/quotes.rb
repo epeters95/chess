@@ -1,4 +1,5 @@
-QUOTES = [
+module Quotes
+  QUOTES = [
     "“Daring ideas are like chessmen moved forward. They may be beaten, but they may start a winning game.\”
     ― Johann Wolfgang von Goethe",
     "\“How dreadful...to be caught up in a game and have no idea of the rules.\”
@@ -311,4 +312,5 @@ QUOTES = [
     ― Darnell Lamont Walker",
     "\“I want to be an aggressive player;One who always find joy in every move.\”
     ― Kenneth de Guzman"
-    ]
+  ]
+end

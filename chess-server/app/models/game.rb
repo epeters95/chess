@@ -1,15 +1,6 @@
-require 'io/console'
-require 'highline'
-require 'colorize'
-require './board'
-require './ai'
-require './util'
-require './quotes'
-require 'pry'
-require 'pry-nav'
-include HighLine::SystemExtensions
-
 class Game
+  include Util
+  include Quotes
 
   CHESSTR_1 = "\nCHESS"
   CHESSTR_2 = "\tv0.99"
@@ -28,14 +19,14 @@ class Game
 
     @ai = Ai.new(@board, switch(@team))
     puts "Loading..."
-    system 'cls'
-    puts "#{CHESSTR_1.yellow}#{CHESSTR_2.cyan}"
-    puts
-    puts justify_quote_str(QUOTES.shuffle[0]).red
-    puts
-    puts "PRESS ANY KEY".grey
-    c = STDIN.getch
-    play
+    # system 'cls'
+    # puts "#{CHESSTR_1.yellow}#{CHESSTR_2.cyan}"
+    # puts
+    # puts justify_quote_str(QUOTES.shuffle[0]).red
+    # puts
+    # puts "PRESS ANY KEY".grey
+    # c = STDIN.getch
+    # play
   end
 
   def justify_quote_str(str)
@@ -175,17 +166,9 @@ class Game
       puts "********* DEBUG MODE **********"
       puts @board.debug_str
     end
-    # puts @board.move_list
   end
 
   def prompt_teams
-    # ch = ''
-    # until ['y', 'n'].include? ch.downcase
-    #   system 'cls'
-    #   puts "Use Notation entry method? (Y or N)"
-    #   ch = STDIN.getch.chr
-    #   @mode = :notate if ch.downcase == 'y'
-    # end
     ch = ''
     until ['w', 'b', 'r'].include? ch.downcase
       system 'cls'
@@ -206,5 +189,21 @@ class Game
       @board.draw_piece(col, row)
       col += i
     end
+  end
+
+  def to_json(options = {})
+    JSON.pretty_generate(
+      { board:
+        {
+          turn:           @board.turn,
+          status_bar:     @board.status_bar,
+          pieces:         @board.pieces,
+          played_moves:   @board.played_moves,
+          legal_moves:    @board.legal_moves[@board.turn].map{|pc, mv_arr| mv_arr.map{|mv| mv.get_notation}},
+          selected_moves: @board.selected_moves,
+          selected:       @board.selected,
+          move_count:     @board.move_count
+        }
+      }, options)
   end
 end

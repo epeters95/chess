@@ -1,6 +1,6 @@
-require './util'
 
 class Move
+  include Util
 
   MOVE_TYPES = [
     :move,

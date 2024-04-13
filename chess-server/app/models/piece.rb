@@ -1,4 +1,5 @@
 class Piece
+  include Util
   VALS = {knight: 3, king: 77, queen: 9, pawn: 1, rook: 5, bishop: 3}
 
   def self.knight_moves; [[1,2],[1,-2],[-1,2],[-1,-2],[2,1],[-2,1],[2,-1],[-2,-1]]; end
