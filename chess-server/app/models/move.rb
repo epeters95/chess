@@ -1,5 +1,11 @@
+class Move < ApplicationRecord
 
-class Move
+  # The entirety of the board's history will be represented by rows of moves belonging to that board
+  # Displaying them will be a simple matter of "replaying" them in forward/backward order
+  # It may even be possible to code "views" for checking rather than using deep dup
+
+  belongs_to :board, inverse_of: "played_moves"
+
   include Util
 
   MOVE_TYPES = [

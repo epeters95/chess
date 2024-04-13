@@ -1,21 +1,29 @@
-class Board
+class Board < ApplicationRecord
+
+  belongs_to :game
+  has_many   :played_moves, class_name: "Move"
+
   include Util
   attr_accessor :turn, :status_bar, :pieces, :played_moves, :legal_moves, :selected_moves, :selected, :move_count
 
   def initialize(player_team, turn=:white, files=nil, pieces=nil)
     @files = files || build_empty_board
     @pieces = pieces || place_pieces
-    @cursor = [BOARD_SIZE / 2, BOARD_SIZE / 2]
-    @player_team = player_team
-    @dir_facing = (player_team == :black ? -1 : 1)
-    @ai_team = switch player_team
     @turn = turn
-    @selected = nil
     @status_bar = {white: "", black: "", global: ""}
-    @selected_moves = []
     @played_moves = []
     @legal_moves = {black: {}, white: {}}
     @move_count = 0
+
+    #TODO: move some of these to game
+    # the question is, is it tied to the state of the board? i.e. checkmate?
+    # move_count is tied to the board, so is turn. the rest of these are not.
+    @cursor = [BOARD_SIZE / 2, BOARD_SIZE / 2]
+    @ai_team = switch player_team
+    @player_team = player_team
+    @dir_facing = (player_team == :black ? -1 : 1)
+    @selected_moves = []
+    @selected = nil
     @debugs = false
   end
 

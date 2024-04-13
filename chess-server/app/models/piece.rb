@@ -1,4 +1,10 @@
 class Piece
+
+  # This object will not have a db table to persist itself. Too many rows.
+  # How can a board be saved on the database without also saving piece objects?
+  # The answer is that we will add a text column to Board representing the serialized 8x8 array.
+  # Pieces will be represented with a notation that includes color (position known by index in array)
+
   include Util
   VALS = {knight: 3, king: 77, queen: 9, pawn: 1, rook: 5, bishop: 3}
 
@@ -6,8 +12,6 @@ class Piece
   def self.rook_moves;   [[0,1],[1,0],[0,-1],[-1,0]]; end
   def self.bishop_moves; [[1,1],[1,-1],[-1,1],[-1,-1]]; end
   def self.crown_moves;  [[1,1],[1,-1],[-1,1],[-1,-1],[0,1],[1,0],[0,-1],[-1,0]]; end
-
-  @@all = []
 
   attr_accessor :color, :position, :val
   attr_reader :char, :ranged, :played_moves, :taken
@@ -20,7 +24,6 @@ class Piece
     @taken = false
     @char = "?"
     @val = 0
-    @@all << self
   end
 
   def clear_moves
