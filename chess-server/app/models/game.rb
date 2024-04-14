@@ -1,19 +1,18 @@
-class Game
+class Game < ApplicationRecord
+
+  has_one :board
+
+  after_commit :init_board
+
   include Util
   include Quotes
 
   CHESSTR_1 = "\nCHESS"
   CHESSTR_2 = "\tv0.99"
 
-  def initialize(color=nil, debug_mode=false)
-    @mode = :cursor # :notate
-    @debug = debug_mode
+  def init_board
 
-    if color.nil?
-      prompt_teams
-    else
-      @team = color
-    end
+    @team = :white
     @board = Board.new(@team)
     @board.generate_legal_moves
 
@@ -53,19 +52,21 @@ class Game
 
   def prompt_promotion_choice
     puts "Choose your promoted piece: q) Queen, r) Rook, n) Knight, b) Bishop"
-    loop do
-      ch = STDIN.getch.chr.downcase
-      case ch
-      when 'q'
-        return :queen
-      when 'r'
-        return :rook
-      when 'n'
-        return :knight
-      when 'b'
-        return :bishop
-      end
-    end
+    # loop do
+    #   ch = STDIN.getch.chr.downcase
+    #   case ch
+    #   when 'q'
+    #     return :queen
+    #   when 'r'
+    #     return :rook
+    #   when 'n'
+    #     return :knight
+    #   when 'b'
+    #     return :bishop
+    #   end
+    # end
+    # TODO: add promotion choice endpoint or modify move#create flow
+    return :queen
   end
 
   def play
@@ -138,15 +139,10 @@ class Game
       end
       draw
     end
-    
-    if restart
-      ch = STDIN.getch.chr.downcase
-    end
   end
 
 
   def draw
-    system 'cls'
     row, col, i = 7, 0, 1
     if @team == :black
       row, col, i = 0, 7, -1
@@ -155,32 +151,6 @@ class Game
     8.times do
       draw_row(col, row, i)
       row -= i
-      puts
-    end
-
-    puts
-    puts @board.status_bar[:white]
-    puts @board.status_bar[:black]
-    puts @board.status_bar[:global]
-    if @debug
-      puts "********* DEBUG MODE **********"
-      puts @board.debug_str
-    end
-  end
-
-  def prompt_teams
-    ch = ''
-    until ['w', 'b', 'r'].include? ch.downcase
-      system 'cls'
-      puts "White, Black, or Random? (w, b, r): "
-      ch = STDIN.getch.chr.downcase
-      if ch == 'w'
-        @team = :white
-      elsif ch == 'b'
-        @team = :black
-      elsif ch == 'r'
-        @team = (rand.round == 1 ? :white : :black)
-      end
     end
   end
 
