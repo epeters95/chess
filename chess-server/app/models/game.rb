@@ -2,52 +2,33 @@ class Game < ApplicationRecord
 
   has_one :board
 
-  after_commit :init_board
+  after_create :init_board
 
   include Util
-  include Quotes
-
-  CHESSTR_1 = "\nCHESS"
-  CHESSTR_2 = "\tv0.99"
 
   def init_board
-
-    @team = :white
-    @board = Board.new(@team)
-    @board.generate_legal_moves
-
-    @ai = Ai.new(@board, switch(@team))
-    puts "Loading..."
-    # system 'cls'
-    # puts "#{CHESSTR_1.yellow}#{CHESSTR_2.cyan}"
-    # puts
-    # puts justify_quote_str(QUOTES.shuffle[0]).red
-    # puts
-    # puts "PRESS ANY KEY".grey
-    # c = STDIN.getch
-    # play
+    self.board.create({ turn: "white" })
+    self.board.generate_legal_moves
+    evaluate_loop
   end
 
-  def justify_quote_str(str)
-    result = ""
-    truncate_len = 60
-    str.split("\n").each do |line|
-      if line.size > truncate_len
-        words = line.split(" ")
-        until words.empty?
-          total = 0
-          while total < truncate_len && !words.empty?
-            word = words.shift + " "
-            result += word
-            total += word.length
-          end
-          result += "\n"
-        end
-      else
-        result += line + "\n"
-      end
+  def is_computer?(color)
+    (color == :white ? (self.white_name == "") : (self.black_name == ""))
+  end
+
+  def evaluate_loop
+    while is_computer?(turn)
+      # Play computer move
+      # switch turn
     end
-    result
+    if !is_computer(self.board.turn)
+      self.update({status:"awaiting_player_move"})
+    else
+  end
+
+  # TODO: called from Game#update endpoint
+  def play_move(move)
+    
   end
 
   def prompt_promotion_choice
@@ -68,6 +49,7 @@ class Game < ApplicationRecord
     # TODO: add promotion choice endpoint or modify move#create flow
     return :queen
   end
+
 
   def play
     ch = ''
@@ -130,7 +112,7 @@ class Game < ApplicationRecord
           restart = true
           draw
         else
-          move = @ai.get_move
+          move = @computer.get_move
           result = @board.play_move move
           status_string = "made move #{move.get_notation}"
           status_string += ", check" if result

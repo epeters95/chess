@@ -3,10 +3,12 @@ class Board < ApplicationRecord
   belongs_to :game
   has_many   :played_moves, class_name: "Move"
 
+  after_create :init_vars
+
   include Util
   attr_accessor :turn, :status_bar, :pieces, :played_moves, :legal_moves, :selected_moves, :selected, :move_count
 
-  def initialize(player_team, turn=:white, files=nil, pieces=nil)
+  def init_vars(player_team, turn=:white, files=nil, pieces=nil)
     @files = files || build_empty_board
     @pieces = pieces || place_pieces
     @turn = turn
@@ -299,7 +301,8 @@ class Board < ApplicationRecord
   def deep_dup
     files = deep_dup_files
     pieces = deep_dup_pieces_from_files(files)
-    doop = self.class.new(@player_team, @turn, files, pieces)
+    # TODO: replace with non-ActiveRecord skeleton object
+    doop = self.class.new({game_id: 0}).init_vars(@player_team, @turn, files, pieces)
     doop.move_count = @move_count
     doop
   end
