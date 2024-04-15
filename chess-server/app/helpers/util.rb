@@ -1,4 +1,7 @@
 module Util
+
+  include Quotes
+
   BOARD_SIZE = 8
   CHARS = {empty: "  ", pawn: "\u265f ", rook: "\u265c ", knight: "\u265e ", bishop: "\u265d ", queen: "\u265b ", king: "\u265a "}
 
@@ -32,5 +35,31 @@ module Util
       el > BOARD_SIZE-1 ? arr[idx] = el - 1 : nil
       el < 0 ? arr[idx] = el + 1 : nil
     end
+  end
+
+  def get_quote
+    justify_str(QUOTES.shuffle[0])
+  end
+
+  def justify_str(str)
+    result = ""
+    truncate_len = 60
+    str.split("\n").each do |line|
+      if line.size > truncate_len
+        words = line.split(" ")
+        until words.empty?
+          total = 0
+          while total < truncate_len && !words.empty?
+            word = words.shift + " "
+            result += word
+            total += word.length
+          end
+          result += "\n"
+        end
+      else
+        result += line + "\n"
+      end
+    end
+    result
   end
 end

@@ -1,4 +1,4 @@
-class Ai
+class Computer
   attr_reader :color
   def initialize(board, color)
     @board = board
