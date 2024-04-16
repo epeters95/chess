@@ -29,6 +29,11 @@ class Board < ApplicationRecord
     @debugs = false
   end
 
+  def switch_turn!
+    self.turn = switch self.turn
+    self.save!
+  end
+
   def debug_str
     "Turn: #{@turn}\n" +
     "Legal moves:\n#{@legal_moves.inspect}\n" +

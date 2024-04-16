@@ -7,29 +7,69 @@ class Game < ApplicationRecord
   include Util
 
   def init_board
-    self.board.create({ turn: "white" })
+    self.board.create(turn: "white")
     self.board.generate_legal_moves
-    evaluate_loop
+    set_waiting_status
   end
 
   def is_computer?(color)
-    (color == :white ? (self.white_name == "") : (self.black_name == ""))
+    name_for(color) == ""
   end
 
-  def evaluate_loop
-    while is_computer?(turn)
-      # Play computer move
-      # switch turn
-    end
-    if !is_computer(self.board.turn)
-      self.update({status:"awaiting_player_move"})
+  def is_computers_turn?
+    is_computer?(self.board.turn)
+  end
+
+  def name_for(color)
+    color == :white ? self.white_name : self.black_name
+  end
+
+  def display_name_for(color)
+    name_for(color) == "" ? "Computer" : name_for(color)
+  end
+
+  def play_move_and_evaluate(move)
+    # TODO: write move comparison method for the following:
+    # unless self.board.legal_moves.include?(move)
+    #   raise IllegalMoveError
+    # end
+    king_checked = self.board.play_move(move)
+
+    status_string = "#{display_name_for(switch(self.board.turn))} made move #{move.get_notation}"
+    status_string += ", check" if king_checked
+    self.board.set_status(status_string, switch(self.board.turn))
+
+    evaluate_outcomes
+  end
+
+  def evaluate_outcomes
+    previous_turn = switch(self.board.turn)
+
+    if self.board.is_insuff_material_stalemate?
+      self.board.set_status("The game is a draw due to insufficient mating material.", :global)
+
+    elsif self.board.is_checkmate?(self.board.turn)
+      self.board.set_status("#{display_name_for(previous_turn)} has won by checkmate!", :global)
+
+    elsif self.board.is_nomoves_stalemate?(self.board.turn)
+      self.board.set_status("The game is a draw. #{display_name_for(self.board.turn)} has survived by stalemate!", :global)
+
     else
+      set_waiting_status
+      return
+    end
+    # Game Over
+    self.update_attribute!(status: "completed")
   end
 
-  # TODO: called from Game#update endpoint
-  def play_move(move)
-    
+  def set_waiting_status
+    if !self.is_computer?(:white)
+      self.update_attribute!(status: "waiting_player")
+    else
+      self.update_attribute!(status: "waiting_computer")
+    end
   end
+
 
   def prompt_promotion_choice
     puts "Choose your promoted piece: q) Queen, r) Rook, n) Knight, b) Bishop"
@@ -48,79 +88,6 @@ class Game < ApplicationRecord
     # end
     # TODO: add promotion choice endpoint or modify move#create flow
     return :queen
-  end
-
-
-  def play
-    ch = ''
-    i = (@team == :black ? -1 : 1)
-    restart = false
-
-    while true && !restart
-      
-      if @board.is_insuff_material_stalemate?
-        @board.set_status("The outcome of this draw is a game due to insufficient mating material.", :global)
-        restart = true
-        draw
-      elsif @board.is_checkmate?(@team)
-        @board.set_status("You have been checkmated by your opponent. You LOSE this game.", :global)
-        restart = true
-        draw
-      elsif @board.is_nomoves_stalemate?(@team)
-        @board.set_status("It looks like you have survived by stalemate!", :global)
-        restart = true
-        draw
-      elsif @board.turn == @team
-        if @board.legal_moves[@team].size == 1
-          @board.selected_moves = @board.legal_moves[@team].values.flatten
-          @board.selected = @board.selected_moves[0].piece
-        end
-        ch =  STDIN.getch.chr.downcase
-        case ch
-        when 'q'
-          break
-        when 'm'
-          restart = true
-          break
-        when 'a'
-          @board.move_cursor_left
-        when 'd'
-          @board.move_cursor_right
-        when 'w'
-          @board.move_cursor_up
-        when 's'
-          @board.move_cursor_down
-        when "\r"
-          move = @board.get_selected_move
-          unless move.nil?
-            if move.move_type == :promotion || move.move_type == :attack_promotion
-              move.promotion_choice = prompt_promotion_choice
-            end
-            result = @board.play_move(move)
-            status_string = "made move #{move.get_notation}"
-            status_string += ", check" if result
-            @board.set_status(status_string, switch(@board.turn))
-          end
-        end
-      else
-        if @board.is_checkmate?(@board.turn)
-          @board.set_status("Congratulations, you have forced checkmate!", :global)
-          restart = true
-          draw
-        elsif @board.is_nomoves_stalemate?(@board.turn)
-          @board.set_status("The result of this match is a stalemate.", :global)
-          restart = true
-          draw
-        else
-          move = @computer.get_move
-          result = @board.play_move move
-          status_string = "made move #{move.get_notation}"
-          status_string += ", check" if result
-          @board.set_status(status_string, switch(@board.turn))
-        end
-      end
-      draw
-    end
   end
 
 
@@ -157,5 +124,11 @@ class Game < ApplicationRecord
           move_count:     @board.move_count
         }
       }, options)
+  end
+
+  class IllegalMoveError < StandardError
+    def message
+      "Illegal move attempted on the board"
+    end
   end
 end

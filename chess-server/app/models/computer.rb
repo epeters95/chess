@@ -1,8 +1,8 @@
 class Computer
   attr_reader :color
-  def initialize(board, color)
+  def initialize(board)
     @board = board
-    @color = color
+    @color = board.turn
   end
 
   def get_move # returns array of [ [piece, [row, col]], ... ]
