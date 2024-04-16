@@ -1,6 +1,6 @@
 class Board < ApplicationRecord
 
-  belongs_to :game
+  belongs_to :game, optional: true
   has_many   :played_moves, class_name: "Move"
 
   after_create :init_vars
@@ -8,25 +8,19 @@ class Board < ApplicationRecord
   include Util
   attr_accessor :turn, :status_bar, :pieces, :played_moves, :legal_moves, :selected_moves, :selected, :move_count
 
-  def init_vars(player_team, turn=:white, files=nil, pieces=nil)
+  def init_vars(files=nil, pieces=nil)
     @files = files || build_empty_board
     @pieces = pieces || place_pieces
-    @turn = turn
     @status_bar = {white: "", black: "", global: ""}
     @played_moves = []
     @legal_moves = {black: {}, white: {}}
-    @move_count = 0
+    self.move_count = 0
+    set_positions_array!
+  end
 
-    #TODO: move some of these to game
-    # the question is, is it tied to the state of the board? i.e. checkmate?
-    # move_count is tied to the board, so is turn. the rest of these are not.
-    @cursor = [BOARD_SIZE / 2, BOARD_SIZE / 2]
-    @ai_team = switch player_team
-    @player_team = player_team
-    @dir_facing = (player_team == :black ? -1 : 1)
-    @selected_moves = []
-    @selected = nil
-    @debugs = false
+  def set_positions_array!
+    self.positions_array = JSON.pretty_generate(@pieces).to_s
+    self.save!
   end
 
   def switch_turn!
@@ -34,16 +28,7 @@ class Board < ApplicationRecord
     self.save!
   end
 
-  def debug_str
-    "Turn: #{@turn}\n" +
-    "Legal moves:\n#{@legal_moves.inspect}\n" +
-    "Selected moves:\n#{@selected_moves.inspect}\n" +
-    "Played moves:\n#{@played_moves.inspect}\n" +
-    "Pieces: \n#{@pieces.inspect}\n" +
-    "Files: \n#{@files.inspect}\n"
-  end
-
-  def generate_legal_moves(ignore_check=false,color=@turn)
+  def generate_legal_moves(ignore_check=false,color=self.turn)
     @legal_moves[color] = {}
     @pieces[color].each do |piece|
       piece.clear_moves
@@ -106,10 +91,9 @@ class Board < ApplicationRecord
           elsif !target_passant.nil? && target_passant.is_a?(Pawn) && 
                 target_passant.color != color &&
                 target_passant.played_moves.size == 1 &&
-                @move_count == target_passant.played_moves.last.move_count &&
+                self.move_count == target_passant.played_moves.last.move_count &&
                 rank_idx(atk_n) == (color == :white ? 5 : 2)
 
-            @debugs = true
             moves << Move.new(piece, move_type, atk_n, target_passant)
           end
         end
@@ -282,15 +266,13 @@ class Board < ApplicationRecord
       @pieces[move.piece.color] << piece
     end
     
-    @move_count += 1
+    self.move_count += 1
     move.completed = true
     move.piece.set_played(move)
-    move.move_count = @move_count
+    move.move_count = self.move_count
 
     @played_moves << move.get_notation
     
-    @selected = nil
-    @selected_moves = []
 
     
     @turn = switch @turn
@@ -300,6 +282,8 @@ class Board < ApplicationRecord
     self.generate_legal_moves(true, switch(@turn))
     result = self.is_king_checked?(@turn)
 
+    self.save!
+
     return result
   end
 
@@ -307,8 +291,8 @@ class Board < ApplicationRecord
     files = deep_dup_files
     pieces = deep_dup_pieces_from_files(files)
     # TODO: replace with non-ActiveRecord skeleton object
-    doop = self.class.new({game_id: 0}).init_vars(@player_team, @turn, files, pieces)
-    doop.move_count = @move_count
+    doop = self.class.new(game_id: 0, turn: self.turn).init_vars(files, pieces)
+    doop.move_count = self.move_count
     doop
   end
 
@@ -385,76 +369,9 @@ class Board < ApplicationRecord
     piece.position = new_pos
   end
 
-  def move_cursor(dir)
-    @cursor[0] += dir[0]
-    @cursor[1] += dir[1]
-    keep_in_bounds @cursor
-  end
-
-  def move_cursor_left
-    @cursor[0] += dir_facing * -1
-    keep_in_bounds @cursor
-  end
-
-  def move_cursor_right
-    @cursor[0] += dir_facing
-    keep_in_bounds @cursor
-  end
-
-  def move_cursor_up
-    @cursor[1] += dir_facing
-    keep_in_bounds @cursor
-  end
-
-  def move_cursor_down
-    @cursor[1] += dir_facing * -1
-    keep_in_bounds @cursor
-  end
-
-  
-  def draw_piece(col, row)
-    piece = self.get(col, row)
-    ch = "?"
-    (color = :black) && (ch = CHARS[:empty]) if piece.nil?
-    (color = piece.color) && (ch = piece.char) if !piece.nil?
-    # print ch.encode("utf-8").colorize(color: color, background: self.get_bg(col, row))
-  end
-
-  def get_bg(col, row)
-    bg = (col + row) % 2 == 1 ? :yellow : :green
-    if !@selected_moves.empty? && @selected_moves.map{ |mv| mv.get_coords }.include?([col, row])
-      bg = (bg == :green ? :red : :red)
-    end
-    (col == @cursor[0] && row == @cursor[1]) ? :magenta : bg
-  end
-
-# returns a move if one is selected
-  def get_selected_move
-    piece = self.get(@cursor[0], @cursor[1])
-    if @selected_moves && @selected_moves.map{ |mv| mv.get_coords }.include?(@cursor)
-
-      move = @selected_moves.select { |mv| mv.get_coords == @cursor }[0]
-      return move
-    else
-      if !piece.nil?
-        if piece.color == @player_team
-        # select piece
-          @selected = piece
-          @selected_moves = @legal_moves[@player_team][piece.object_id.to_s] || []
-        end
-        
-      else
-        @selected = nil
-        @selected_moves = []
-      end
-      return nil
-    end
-  end
-
   def prompt_piece_choice
     return :queen
   end
-
 
   protected
 

@@ -7,8 +7,8 @@ class Game < ApplicationRecord
   include Util
 
   def init_board
-    self.board.create(turn: "white")
-    self.board.generate_legal_moves
+    self.board = Board.create!(game_id: self.id, turn: "white")
+    # self.board.generate_legal_moves
     set_waiting_status
   end
 
@@ -63,50 +63,10 @@ class Game < ApplicationRecord
   end
 
   def set_waiting_status
-    if !self.is_computer?(:white)
-      self.update_attribute!(status: "waiting_player")
-    else
+    if self.is_computer?(self.board.turn)
       self.update_attribute!(status: "waiting_computer")
-    end
-  end
-
-
-  def prompt_promotion_choice
-    puts "Choose your promoted piece: q) Queen, r) Rook, n) Knight, b) Bishop"
-    # loop do
-    #   ch = STDIN.getch.chr.downcase
-    #   case ch
-    #   when 'q'
-    #     return :queen
-    #   when 'r'
-    #     return :rook
-    #   when 'n'
-    #     return :knight
-    #   when 'b'
-    #     return :bishop
-    #   end
-    # end
-    # TODO: add promotion choice endpoint or modify move#create flow
-    return :queen
-  end
-
-
-  def draw
-    row, col, i = 7, 0, 1
-    if @team == :black
-      row, col, i = 0, 7, -1
-    end
-    
-    8.times do
-      draw_row(col, row, i)
-      row -= i
-    end
-  end
-
-  def draw_row(col, row, i)
-    8.times do
-      @board.draw_piece(col, row)
-      col += i
+    else
+      self.update_attribute!(status: "waiting_player")
     end
   end
 
