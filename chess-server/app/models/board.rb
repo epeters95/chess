@@ -331,9 +331,12 @@ class Board < ApplicationRecord
     self.generate_legal_moves(true, switch(self.turn))
     result = self.is_king_checked?(self.turn)
 
-    self.save!
-
     return result
+  end
+
+  def play_move!(move, ignore_check=false)
+    play_move(move, ignore_check)
+    self.save!
   end
 
   def deep_dup

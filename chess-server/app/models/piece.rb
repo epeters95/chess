@@ -3,7 +3,7 @@ class Piece
   # This object will not have a db table to persist itself. Too many rows.
   # How can a board be saved on the database without also saving piece objects?
   # The answer is that we will add a text column to Board representing the serialized 8x8 array.
-  # Pieces will be represented with a notation that includes color (position known by index in array)
+  # Pieces will be represented with a notation illustrated in to_json
 
   include Util
   VALS = {knight: 3, king: 77, queen: 9, pawn: 1, rook: 5, bishop: 3}
@@ -57,6 +57,7 @@ class Piece
   end
 
   def deep_dup
+    # TODO: determine if necessary to rewrite the mv.deep_dup action considering played_moves is generated from JSON
     return self.class.new(@color, @position, @played_moves.map{|mv| mv.deep_dup(mv.piece, mv.other_piece)})
   end
 
@@ -91,6 +92,18 @@ class Piece
 
   def to_s
     notation
+  end
+
+  def to_json(options = {})
+    vars = instance_variables.excluding [:@char, :@val, :@letter]
+    merged_hash = vars.to_h do |iv|
+      [iv.to_s.delete('@'), instance_variable_get(iv)]
+    end.merge(
+      {
+        piece_directions: piece_directions,
+        class_name: self.class.name}
+    )
+    JSON.generate(merged_hash, options)
   end
 end
 
