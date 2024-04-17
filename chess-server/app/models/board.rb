@@ -3,10 +3,11 @@ class Board < ApplicationRecord
   belongs_to :game, optional: true
   has_many   :played_moves, class_name: "Move"
 
-  after_create :init_vars
+  after_create :init_vars, :generate_legal_moves
 
   include Util
-  attr_accessor :turn, :status_bar, :pieces, :played_moves, :legal_moves, :selected_moves, :selected, :move_count
+  attr_reader :legal_moves, :played_moves
+  attr_accessor :status_bar, :selected_moves, :selected
 
   def init_vars(files=nil, pieces=nil)
     @files = files || build_empty_board
@@ -15,12 +16,15 @@ class Board < ApplicationRecord
     @played_moves = []
     @legal_moves = {black: {}, white: {}}
     self.move_count = 0
-    set_positions_array!
+    set_pieces_to_positions_array(@pieces)
   end
 
-  def set_positions_array!
-    self.positions_array = JSON.pretty_generate(@pieces).to_s
-    self.save!
+  def get_pieces
+    @pieces || get_pieces_from_positions_array
+  end
+
+  def get_files
+    @files || get_files_from_positions_array
   end
 
   def switch_turn!
@@ -28,13 +32,31 @@ class Board < ApplicationRecord
     self.save!
   end
 
-  def generate_legal_moves(ignore_check=false,color=self.turn)
+  def get_pieces_from_positions_array
+    # if @pieces.nil?
+    #   # TODO: get pieces from positions array
+    # end
+  end
+
+  def get_files_from_positions_array
+    # if @files.nil?
+    #   # TODO: get files from positions array
+    # end
+  end
+
+  def set_pieces_to_positions_array(pieces_hash)
+    self.positions_array = JSON.generate(pieces_hash)
+    # self.save!
+    # Currently, non-persisting board objects are used to calculate legal moves,
+    # therefore the save method must be called externally to persist pieces in db
+  end
+
+  def generate_legal_moves(ignore_check=false,color=self.turn.to_sym)
     @legal_moves[color] = {}
     @pieces[color].each do |piece|
       piece.clear_moves
       moves = []
       skip = false
-      
 
       dirs = piece.piece_directions
       dirs.each do |dir|
@@ -66,11 +88,20 @@ class Board < ApplicationRecord
               move_type = :promotion
               # set to promotion instead
             end
-            moves << Move.new(piece, move_type, new_place_n, other_piece)
+
+            moves << Move.new(
+              board_id:         self.id,
+              piece_str:        piece.to_json,
+              other_piece_str:  other_piece.to_json,
+              move_type:        move_type.to_s,
+              new_position:     new_place_n
+              )
             break unless keep_going
           end
         end
       end
+
+      
       if piece.is_a?(Pawn)
         self.get_pawn_attacks(piece).each do |atk|
           # Regular attack
@@ -86,7 +117,13 @@ class Board < ApplicationRecord
           end
           if !target.nil? && target.color != color
             
-            moves << Move.new(piece, move_type, atk_n, target)
+            moves << Move.new(
+              board_id:         self.id,
+              piece_str:        piece.to_json,
+              other_piece_str:  target.to_json,
+              move_type:        move_type.to_s,
+              new_position:     atk_n
+              )
 
           elsif !target_passant.nil? && target_passant.is_a?(Pawn) && 
                 target_passant.color != color &&
@@ -94,29 +131,39 @@ class Board < ApplicationRecord
                 self.move_count == target_passant.played_moves.last.move_count &&
                 rank_idx(atk_n) == (color == :white ? 5 : 2)
 
-            moves << Move.new(piece, move_type, atk_n, target_passant)
+            moves << Move.new(
+              board_id:         self.id,
+              piece_str:        piece.to_json,
+              other_piece_str:  target_passant.to_json,
+              move_type:        move_type.to_s,
+              new_position:     atk_n
+              )
           end
         end
       end
 
       if piece.is_a?(King) and piece.castleable
-        self.get_castleable_rooks(color).each do |cr|
-          if file_idx(cr.position) < file_idx(piece.position)
+        self.get_castleable_rooks(color).each do |rook|
+          if file_idx(rook.position) < file_idx(piece.position)
             # Queenside
             moves << Move.new(
-              piece,
-              :castle_queenside,
-              file(file_idx(piece.file) - 2) + piece.rank,
-              cr,
-              file(file_idx(cr.file) + 3) + cr.rank)
+              board_id:         self.id,
+              piece_str:        piece.to_json,
+              other_piece_str:  rook.to_json,
+              move_type:        "castle_queenside",
+              new_position:     file(file_idx(piece.file) - 2) + piece.rank,
+              rook_position:    file(file_idx(rook.file) + 3) + rook.rank
+              )
           else
             # Kingside
             moves << Move.new(
-              piece,
-              :castle_kingside,
-              file(file_idx(piece.file) + 2) + piece.rank,
-              cr,
-              file(file_idx(cr.file) - 2) + cr.rank)
+              board_id:         self.id,
+              piece_str:        piece.to_json,
+              other_piece_str:  rook.to_json,
+              move_type:        "castle_kingside",
+              new_position:     file(file_idx(piece.file) + 2) + piece.rank,
+              rook_position:    file(file_idx(rook.file) - 2) + rook.rank
+              )
           end
         end
       end
@@ -128,6 +175,7 @@ class Board < ApplicationRecord
       piece.add_moves moves
       @legal_moves[color][piece.object_id.to_s] = moves
     end
+    @legal_moves
   end
 
   def get_castleable_rooks(color)
@@ -167,12 +215,13 @@ class Board < ApplicationRecord
     legal_rooks
   end
 
+  # TODO: rework to get the piece from the move
   def is_legal?(move)
     dummy_board = self.deep_dup
     duped_piece = dummy_board.get_n(move.piece.position)
     duped_other_piece = (move.other_piece.nil? ? nil : dummy_board.get_n(move.other_piece.position))
     dummy_board.play_move(move.deep_dup(duped_piece,duped_other_piece), true)
-    return !dummy_board.is_king_checked?(@turn)
+    return !dummy_board.is_king_checked?(self.turn)
   end
 
   def is_king_checked?(color)
@@ -184,7 +233,7 @@ class Board < ApplicationRecord
   end
 
   def is_insuff_material_stalemate?
-    all_remaining = self.pieces.values.flatten.find_all{|pc| !pc.taken }
+    all_remaining = @pieces.values.flatten.find_all{|pc| !pc.taken }
     insufficient = false
     if all_remaining.size <= 4
       dbg = "REMAINING: \n" + all_remaining.map{|r| "#{r.color} #{r.notation} #{r.position}, taken=#{r.taken}\n" }.join("") + "****\n"
@@ -234,7 +283,7 @@ class Board < ApplicationRecord
   # The only moves that should be passed in here are generated by the board to be legal
   # duped board will use this method then ask if checked
   def play_move(move, ignore_check=false)
-    if !move.is_a?(Move) || move.piece.color != @turn
+    if !move.is_a?(Move) || move.piece.color != self.turn
       puts "Error: invalid move"
       return nil
     end
@@ -249,7 +298,7 @@ class Board < ApplicationRecord
 
     if move.move_type == :attack || move.move_type == :attack_promotion
       # TODO: verify if this fix still needed...
-      @legal_moves[switch @turn][target.object_id.to_s] = [] unless @legal_moves[switch @turn][target.object_id.to_s].nil?
+      @legal_moves[switch self.turn][target.object_id.to_s] = [] unless @legal_moves[switch self.turn][target.object_id.to_s].nil?
       @pieces[target.color].delete target
       target.take
     end
@@ -275,12 +324,12 @@ class Board < ApplicationRecord
     
 
     
-    @turn = switch @turn
-    self.set_status("> #{@turn.upcase} TO MOVE", :global)
+    self.turn = switch self.turn
+    self.set_status("> #{self.turn.upcase} TO MOVE", :global)
     # Generate new moves for the next turn
     self.generate_legal_moves(ignore_check)
-    self.generate_legal_moves(true, switch(@turn))
-    result = self.is_king_checked?(@turn)
+    self.generate_legal_moves(true, switch(self.turn))
+    result = self.is_king_checked?(self.turn)
 
     self.save!
 
@@ -288,10 +337,12 @@ class Board < ApplicationRecord
   end
 
   def deep_dup
-    files = deep_dup_files
-    pieces = deep_dup_pieces_from_files(files)
+    dup_files = deep_dup_files
+    dup_pieces = deep_dup_pieces_from_files(@files)
     # TODO: replace with non-ActiveRecord skeleton object
-    doop = self.class.new(game_id: 0, turn: self.turn).init_vars(files, pieces)
+    doop = Board.new(game_id: 0, turn: self.turn)
+    doop.init_vars(dup_files, dup_pieces)
+    # TODO: ensure pieces dup no longer necessary with serialization
     doop.move_count = self.move_count
     doop
   end

@@ -1,19 +1,19 @@
 class Game < ApplicationRecord
 
-  has_one :board
+  has_one :board, dependent: :destroy
 
   after_create :init_board
 
   include Util
 
   def init_board
-    self.board = Board.create!(game_id: self.id, turn: "white")
-    # self.board.generate_legal_moves
+    self.create_board(turn: "white")
+    self.board.save!  # Manually saving board persists pieces in db
     set_waiting_status
   end
 
   def is_computer?(color)
-    name_for(color) == ""
+    name_for(color).nil?
   end
 
   def is_computers_turn?
@@ -25,7 +25,7 @@ class Game < ApplicationRecord
   end
 
   def display_name_for(color)
-    name_for(color) == "" ? "Computer" : name_for(color)
+    is_computer?(color) ? "Computer" : name_for(color)
   end
 
   def play_move_and_evaluate(move)
@@ -59,14 +59,14 @@ class Game < ApplicationRecord
       return
     end
     # Game Over
-    self.update_attribute!(status: "completed")
+    self.update(status: "completed")
   end
 
   def set_waiting_status
     if self.is_computer?(self.board.turn)
-      self.update_attribute!(status: "waiting_computer")
+      self.update(status: "waiting_computer")
     else
-      self.update_attribute!(status: "waiting_player")
+      self.update(status: "waiting_player")
     end
   end
 

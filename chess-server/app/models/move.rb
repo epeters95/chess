@@ -17,9 +17,11 @@ class Move < ApplicationRecord
     :attack_promotion
   ]
 
-  attr_accessor :new_position, :rook_position, :other_piece, :piece, :completed, :promotion_choice, :move_count
+  attr_accessor :other_piece, :piece, :completed, :promotion_choice, :move_count
   attr_reader :move_type
-  def initialize(piece, move_type, new_position, other_piece=nil, rook_position=nil)
+
+  def init_vars(piece, move_type, new_position, other_piece=nil, rook_position=nil)
+    # TODO: get piece object from JSON string
     @piece = piece
 
     # Refers to the piece being attacked, or the castling rook, or the promotion choice
