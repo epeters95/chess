@@ -9,22 +9,17 @@ class Board < ApplicationRecord
   attr_reader :legal_moves, :played_moves
   attr_accessor :status_bar, :selected_moves, :selected
 
-  def init_vars(files=nil, pieces=nil)
-    @files = files || build_empty_board
+  def init_vars(pieces=nil)
     @pieces = pieces || place_pieces
     @status_bar = {white: "", black: "", global: ""}
     @played_moves = []
     @legal_moves = {black: {}, white: {}}
     self.move_count = 0
-    set_pieces_to_positions_array(@pieces)
+    save_pieces_to_positions_array(@pieces)
   end
 
-  def get_pieces
-    @pieces || get_pieces_from_positions_array
-  end
-
-  def get_files
-    @files || get_files_from_positions_array
+  def refresh_pieces
+    @pieces ||= get_pieces_from_positions_array
   end
 
   def switch_turn!
@@ -36,15 +31,14 @@ class Board < ApplicationRecord
     # if @pieces.nil?
     #   # TODO: get pieces from positions array
     # end
+    json_pieces = JSON.parse(self.positions_array)
+    return {
+      white: json_pieces["white"].map{|pc| Piece.from_json(pc)},
+      black: json_pieces["black"].map{|pc| Piece.from_json(pc)}
+    }
   end
 
-  def get_files_from_positions_array
-    # if @files.nil?
-    #   # TODO: get files from positions array
-    # end
-  end
-
-  def set_pieces_to_positions_array(pieces_hash)
+  def save_pieces_to_positions_array(pieces_hash)
     self.positions_array = JSON.generate(pieces_hash)
     # self.save!
     # Currently, non-persisting board objects are used to calculate legal moves,
@@ -89,10 +83,11 @@ class Board < ApplicationRecord
               # set to promotion instead
             end
 
+            other_piece_json = other_piece.nil? ? nil : other_piece.to_json
             moves << Move.new(
               board_id:         self.id,
               piece_str:        piece.to_json,
-              other_piece_str:  other_piece.to_json,
+              other_piece_str:  other_piece_json,
               move_type:        move_type.to_s,
               new_position:     new_place_n
               )
@@ -109,13 +104,13 @@ class Board < ApplicationRecord
           target = self.get(atk[0], atk[1])
           atk_n = file(atk[0]) + rank(atk[1])
           # En Passant attack
-          new_rank_idx = atk[1] + (color == :white ? -1 : 1)
+          new_rank_idx = atk[1] + (color.to_sym == :white ? -1 : 1)
           target_passant = self.get(atk[0],new_rank_idx)
 
           if rank_idx(atk_n) == (color == :white ? BOARD_SIZE - 1 : 0)
             move_type = :attack_promotion
           end
-          if !target.nil? && target.color != color
+          if !target.nil? && target.color.to_sym != color
             
             moves << Move.new(
               board_id:         self.id,
@@ -175,6 +170,7 @@ class Board < ApplicationRecord
       piece.add_moves moves
       @legal_moves[color][piece.object_id.to_s] = moves
     end
+    save_pieces_to_positions_array(@pieces)
     @legal_moves
   end
 
@@ -225,6 +221,7 @@ class Board < ApplicationRecord
   end
 
   def is_king_checked?(color)
+    color = color.to_sym
     if @legal_moves[switch color].empty?
       # Checking for checkmate, need moves generated
       generate_legal_moves(true, switch(color))
@@ -262,12 +259,14 @@ class Board < ApplicationRecord
 
 
   def is_nomoves_stalemate?(color)
-    self.legal_moves[color].values.flatten.empty? && !self.is_king_checked?(color)
+    color = color.to_sym
+    @legal_moves[color].values.flatten.empty? && !self.is_king_checked?(color)
   end
 
 
   def is_checkmate?(color)
-    self.legal_moves[color].values.flatten.empty? && self.is_king_checked?(color)
+    color = color.to_sym
+    @legal_moves[color].values.flatten.empty? && self.is_king_checked?(color)
   end
 
   def get_pawn_attacks(pawn)
@@ -291,14 +290,7 @@ class Board < ApplicationRecord
     target = move.other_piece
     self.move_piece(move.piece, move.new_position)
 
-    if !target.nil? and target.position != move.new_position
-      # En Passant
-      @files[file_idx(target.position)][rank_idx(target.position)] = nil
-    end
-
     if move.move_type == :attack || move.move_type == :attack_promotion
-      # TODO: verify if this fix still needed...
-      @legal_moves[switch self.turn][target.object_id.to_s] = [] unless @legal_moves[switch self.turn][target.object_id.to_s].nil?
       @pieces[target.color].delete target
       target.take
     end
@@ -311,7 +303,6 @@ class Board < ApplicationRecord
     if move.move_type == :promotion || move.move_type == :attack_promotion
       @pieces[move.piece.color].delete move.piece
       piece = Piece.generate(move.promotion_choice, move.piece.color, move.new_position)
-      @files[file_idx(move.new_position)][rank_idx(move.new_position)] = piece
       @pieces[move.piece.color] << piece
     end
     
@@ -324,7 +315,7 @@ class Board < ApplicationRecord
     
 
     
-    self.turn = switch self.turn
+    self.turn = switch(self.turn).to_s
     self.set_status("> #{self.turn.upcase} TO MOVE", :global)
     # Generate new moves for the next turn
     self.generate_legal_moves(ignore_check)
@@ -336,48 +327,24 @@ class Board < ApplicationRecord
 
   def play_move!(move, ignore_check=false)
     play_move(move, ignore_check)
+    move.save!
+    save_pieces_to_positions_array(@pieces)
     self.save!
+    debugger
   end
 
   def deep_dup
-    dup_files = deep_dup_files
-    dup_pieces = deep_dup_pieces_from_files(@files)
     # TODO: replace with non-ActiveRecord skeleton object
     doop = Board.new(game_id: 0, turn: self.turn)
-    doop.init_vars(dup_files, dup_pieces)
+    doop.init_vars(deep_dup_pieces)
     # TODO: ensure pieces dup no longer necessary with serialization
     doop.move_count = self.move_count
     doop
   end
 
   def deep_dup_pieces
-    dummy_pieces = {
-      black: @pieces[:black].map {|piece| piece.deep_dup },
-      white: @pieces[:white].map {|piece| piece.deep_dup }
-    }
+    dummy_pieces = get_pieces_from_positions_array
     dummy_pieces
-  end
-
-  def deep_dup_pieces_from_files(files)
-    dummy_pieces = {
-      black: files.flatten.compact.select { |piece| piece.color == :black },
-      white: files.flatten.compact.select { |piece| piece.color == :white }
-    }
-    dummy_pieces
-  end
-
-  def deep_dup_files
-    duped_files = build_empty_board
-
-    @files.each_with_index do |file, f|
-      file.each_with_index do |piece, r|
-        if !piece.nil?
-          duped_files[f][r] = piece.deep_dup
-
-        end
-      end
-    end
-    duped_files
   end
 
   def place_pieces
@@ -387,11 +354,8 @@ class Board < ApplicationRecord
     [1, 6].each do |r|
       BOARD_SIZE.times do |f|
         # Push each piece into the return hash using its file as the index
-        # Also, place it where it goes on the board
         piece = Piece.generate(:pawn, color, file(f) + rank(r))
-        gameboard[color] << piece
-        @files[f][r] = piece
-      
+        gameboard[color] << piece      
       end
       color = :black
     end
@@ -401,7 +365,6 @@ class Board < ApplicationRecord
       [:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook].each_with_index do |piece_type, f|
         piece = Piece.generate(piece_type, color, file(f) + rank(r))
         gameboard[color] << piece
-        @files[f][r] = piece
       end
       color = :black
     end
@@ -409,6 +372,7 @@ class Board < ApplicationRecord
   end
 
   def set_status(str, color)
+    color = color.to_sym
     if color == :global
       @status_bar[color] = "#{str}"
     else
@@ -417,9 +381,8 @@ class Board < ApplicationRecord
   end
 
   def move_piece(piece, new_pos)
-    old_pos = piece.position
-    @files[file_idx(new_pos)][rank_idx(new_pos)] = piece
-    @files[file_idx(old_pos)][rank_idx(old_pos)] = nil
+    piece_to_delete = self.get_n(new_pos)
+    @pieces[switch(piece.color)].delete(piece_to_delete)
     piece.position = new_pos
   end
 
@@ -433,8 +396,16 @@ class Board < ApplicationRecord
     self.get(file_idx(pos), rank_idx(pos))
   end
 
+  # TODO: this whole files/pieces system needs a major rework (FML)
   def get(col, row)
-    @files[col][row]
+    # @files[col][row]  # <-- this should've been pieces all along
+    all_pieces = @pieces[:white] + @pieces[:black]
+    found = all_pieces.select{|pc| pc.position == (file(col) + rank(row)) }
+    if found.empty?
+      return nil
+    else
+      return found.first
+    end
   end
 
   

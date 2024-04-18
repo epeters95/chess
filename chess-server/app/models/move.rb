@@ -11,25 +11,13 @@ class Move < ApplicationRecord
   include Util
 
   attr_accessor :completed, :promotion_choice, :move_count
-  attr_reader :move_type
 
   def piece
-    @piece ||= get_piece_from_json(self.piece_str)
+    @piece ||= Piece.from_json_str(self.piece_str)
   end
 
   def other_piece
-    @other_piece ||= get_piece_from_json(self.other_piece_str)
-  end
-
-  def get_piece_from_json(piece_str)
-    if piece_str.nil? || piece_str == "null"
-      return nil
-    end
-    json_obj = JSON.parse(piece_str)
-    klass = Object.const_get(json_obj["class_name"])
-    init_arg_names = klass.instance_method(:initialize).parameters.map{|pm| pm[1].to_s }
-    args = init_arg_names.map{|arg| json_obj[arg] }
-    klass.new(*args)
+    @other_piece ||= Piece.from_json_str(self.other_piece_str)
   end
 
   def get_notation(disamb=false)
@@ -69,4 +57,27 @@ class Move < ApplicationRecord
     @notation ||= self.get_notation
   end
 
+  def to_json(options = {})
+    if self.move_type == nil || self.move_type == ""
+      debugger
+    end
+    exclude_piece_moves = true
+    other_piece_json = @other_piece.nil? ? nil : @other_piece.to_json(exclude_piece_moves)
+    hsh = {
+      board_id: self.board_id,
+      piece_str: @piece.to_json(exclude_piece_moves),
+      other_piece_str: other_piece_json,
+      move_type: self.move_type.to_s,
+      new_position: self.new_position,
+      rook_position: self.rook_position,
+      move_count: self.move_count
+    }
+    JSON.generate(hsh, options)
+  end
+
+  def self.from_json(json_obj)
+    exclude_piece_moves = true
+    move_obj = self.new(json_obj.symbolize_keys)
+    move_obj
+  end
 end

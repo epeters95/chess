@@ -1,8 +1,11 @@
 class Computer
+
+  include Util
+
   attr_reader :color
   def initialize(board)
     @board = board
-    @color = board.turn
+    @color = board.turn.to_sym
   end
 
   def get_move # returns array of [ [piece, [row, col]], ... ]
@@ -10,7 +13,8 @@ class Computer
     under_attack = nil
     attacker = nil
     # 1. Detect threats
-    @board.pieces[switch @color].each do |piece|
+    pieces = @board.get_pieces_from_positions_array
+    pieces[switch @color].each do |piece|
       moves = piece.get_moves
       moves.find_all{|mv| !mv.other_piece.nil? }.each do |attack|
         # Get greatest threat
@@ -24,7 +28,7 @@ class Computer
       end
     end
     # Identify counter to threat
-    @board.pieces[@color].shuffle.each do |my_piece|
+    pieces[@color].shuffle.each do |my_piece|
       # TODO: implement blocking
       my_moves = my_piece.get_moves
       atks = my_moves.select { |mv| !mv.other_piece.nil? }

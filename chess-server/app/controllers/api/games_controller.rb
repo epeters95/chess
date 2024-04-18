@@ -25,7 +25,7 @@ class Api::GamesController < ApplicationController
           # Else, initiate a player move specified in params
           chosen_move = Move.create!(move_params)
         end
-        play_move_and_evaluate(chosen_move)
+        @game.play_move_and_evaluate!(chosen_move)
         render json: @game.board.legal_moves, status: :ok
       else
         render json: {errors: "Game is over"}, status: :unprocessable_entity

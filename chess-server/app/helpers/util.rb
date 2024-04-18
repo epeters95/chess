@@ -5,7 +5,7 @@ module Util
   BOARD_SIZE = 8
   CHARS = {empty: "  ", pawn: "\u265f ", rook: "\u265c ", knight: "\u265e ", bishop: "\u265d ", queen: "\u265b ", king: "\u265a "}
 
-  def switch(color); (color == :white ? :black : :white) end
+  def switch(color); (color.to_sym == :white ? :black : :white) end
 
 
   def file(col)

@@ -94,16 +94,37 @@ class Piece
     notation
   end
 
-  def to_json(options = {})
-    vars = instance_variables.excluding [:@char, :@val, :@letter]
+  def to_json(exclude_moves=false, options = {})
+    exclude_vars = [:@char, :@val, :@letter]
+    exclude_vars << [:@current_legal_moves] if exclude_moves
+    vars = instance_variables.excluding exclude_vars
     merged_hash = vars.to_h do |iv|
       [iv.to_s.delete('@'), instance_variable_get(iv)]
     end.merge(
       {
         piece_directions: piece_directions,
-        class_name: self.class.name}
+        class_name: self.class.name
+      }
     )
     JSON.generate(merged_hash, options)
+  end
+
+  def self.from_json_str(piece_str, exclude_moves=false)
+    if piece_str.nil? || piece_str == "null"
+      return nil
+    end
+    self.from_json(JSON.parse(piece_str), exclude_moves)
+  end
+
+  def self.from_json(json_obj, exclude_moves=false)
+    klass = Object.const_get(json_obj["class_name"])
+    init_arg_names = klass.instance_method(:initialize).parameters.map{|pm| pm[1].to_s }
+    args = init_arg_names.map{|arg| json_obj[arg] }
+    piece_obj = klass.new(*args)
+    unless exclude_moves
+      piece_obj.add_moves(json_obj["current_legal_moves"].map{|lm| Move.from_json(lm)})
+    end
+    piece_obj
   end
 end
 
@@ -119,7 +140,7 @@ class Pawn < Piece
   end
 
   def pawn_dir
-    @pawn_dir ||= (@color == :white ? 1 : -1)
+    @pawn_dir ||= (@color.to_sym == :white ? 1 : -1)
   end
 
   def pawn_attack_dirs
