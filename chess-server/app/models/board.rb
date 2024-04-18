@@ -11,9 +11,9 @@ class Board < ApplicationRecord
 
   def init_vars(pieces=nil)
     @pieces = pieces || place_pieces
-    @status_bar = {white: "", black: "", global: ""}
+    @status_bar = {"white" => "", "black" => "", "global" => ""}
     @played_moves = []
-    @legal_moves = {black: {}, white: {}}
+    @legal_moves = {"black" => {}, "white" => {}}
     self.move_count = 0
     save_pieces_to_positions_array(@pieces)
   end
@@ -28,14 +28,10 @@ class Board < ApplicationRecord
   end
 
   def get_pieces_from_positions_array
-    # if @pieces.nil?
-    #   # TODO: get pieces from positions array
-    # end
     json_pieces = JSON.parse(self.positions_array)
-    return {
-      white: json_pieces["white"].map{|pc| Piece.from_json(pc)},
-      black: json_pieces["black"].map{|pc| Piece.from_json(pc)}
-    }
+    ["white", "black"].to_h do |color|
+      [color, json_pieces[color].map{ |pc| Piece.from_json(pc) }]
+    end
   end
 
   def save_pieces_to_positions_array(pieces_hash)
@@ -45,7 +41,7 @@ class Board < ApplicationRecord
     # therefore the save method must be called externally to persist pieces in db
   end
 
-  def generate_legal_moves(ignore_check=false,color=self.turn.to_sym)
+  def generate_legal_moves(ignore_check=false,color=self.turn)
     @legal_moves[color] = {}
     @pieces[color].each do |piece|
       piece.clear_moves
@@ -65,7 +61,7 @@ class Board < ApplicationRecord
             break if outside?(new_place)
             new_place_n = file(new_place[0]) + rank(new_place[1])
 
-            move_type = :move
+            move_type = "move"
             other_piece = self.get(new_place[0], new_place[1])
             if !other_piece.nil?
               keep_going = false
@@ -74,12 +70,12 @@ class Board < ApplicationRecord
                 break
               end
               if other_piece.color != piece.color
-                move_type = :attack
+                move_type = "attack"
               else
                 break # stop looking in this direction
               end
-            elsif piece.is_a?(Pawn) && rank_idx(new_place_n) == (color == :white ? BOARD_SIZE - 1 : 0)
-              move_type = :promotion
+            elsif piece.is_a?(Pawn) && rank_idx(new_place_n) == (color == "white" ? BOARD_SIZE - 1 : 0)
+              move_type = "promotion"
               # set to promotion instead
             end
 
@@ -88,7 +84,7 @@ class Board < ApplicationRecord
               board_id:         self.id,
               piece_str:        piece.to_json,
               other_piece_str:  other_piece_json,
-              move_type:        move_type.to_s,
+              move_type:        move_type,
               new_position:     new_place_n
               )
             break unless keep_going
@@ -100,23 +96,23 @@ class Board < ApplicationRecord
       if piece.is_a?(Pawn)
         self.get_pawn_attacks(piece).each do |atk|
           # Regular attack
-          move_type = :attack
+          move_type = "attack"
           target = self.get(atk[0], atk[1])
           atk_n = file(atk[0]) + rank(atk[1])
           # En Passant attack
-          new_rank_idx = atk[1] + (color.to_sym == :white ? -1 : 1)
+          new_rank_idx = atk[1] + (color == "white" ? -1 : 1)
           target_passant = self.get(atk[0],new_rank_idx)
 
-          if rank_idx(atk_n) == (color == :white ? BOARD_SIZE - 1 : 0)
-            move_type = :attack_promotion
+          if rank_idx(atk_n) == (color == "white" ? BOARD_SIZE - 1 : 0)
+            move_type = "attack_promotion"
           end
-          if !target.nil? && target.color.to_sym != color
+          if !target.nil? && target.color != color
             
             moves << Move.new(
               board_id:         self.id,
               piece_str:        piece.to_json,
               other_piece_str:  target.to_json,
-              move_type:        move_type.to_s,
+              move_type:        move_type,
               new_position:     atk_n
               )
 
@@ -124,13 +120,13 @@ class Board < ApplicationRecord
                 target_passant.color != color &&
                 target_passant.played_moves.size == 1 &&
                 self.move_count == target_passant.played_moves.last.move_count &&
-                rank_idx(atk_n) == (color == :white ? 5 : 2)
+                rank_idx(atk_n) == (color == "white" ? 5 : 2)
 
             moves << Move.new(
               board_id:         self.id,
               piece_str:        piece.to_json,
               other_piece_str:  target_passant.to_json,
-              move_type:        move_type.to_s,
+              move_type:        move_type,
               new_position:     atk_n
               )
           end
@@ -211,7 +207,6 @@ class Board < ApplicationRecord
     legal_rooks
   end
 
-  # TODO: rework to get the piece from the move
   def is_legal?(move)
     dummy_board = self.deep_dup
     duped_piece = dummy_board.get_n(move.piece.position)
@@ -221,7 +216,6 @@ class Board < ApplicationRecord
   end
 
   def is_king_checked?(color)
-    color = color.to_sym
     if @legal_moves[switch color].empty?
       # Checking for checkmate, need moves generated
       generate_legal_moves(true, switch(color))
@@ -234,8 +228,8 @@ class Board < ApplicationRecord
     insufficient = false
     if all_remaining.size <= 4
       dbg = "REMAINING: \n" + all_remaining.map{|r| "#{r.color} #{r.notation} #{r.position}, taken=#{r.taken}\n" }.join("") + "****\n"
-      self.set_status(dbg, :global)
-      [:black, :white].each do |color|
+      self.set_status(dbg, "global")
+      ["black", "white"].each do |color|
         my_remaining = all_remaining.find_all{|pc| pc.color == color}
         their_remaining = all_remaining.find_all{|pc| pc.color == switch(color)}
 
@@ -259,13 +253,11 @@ class Board < ApplicationRecord
 
 
   def is_nomoves_stalemate?(color)
-    color = color.to_sym
     @legal_moves[color].values.flatten.empty? && !self.is_king_checked?(color)
   end
 
 
   def is_checkmate?(color)
-    color = color.to_sym
     @legal_moves[color].values.flatten.empty? && self.is_king_checked?(color)
   end
 
@@ -290,17 +282,17 @@ class Board < ApplicationRecord
     target = move.other_piece
     self.move_piece(move.piece, move.new_position)
 
-    if move.move_type == :attack || move.move_type == :attack_promotion
+    if move.move_type == "attack" || move.move_type == "attack_promotion"
       @pieces[target.color].delete target
       target.take
     end
-    if move.move_type == :castle_kingside || move.move_type == :castle_queenside
+    if move.move_type == "castle_kingside" || move.move_type == "castle_queenside"
       move_piece(move.other_piece, move.rook_position)
       move.other_piece.set_played(move)
       move.other_piece.set_castleable
       move.piece.set_castleable
     end
-    if move.move_type == :promotion || move.move_type == :attack_promotion
+    if move.move_type == "promotion" || move.move_type == "attack_promotion"
       @pieces[move.piece.color].delete move.piece
       piece = Piece.generate(move.promotion_choice, move.piece.color, move.new_position)
       @pieces[move.piece.color] << piece
@@ -313,10 +305,8 @@ class Board < ApplicationRecord
 
     @played_moves << move.get_notation
     
-
-    
-    self.turn = switch(self.turn).to_s
-    self.set_status("> #{self.turn.upcase} TO MOVE", :global)
+    self.turn = switch(self.turn)
+    self.set_status("> #{self.turn.upcase} TO MOVE", "global")
     # Generate new moves for the next turn
     self.generate_legal_moves(ignore_check)
     self.generate_legal_moves(true, switch(self.turn))
@@ -330,7 +320,6 @@ class Board < ApplicationRecord
     move.save!
     save_pieces_to_positions_array(@pieces)
     self.save!
-    debugger
   end
 
   def deep_dup
@@ -348,35 +337,34 @@ class Board < ApplicationRecord
   end
 
   def place_pieces
-    gameboard = {black: [], white: []}
+    gameboard = {"black" => [], "white" => []}
     # pawns
-    color = :white
+    color = "white"
     [1, 6].each do |r|
       BOARD_SIZE.times do |f|
         # Push each piece into the return hash using its file as the index
-        piece = Piece.generate(:pawn, color, file(f) + rank(r))
+        piece = Piece.generate("pawn", color, file(f) + rank(r))
         gameboard[color] << piece      
       end
-      color = :black
+      color = "black"
     end
     # home
-    color = :white
+    color = "white"
     [0, 7].each do |r|
-      [:rook, :knight, :bishop, :queen, :king, :bishop, :knight, :rook].each_with_index do |piece_type, f|
+      ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"].each_with_index do |piece_type, f|
         piece = Piece.generate(piece_type, color, file(f) + rank(r))
         gameboard[color] << piece
       end
-      color = :black
+      color = "black"
     end
     gameboard
   end
 
   def set_status(str, color)
-    color = color.to_sym
-    if color == :global
+    if color == "global"
       @status_bar[color] = "#{str}"
     else
-      @status_bar[color] = "#{color.to_s}: #{str}"
+      @status_bar[color] = "#{color}: #{str}"
     end
   end
 
@@ -387,7 +375,7 @@ class Board < ApplicationRecord
   end
 
   def prompt_piece_choice
-    return :queen
+    return "queen"
   end
 
   protected
@@ -396,10 +384,9 @@ class Board < ApplicationRecord
     self.get(file_idx(pos), rank_idx(pos))
   end
 
-  # TODO: this whole files/pieces system needs a major rework (FML)
+  # TODO: consider better ways of organizing pieces for position lookup
   def get(col, row)
-    # @files[col][row]  # <-- this should've been pieces all along
-    all_pieces = @pieces[:white] + @pieces[:black]
+    all_pieces = @pieces["white"] + @pieces["black"]
     found = all_pieces.select{|pc| pc.position == (file(col) + rank(row)) }
     if found.empty?
       return nil

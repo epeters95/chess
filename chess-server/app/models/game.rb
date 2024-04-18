@@ -21,7 +21,7 @@ class Game < ApplicationRecord
   end
 
   def name_for(color)
-    color == :white ? self.white_name : self.black_name
+    color == "white" ? self.white_name : self.black_name
   end
 
   def display_name_for(color)
@@ -38,7 +38,7 @@ class Game < ApplicationRecord
     status_string = "#{display_name_for(switch(self.board.turn))} made move #{move.get_notation}"
     status_string += ", check" if king_checked
     self.board.set_status(status_string, switch(self.board.turn))
-    
+
     evaluate_outcomes
   end
 
@@ -46,13 +46,13 @@ class Game < ApplicationRecord
     previous_turn = switch(self.board.turn)
 
     if self.board.is_insuff_material_stalemate?
-      self.board.set_status("The game is a draw due to insufficient mating material.", :global)
+      self.board.set_status("The game is a draw due to insufficient mating material.", "global")
 
     elsif self.board.is_checkmate?(self.board.turn)
-      self.board.set_status("#{display_name_for(previous_turn)} has won by checkmate!", :global)
+      self.board.set_status("#{display_name_for(previous_turn)} has won by checkmate!", "global")
 
     elsif self.board.is_nomoves_stalemate?(self.board.turn)
-      self.board.set_status("The game is a draw. #{display_name_for(self.board.turn)} has survived by stalemate!", :global)
+      self.board.set_status("The game is a draw. #{display_name_for(self.board.turn)} has survived by stalemate!", "global")
 
     else
       set_waiting_status

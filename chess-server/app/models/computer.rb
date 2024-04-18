@@ -5,7 +5,7 @@ class Computer
   attr_reader :color
   def initialize(board)
     @board = board
-    @color = board.turn.to_sym
+    @color = board.turn
   end
 
   def get_move # returns array of [ [piece, [row, col]], ... ]

@@ -10,7 +10,7 @@ class Move < ApplicationRecord
 
   include Util
 
-  attr_accessor :completed, :promotion_choice, :move_count
+  attr_accessor :promotion_choice
 
   def piece
     @piece ||= Piece.from_json_str(self.piece_str)
@@ -41,7 +41,7 @@ class Move < ApplicationRecord
     doop = self.class.new(
       piece_str:       duped_piece.to_json,
       other_piece_str: duped_other_piece.to_json,
-      move_type:       self.move_type.to_s,
+      move_type:       self.move_type,
       new_position:    self.new_position,
       rook_position:   self.rook_position,
       move_count:      self.move_count
@@ -58,19 +58,16 @@ class Move < ApplicationRecord
   end
 
   def to_json(options = {})
-    if self.move_type == nil || self.move_type == ""
-      debugger
-    end
     exclude_piece_moves = true
     other_piece_json = @other_piece.nil? ? nil : @other_piece.to_json(exclude_piece_moves)
     hsh = {
-      board_id: self.board_id,
-      piece_str: @piece.to_json(exclude_piece_moves),
-      other_piece_str: other_piece_json,
-      move_type: self.move_type.to_s,
-      new_position: self.new_position,
-      rook_position: self.rook_position,
-      move_count: self.move_count
+      board_id:         self.board_id,
+      piece_str:        @piece.to_json(exclude_piece_moves),
+      other_piece_str:  other_piece_json,
+      move_type:        self.move_type,
+      new_position:     self.new_position,
+      rook_position:    self.rook_position,
+      move_count:       self.move_count
     }
     JSON.generate(hsh, options)
   end

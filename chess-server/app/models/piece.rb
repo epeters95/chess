@@ -6,7 +6,6 @@ class Piece
   # Pieces will be represented with a notation illustrated in to_json
 
   include Util
-  VALS = {knight: 3, king: 77, queen: 9, pawn: 1, rook: 5, bishop: 3}
 
   def self.knight_moves; [[1,2],[1,-2],[-1,2],[-1,-2],[2,1],[-2,1],[2,-1],[-2,-1]]; end
   def self.rook_moves;   [[0,1],[1,0],[0,-1],[-1,0]]; end
@@ -15,6 +14,7 @@ class Piece
 
   attr_accessor :color, :position, :val
   attr_reader :char, :ranged, :played_moves, :taken
+
   def initialize(color, position, played_moves=[])
     @color = color
     @position = position
@@ -40,17 +40,17 @@ class Piece
 
   def self.generate(piece_type, color, pos)
     case piece_type
-    when :pawn
+    when "pawn"
       pc = Pawn.new(color, pos)
-    when :knight
+    when "knight"
       pc = Knight.new(color, pos)
-    when :bishop
+    when "bishop"
       pc = Bishop.new(color, pos)
-    when :rook
+    when "rook"
       pc = Rook.new(color, pos)
-    when :queen
+    when "queen"
       pc = Queen.new(color, pos)
-    when :king
+    when "king"
       pc = King.new(color, pos)
     end
     pc
@@ -140,7 +140,7 @@ class Pawn < Piece
   end
 
   def pawn_dir
-    @pawn_dir ||= (@color.to_sym == :white ? 1 : -1)
+    @pawn_dir ||= (@color == "white" ? 1 : -1)
   end
 
   def pawn_attack_dirs
