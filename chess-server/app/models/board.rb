@@ -2,7 +2,12 @@ class Board < ApplicationRecord
 
   belongs_to :game, optional: true
   has_many   :played_moves, -> { where "completed = 1" }, class_name: "Move"
-  has_many   :legal_moves, -> { where "completed = 0" }, class_name: "Move"
+  has_many   :saved_legal_moves, -> { where "completed = 0" }, class_name: "Move"
+  # TODO: too many moves...can destroy previous moves on move generation to use
+  # less db space, but makes little sense if we could simply regenerate moves on the fly
+  # on each new game lookup to refresh the instance variable @legal_moves
+  # This must maintain the current design of ALSO generating the opposite turn's moves
+  # with check ignored in order to recognize a move threatening the king even if it causes check
 
   after_create :init_vars, :generate_legal_moves
 
@@ -28,7 +33,7 @@ class Board < ApplicationRecord
   end
 
   def generate_legal_moves(ignore_check=false,color=self.turn)
-    @legal_moves[color] = {}
+    legal_moves[color] = []
     @pieces[color].each do |piece|
       piece.clear_moves
       moves = []
@@ -68,7 +73,7 @@ class Board < ApplicationRecord
             other_piece_json = other_piece.nil? ? nil : other_piece.to_json
             moves << Move.new(
               board_id:         self.id,
-              move_count:       self.move_count,
+              move_count:       self.move_count.to_i,
               piece_str:        piece.to_json,
               other_piece_str:  other_piece_json,
               move_type:        move_type,
@@ -97,7 +102,7 @@ class Board < ApplicationRecord
             
             moves << Move.new(
               board_id:         self.id,
-              move_count:       self.move_count,
+              move_count:       self.move_count.to_i,
               piece_str:        piece.to_json,
               other_piece_str:  target.to_json,
               move_type:        move_type,
@@ -112,7 +117,7 @@ class Board < ApplicationRecord
 
             moves << Move.new(
               board_id:         self.id,
-              move_count:       self.move_count,
+              move_count:       self.move_count.to_i,
               piece_str:        piece.to_json,
               other_piece_str:  target_passant.to_json,
               move_type:        move_type,
@@ -128,7 +133,7 @@ class Board < ApplicationRecord
             # Queenside
             moves << Move.new(
               board_id:         self.id,
-              move_count:       self.move_count,
+              move_count:       self.move_count.to_i,
               piece_str:        piece.to_json,
               other_piece_str:  rook.to_json,
               move_type:        "castle_queenside",
@@ -139,7 +144,7 @@ class Board < ApplicationRecord
             # Kingside
             moves << Move.new(
               board_id:         self.id,
-              move_count:       self.move_count,
+              move_count:       self.move_count.to_i,
               piece_str:        piece.to_json,
               other_piece_str:  rook.to_json,
               move_type:        "castle_kingside",
@@ -155,28 +160,34 @@ class Board < ApplicationRecord
         moves = moves.select { |move| is_not_check_after?(move) }
       end
       piece.add_moves moves
-      @legal_moves[color][piece.object_id.to_s] = moves
+      legal_moves[color].concat moves
     end
     save_pieces_to_positions_array
-    @legal_moves
+    legal_moves
   end
 
   def save_legal_moves!
-    @legal_moves[self.turn] do |move|
+    legal_moves[self.turn].each do |move|
       move.save!
     end
   end
 
-  def get_legal_moves
-    @legal_moves ||= self.legal_moves.find_by(completed: false, move_count: (self.move_count - 1))
+  def legal_moves
+    if @legal_moves.nil?
+      @legal_moves = {"black" => [], "white" => []}
+      self.legal_moves.where(completed: false, move_count: self.move_count).each do |move|
+        @legal_moves[move.turn] <<  move
+      end
+    end
+    @legal_moves
   end
 
   def is_king_checked?(color)
-    if @legal_moves[switch color].empty?
+    if legal_moves[switch color].empty?
       # Checking for checkmate, need moves generated
       generate_legal_moves(true, switch(color))
     end
-    !@legal_moves[switch color].values.flatten.select { |mv| mv.other_piece.is_a?(King) }.empty?
+    !legal_moves[switch color].select { |mv| mv.other_piece.is_a?(King) }.empty?
   end
 
   def is_insuff_material_stalemate?
@@ -208,11 +219,11 @@ class Board < ApplicationRecord
   end
 
   def is_nomoves_stalemate?(color)
-    @legal_moves[color].values.flatten.empty? && !is_king_checked?(color)
+    legal_moves[color].empty? && !is_king_checked?(color)
   end
 
   def is_checkmate?(color)
-    @legal_moves[color].values.flatten.empty? && is_king_checked?(color)
+    legal_moves[color].empty? && is_king_checked?(color)
   end
 
 
@@ -246,7 +257,6 @@ class Board < ApplicationRecord
     self.move_count += 1
     move.completed = true
     move.piece.set_played(move)
-    move.move_count = self.move_count
 
     @played_moves << move.get_notation
     
@@ -263,6 +273,7 @@ class Board < ApplicationRecord
   def play_move!(move, ignore_check=false)
     play_move(move, ignore_check)
     move.save!
+    save_legal_moves!
     save_pieces_to_positions_array
     self.save!
   end
@@ -286,8 +297,7 @@ class Board < ApplicationRecord
     @pieces = pieces || place_pieces
     @status_bar = {"white" => "", "black" => "", "global" => ""}
     @played_moves = []
-    @legal_moves = {"black" => {}, "white" => {}}
-    self.move_count = 0
+    self.move_count = 1
     save_pieces_to_positions_array
   end
 
@@ -382,7 +392,7 @@ class Board < ApplicationRecord
           check_position = file(file_i) + rook.rank.to_s
 
           (!get_n(check_position).nil? ||
-           !@legal_moves[switch color].values.flatten.select { |mv| !mv.piece.is_a?(Pawn) && mv.new_position == check_position }.empty? ||
+           !legal_moves[switch color].select { |mv| !mv.piece.is_a?(Pawn) && mv.new_position == check_position }.empty? ||
            !@pieces[switch color].select { |pc| pc.is_a?(Pawn) and !pc.position.nil? && !pc.pawn_attacks.select { |atk| file(atk[0]) + rank(atk[1]) == check_position }.empty? }.empty?
            # it is necessary to check pawn attacks, as these are "through check",
            # although would not have a legal move generated to identify them

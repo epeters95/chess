@@ -59,7 +59,7 @@ class Game < ApplicationRecord
           turn:           self.board.turn,
           # status_bar:     self.board.status_bar,
           pieces:         self.board.positions_array,
-          legal_moves:    self.board.get_legal_moves[self.board.turn],
+          legal_moves:    self.board.legal_moves[self.board.turn],
           move_count:     self.board.move_count
         }
       }, options)
@@ -70,6 +70,7 @@ class Game < ApplicationRecord
   def init_board
     self.create_board(turn: "white")
     self.board.save!  # Manually saving board persists pieces in db
+    self.board.save_legal_moves!
     set_waiting_status
   end
 

@@ -51,6 +51,10 @@ class Move < ApplicationRecord
     @notation ||= self.get_notation
   end
 
+  def turn
+    self.move_count % 2 == 1 : "white" : "black"
+  end
+
   def to_json(options = {})
     exclude_piece_moves = true
     other_piece_json = @other_piece.nil? ? nil : @other_piece.to_json(exclude_piece_moves)
@@ -70,4 +74,5 @@ class Move < ApplicationRecord
     move_obj = self.new(json_obj.symbolize_keys)
     move_obj
   end
+
 end

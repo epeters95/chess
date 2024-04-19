@@ -53,7 +53,7 @@ class Computer
     end
     thing = best_moves.shuffle[0]
     if thing.nil?
-      thing = @board.legal_moves[@color].values.flatten.first
+      thing = @board.legal_moves[@color].first
     end
     return thing
   end
