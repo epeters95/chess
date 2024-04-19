@@ -7,7 +7,7 @@ class Board < ApplicationRecord
 
   include Util
   attr_reader :legal_moves, :played_moves
-  attr_accessor :status_bar, :selected_moves, :selected
+  attr_accessor :status_bar
 
   def init_vars(pieces=nil)
     @pieces = pieces || place_pieces
@@ -15,7 +15,7 @@ class Board < ApplicationRecord
     @played_moves = []
     @legal_moves = {"black" => {}, "white" => {}}
     self.move_count = 0
-    save_pieces_to_positions_array(@pieces)
+    save_pieces_to_positions_array
   end
 
   def refresh_pieces
@@ -34,9 +34,8 @@ class Board < ApplicationRecord
     end
   end
 
-  def save_pieces_to_positions_array(pieces_hash)
-    self.positions_array = JSON.generate(pieces_hash)
-    # self.save!
+  def save_pieces_to_positions_array
+    self.positions_array = JSON.generate(@pieces)
     # Currently, non-persisting board objects are used to calculate legal moves,
     # therefore the save method must be called externally to persist pieces in db
   end
@@ -62,7 +61,7 @@ class Board < ApplicationRecord
             new_place_n = file(new_place[0]) + rank(new_place[1])
 
             move_type = "move"
-            other_piece = self.get(new_place[0], new_place[1])
+            other_piece = get(new_place[0], new_place[1])
             if !other_piece.nil?
               keep_going = false
               if piece.is_a?(Pawn)
@@ -94,14 +93,14 @@ class Board < ApplicationRecord
 
       
       if piece.is_a?(Pawn)
-        self.get_pawn_attacks(piece).each do |atk|
+        get_pawn_attacks(piece).each do |atk|
           # Regular attack
           move_type = "attack"
-          target = self.get(atk[0], atk[1])
+          target = get(atk[0], atk[1])
           atk_n = file(atk[0]) + rank(atk[1])
           # En Passant attack
           new_rank_idx = atk[1] + (color == "white" ? -1 : 1)
-          target_passant = self.get(atk[0],new_rank_idx)
+          target_passant = get(atk[0],new_rank_idx)
 
           if rank_idx(atk_n) == (color == "white" ? BOARD_SIZE - 1 : 0)
             move_type = "attack_promotion"
@@ -134,7 +133,7 @@ class Board < ApplicationRecord
       end
 
       if piece.is_a?(King) and piece.castleable
-        self.get_castleable_rooks(color).each do |rook|
+        get_castleable_rooks(color).each do |rook|
           if file_idx(rook.position) < file_idx(piece.position)
             # Queenside
             moves << Move.new(
@@ -161,12 +160,12 @@ class Board < ApplicationRecord
       # if we are calling this method to determine if there is check,
       # we do not consider if the move causes check for the checking piece
       if !ignore_check
-        moves = moves.select { |move| self.is_legal?(move) }
+        moves = moves.select { |move| is_legal?(move) }
       end
       piece.add_moves moves
       @legal_moves[color][piece.object_id.to_s] = moves
     end
-    save_pieces_to_positions_array(@pieces)
+    save_pieces_to_positions_array
     @legal_moves
   end
 
@@ -191,9 +190,9 @@ class Board < ApplicationRecord
         else
           check_position = file(file_i) + rook.rank.to_s
 
-          (!self.get_n(check_position).nil? ||
+          (!get_n(check_position).nil? ||
            !@legal_moves[switch color].values.flatten.select { |mv| !mv.piece.is_a?(Pawn) && mv.new_position == check_position }.empty? ||
-           !@pieces[switch color].select { |pc| pc.is_a?(Pawn) and !pc.position.nil? && !self.get_pawn_attacks(pc).select { |atk| file(atk[0]) + rank(atk[1]) == check_position }.empty? }.empty?
+           !@pieces[switch color].select { |pc| pc.is_a?(Pawn) and !pc.position.nil? && !get_pawn_attacks(pc).select { |atk| file(atk[0]) + rank(atk[1]) == check_position }.empty? }.empty?
            # it is necessary to check pawn attacks, as these are "through check",
            # although would not have a legal move generated to identify them
           )
@@ -208,7 +207,7 @@ class Board < ApplicationRecord
   end
 
   def is_legal?(move)
-    dummy_board = self.deep_dup
+    dummy_board = deep_dup
     duped_piece = dummy_board.get_n(move.piece.position)
     duped_other_piece = (move.other_piece.nil? ? nil : dummy_board.get_n(move.other_piece.position))
     dummy_board.play_move(move.deep_dup(duped_piece,duped_other_piece), true)
@@ -228,7 +227,7 @@ class Board < ApplicationRecord
     insufficient = false
     if all_remaining.size <= 4
       dbg = "REMAINING: \n" + all_remaining.map{|r| "#{r.color} #{r.notation} #{r.position}, taken=#{r.taken}\n" }.join("") + "****\n"
-      self.set_status(dbg, "global")
+      set_status(dbg, "global")
       ["black", "white"].each do |color|
         my_remaining = all_remaining.find_all{|pc| pc.color == color}
         their_remaining = all_remaining.find_all{|pc| pc.color == switch(color)}
@@ -253,12 +252,12 @@ class Board < ApplicationRecord
 
 
   def is_nomoves_stalemate?(color)
-    @legal_moves[color].values.flatten.empty? && !self.is_king_checked?(color)
+    @legal_moves[color].values.flatten.empty? && !is_king_checked?(color)
   end
 
 
   def is_checkmate?(color)
-    @legal_moves[color].values.flatten.empty? && self.is_king_checked?(color)
+    @legal_moves[color].values.flatten.empty? && is_king_checked?(color)
   end
 
   def get_pawn_attacks(pawn)
@@ -280,7 +279,7 @@ class Board < ApplicationRecord
     end
 
     target = move.other_piece
-    self.move_piece(move.piece, move.new_position)
+    move_piece(move.piece, move.new_position)
 
     if move.move_type == "attack" || move.move_type == "attack_promotion"
       @pieces[target.color].delete target
@@ -306,11 +305,11 @@ class Board < ApplicationRecord
     @played_moves << move.get_notation
     
     self.turn = switch(self.turn)
-    self.set_status("> #{self.turn.upcase} TO MOVE", "global")
+    set_status("> #{self.turn.upcase} TO MOVE", "global")
     # Generate new moves for the next turn
-    self.generate_legal_moves(ignore_check)
-    self.generate_legal_moves(true, switch(self.turn))
-    result = self.is_king_checked?(self.turn)
+    generate_legal_moves(ignore_check)
+    generate_legal_moves(true, switch(self.turn))
+    result = is_king_checked?(self.turn)
 
     return result
   end
@@ -318,7 +317,7 @@ class Board < ApplicationRecord
   def play_move!(move, ignore_check=false)
     play_move(move, ignore_check)
     move.save!
-    save_pieces_to_positions_array(@pieces)
+    save_pieces_to_positions_array
     self.save!
   end
 
@@ -326,14 +325,14 @@ class Board < ApplicationRecord
     # TODO: replace with non-ActiveRecord skeleton object
     doop = Board.new(game_id: 0, turn: self.turn)
     doop.init_vars(deep_dup_pieces)
-    # TODO: ensure pieces dup no longer necessary with serialization
     doop.move_count = self.move_count
     doop
   end
 
   def deep_dup_pieces
-    dummy_pieces = get_pieces_from_positions_array
-    dummy_pieces
+    # TODO: verify previous concerns that pieces in deep_dup
+    # do not contain references to current board instance
+    get_pieces_from_positions_array
   end
 
   def place_pieces
@@ -369,7 +368,7 @@ class Board < ApplicationRecord
   end
 
   def move_piece(piece, new_pos)
-    piece_to_delete = self.get_n(new_pos)
+    piece_to_delete = get_n(new_pos)
     @pieces[switch(piece.color)].delete(piece_to_delete)
     piece.position = new_pos
   end
@@ -381,7 +380,7 @@ class Board < ApplicationRecord
   protected
 
   def get_n(pos)
-    self.get(file_idx(pos), rank_idx(pos))
+    get(file_idx(pos), rank_idx(pos))
   end
 
   # TODO: consider better ways of organizing pieces for position lookup

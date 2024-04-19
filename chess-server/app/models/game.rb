@@ -63,7 +63,7 @@ class Game < ApplicationRecord
   end
 
   def set_waiting_status
-    if self.is_computer?(self.board.turn)
+    if is_computer?(self.board.turn)
       self.update(status: "waiting_computer")
     else
       self.update(status: "waiting_player")
@@ -74,14 +74,11 @@ class Game < ApplicationRecord
     JSON.pretty_generate(
       { board:
         {
-          turn:           @board.turn,
-          status_bar:     @board.status_bar,
-          pieces:         @board.pieces,
-          played_moves:   @board.played_moves,
-          legal_moves:    @board.legal_moves[@board.turn].map{|pc, mv_arr| mv_arr.map{|mv| mv.get_notation}},
-          selected_moves: @board.selected_moves,
-          selected:       @board.selected,
-          move_count:     @board.move_count
+          turn:           self.board.turn,
+          status_bar:     self.board.status_bar,
+          pieces:         self.board.pieces,
+          legal_moves:    self.board.legal_moves[self.board.turn].map{|pc, mv_arr| mv_arr.map{|mv| mv.get_notation}},
+          move_count:     self.board.move_count
         }
       }, options)
   end

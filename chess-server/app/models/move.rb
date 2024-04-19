@@ -26,13 +26,13 @@ class Move < ApplicationRecord
     elsif self.move_type == "castle_queenside"
       "O-O-O"
     elsif self.move_type == "promotion" || self.move_type == "attack_promotion"
-      "#{self.piece.position}"\
-      "#{"x#{self.other_piece.letter}" if self.move_type == "attack_promotion"}"\
+      "#{piece.position}"\
+      "#{"x#{other_piece.letter}" if self.move_type == "attack_promotion"}"\
       "=?"#{@other_piece.letter}"
     else
       # A move or attack
-      "#{self.piece.letter}#{self.piece.position if disamb}"\
-      "#{"x#{self.other_piece.letter}" if self.move_type == "attack"}"\
+      "#{piece.letter}#{piece.position if disamb}"\
+      "#{"x#{other_piece.letter}" if self.move_type == "attack"}"\
       "#{self.new_position}"
     end
   end
@@ -73,7 +73,6 @@ class Move < ApplicationRecord
   end
 
   def self.from_json(json_obj)
-    exclude_piece_moves = true
     move_obj = self.new(json_obj.symbolize_keys)
     move_obj
   end
