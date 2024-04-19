@@ -53,9 +53,9 @@ class Game < ApplicationRecord
       { board:
         {
           turn:           self.board.turn,
-          status_bar:     self.board.status_bar,
-          pieces:         self.board.pieces,
-          legal_moves:    self.board.legal_moves[self.board.turn].map{|pc, mv_arr| mv_arr.map{|mv| mv.get_notation}},
+          # status_bar:     self.board.status_bar,
+          pieces:         self.board.positions_array,
+          # legal_moves:    self.board.legal_moves[self.board.turn],
           move_count:     self.board.move_count
         }
       }, options)
