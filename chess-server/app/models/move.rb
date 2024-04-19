@@ -52,7 +52,7 @@ class Move < ApplicationRecord
   end
 
   def turn
-    self.move_count % 2 == 1 : "white" : "black"
+    self.move_count % 2 == 1 ? "white" : "black"
   end
 
   def to_json(options = {})

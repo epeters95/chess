@@ -3,11 +3,6 @@ class Board < ApplicationRecord
   belongs_to :game, optional: true
   has_many   :played_moves, -> { where "completed = 1" }, class_name: "Move"
   has_many   :saved_legal_moves, -> { where "completed = 0" }, class_name: "Move"
-  # TODO: too many moves...can destroy previous moves on move generation to use
-  # less db space, but makes little sense if we could simply regenerate moves on the fly
-  # on each new game lookup to refresh the instance variable @legal_moves
-  # This must maintain the current design of ALSO generating the opposite turn's moves
-  # with check ignored in order to recognize a move threatening the king even if it causes check
 
   after_create :init_vars, :generate_legal_moves
 
@@ -33,7 +28,7 @@ class Board < ApplicationRecord
   end
 
   def generate_legal_moves(ignore_check=false,color=self.turn)
-    legal_moves[color] = []
+    @legal_moves[color] = []
     @pieces[color].each do |piece|
       piece.clear_moves
       moves = []
@@ -160,24 +155,15 @@ class Board < ApplicationRecord
         moves = moves.select { |move| is_not_check_after?(move) }
       end
       piece.add_moves moves
-      legal_moves[color].concat moves
+      @legal_moves[color].concat moves
     end
     save_pieces_to_positions_array
-    legal_moves
-  end
-
-  def save_legal_moves!
-    legal_moves[self.turn].each do |move|
-      move.save!
-    end
   end
 
   def legal_moves
     if @legal_moves.nil?
       @legal_moves = {"black" => [], "white" => []}
-      self.legal_moves.where(completed: false, move_count: self.move_count).each do |move|
-        @legal_moves[move.turn] <<  move
-      end
+      refresh_legal_moves
     end
     @legal_moves
   end
@@ -262,18 +248,21 @@ class Board < ApplicationRecord
     
     self.turn = switch(self.turn)
     set_status("> #{self.turn.upcase} TO MOVE", "global")
-    # Generate new moves for the next turn
-    generate_legal_moves(ignore_check)
-    generate_legal_moves(true, switch(self.turn))
-    result = is_king_checked?(self.turn)
+    refresh_legal_moves(ignore_check)
+  end
 
-    return result
+  # This method ensures the board @legal_moves variable is populated
+  def refresh_legal_moves(ignore_check)
+    # Generate real moves for the next turn
+    generate_legal_moves(ignore_check)
+
+    # Generate potential checks on the next turn's king
+    generate_legal_moves(true, switch(self.turn))
   end
 
   def play_move!(move, ignore_check=false)
     play_move(move, ignore_check)
     move.save!
-    save_legal_moves!
     save_pieces_to_positions_array
     self.save!
   end
@@ -297,6 +286,7 @@ class Board < ApplicationRecord
     @pieces = pieces || place_pieces
     @status_bar = {"white" => "", "black" => "", "global" => ""}
     @played_moves = []
+    @legal_moves = {"black" => [], "white" => []}
     self.move_count = 1
     save_pieces_to_positions_array
   end

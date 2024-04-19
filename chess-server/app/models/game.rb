@@ -42,9 +42,6 @@ class Game < ApplicationRecord
 
     else
 
-      # Save legal moves for later fetching
-      self.board.save_legal_moves!
-
       set_waiting_status
       return
     end
@@ -70,7 +67,6 @@ class Game < ApplicationRecord
   def init_board
     self.create_board(turn: "white")
     self.board.save!  # Manually saving board persists pieces in db
-    self.board.save_legal_moves!
     set_waiting_status
   end
 
