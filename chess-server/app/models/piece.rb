@@ -157,6 +157,16 @@ class Pawn < Piece
     pawn_moves
   end
 
+  def pawn_attacks
+    attacks = []
+    pawn_attack_dirs.each do |dir|
+      new_place = [file_idx(@position) + dir[0], rank_idx(@position) + dir[1]]
+      next if outside?(new_place)
+      attacks << new_place
+    end
+    attacks
+  end
+
 end
 
 class Bishop < Piece

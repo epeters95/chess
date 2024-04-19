@@ -6,22 +6,8 @@ class Game < ApplicationRecord
 
   include Util
 
-  def init_board
-    self.create_board(turn: "white")
-    self.board.save!  # Manually saving board persists pieces in db
-    set_waiting_status
-  end
-
-  def is_computer?(color)
-    name_for(color).nil?
-  end
-
   def is_computers_turn?
     is_computer?(self.board.turn)
-  end
-
-  def name_for(color)
-    color == "white" ? self.white_name : self.black_name
   end
 
   def display_name_for(color)
@@ -62,14 +48,6 @@ class Game < ApplicationRecord
     self.update(status: "completed")
   end
 
-  def set_waiting_status
-    if is_computer?(self.board.turn)
-      self.update(status: "waiting_computer")
-    else
-      self.update(status: "waiting_player")
-    end
-  end
-
   def to_json(options = {})
     JSON.pretty_generate(
       { board:
@@ -81,6 +59,30 @@ class Game < ApplicationRecord
           move_count:     self.board.move_count
         }
       }, options)
+  end
+
+  private
+
+  def init_board
+    self.create_board(turn: "white")
+    self.board.save!  # Manually saving board persists pieces in db
+    set_waiting_status
+  end
+
+  def is_computer?(color)
+    name_for(color).nil?
+  end
+
+  def name_for(color)
+    color == "white" ? self.white_name : self.black_name
+  end
+
+  def set_waiting_status
+    if is_computer?(self.board.turn)
+      self.update(status: "waiting_computer")
+    else
+      self.update(status: "waiting_player")
+    end
   end
 
   class IllegalMoveError < StandardError

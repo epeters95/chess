@@ -10,8 +10,6 @@ class Move < ApplicationRecord
 
   include Util
 
-  attr_accessor :promotion_choice
-
   def piece
     @piece ||= Piece.from_json_str(self.piece_str)
   end
@@ -47,10 +45,6 @@ class Move < ApplicationRecord
       move_count:      self.move_count
       )
     doop
-  end
-
-  def get_coords
-    [file_idx(self.new_position), rank_idx(self.new_position)]
   end
 
   def to_s
