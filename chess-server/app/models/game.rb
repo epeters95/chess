@@ -41,6 +41,10 @@ class Game < ApplicationRecord
       self.board.set_status("The game is a draw. #{display_name_for(self.board.turn)} has survived by stalemate!", "global")
 
     else
+
+      # Save legal moves for later fetching
+      self.board.save_legal_moves!
+
       set_waiting_status
       return
     end
@@ -55,7 +59,7 @@ class Game < ApplicationRecord
           turn:           self.board.turn,
           # status_bar:     self.board.status_bar,
           pieces:         self.board.positions_array,
-          # legal_moves:    self.board.legal_moves[self.board.turn],
+          legal_moves:    self.board.get_legal_moves[self.board.turn],
           move_count:     self.board.move_count
         }
       }, options)

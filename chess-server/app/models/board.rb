@@ -1,12 +1,13 @@
 class Board < ApplicationRecord
 
   belongs_to :game, optional: true
-  has_many   :played_moves, class_name: "Move"
+  has_many   :played_moves, -> { where "completed = 1" }, class_name: "Move"
+  has_many   :legal_moves, -> { where "completed = 0" }, class_name: "Move"
 
   after_create :init_vars, :generate_legal_moves
 
   include Util
-  attr_reader :legal_moves, :played_moves
+  attr_reader :played_moves
   attr_accessor :status_bar
 
   def refresh_pieces
@@ -67,6 +68,7 @@ class Board < ApplicationRecord
             other_piece_json = other_piece.nil? ? nil : other_piece.to_json
             moves << Move.new(
               board_id:         self.id,
+              move_count:       self.move_count,
               piece_str:        piece.to_json,
               other_piece_str:  other_piece_json,
               move_type:        move_type,
@@ -95,6 +97,7 @@ class Board < ApplicationRecord
             
             moves << Move.new(
               board_id:         self.id,
+              move_count:       self.move_count,
               piece_str:        piece.to_json,
               other_piece_str:  target.to_json,
               move_type:        move_type,
@@ -109,6 +112,7 @@ class Board < ApplicationRecord
 
             moves << Move.new(
               board_id:         self.id,
+              move_count:       self.move_count,
               piece_str:        piece.to_json,
               other_piece_str:  target_passant.to_json,
               move_type:        move_type,
@@ -124,6 +128,7 @@ class Board < ApplicationRecord
             # Queenside
             moves << Move.new(
               board_id:         self.id,
+              move_count:       self.move_count,
               piece_str:        piece.to_json,
               other_piece_str:  rook.to_json,
               move_type:        "castle_queenside",
@@ -134,6 +139,7 @@ class Board < ApplicationRecord
             # Kingside
             moves << Move.new(
               board_id:         self.id,
+              move_count:       self.move_count,
               piece_str:        piece.to_json,
               other_piece_str:  rook.to_json,
               move_type:        "castle_kingside",
@@ -153,6 +159,16 @@ class Board < ApplicationRecord
     end
     save_pieces_to_positions_array
     @legal_moves
+  end
+
+  def save_legal_moves!
+    @legal_moves[self.turn] do |move|
+      move.save!
+    end
+  end
+
+  def get_legal_moves
+    @legal_moves ||= self.legal_moves.find_by(completed: false, move_count: (self.move_count - 1))
   end
 
   def is_king_checked?(color)
@@ -262,7 +278,7 @@ class Board < ApplicationRecord
   def prompt_piece_choice
     return "queen"
   end
-  
+
 
   protected
 
