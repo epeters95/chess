@@ -6,14 +6,14 @@ class Api::GamesController < ApplicationController
   end
 
   def show
-    render json: @game
+    render json: @game, status: :ok
   end
 
   def create
     @game = Game.new(game_params)
     if @game.save
       # Game is ready for first move from white
-      render json: {id: @game.id, moves: @game.board.legal_moves}, status: :created
+      render json: @game, status: :created
     else
       render json: @game.errors, status: :unprocessable_entity
     end
@@ -30,7 +30,7 @@ class Api::GamesController < ApplicationController
           chosen_move = Move.create!(move_params)
         end
         @game.play_move_and_evaluate!(chosen_move)
-        render json: @game.board.legal_moves, status: :ok
+        render json: @game, status: :ok
       else
         render json: {errors: "Game is over"}, status: :unprocessable_entity
       end
