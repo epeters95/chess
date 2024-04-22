@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <title>Chess</title>
+  <link rel="stylesheet" href="display.css">
+</head>
+<body>
+  <div class="header">
+  </div>
+  
+  <div class="main">
+    <div class="title">
+      <div id="chessimg">
+        <img class="chessgif" src="loading.gif">
+      </div>
+      <h1 id="chesstitle">Chess</h1>
+    </div>
+    <div id="content">
+
+
+      <div id="canvas-window">
+        <canvas id="gameView"></canvas>
+      </div>
+      <div class="player-names">
+        <label>White:</label>
+        <input type="text" id="player1-name" placeholder="Leave blank for Computer"/>
+        <br>
+        <label>Black:</label>
+        <input type="text" id="player2-name" placeholder="Leave blank for Computer"/>
+        <div class="newgame">
+          <button id="new-game">New Game</button>
+        </div>
+      </div>
+
+    </div>
+    <br>
+  </div>
+  
+  <div class="footer">
+  </div>
+  
+
+</body>
+<script type="text/javascript" src="game.js"></script>
+
+</html>

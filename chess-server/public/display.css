@@ -1,0 +1,103 @@
+.title {
+  width: 100%;
+  height: 120px;
+  position: absolute;
+  z-index: 100;
+}
+#chessimg {
+  margin: auto;
+  display: inline-block;
+  width: 80px;
+}
+
+.chessgif {
+  height: 100%;
+  width: 100%;
+}
+
+#chesstitle {
+  display: inline;
+  top: -40px;
+  position: relative;
+  font-size: 40pt;
+}
+
+.newgame {
+  z-index: 1000;
+}
+
+.newgame button {
+  width: 200px;
+}
+
+canvas {
+  background-color: #e4e1db;
+  display: inline-block;
+}
+
+.main {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}
+
+
+#content {
+  position: relative;
+  top: 128px;
+  background-color: transparent;
+  margin: auto;
+  width: 800px;
+  height: 800px;
+  border-radius: 3px;
+}
+
+
+body {
+  background-color: rgb(64, 106, 95); 
+  background-image: url(grid.png);
+  background-size: 10;
+  text-align: center;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 72;
+}
+
+checker{
+  background-color: rgb(140, 68, 96);
+}
+.player-names * {
+  padding: 5px;
+}
+.player-names label, .player-names input{
+  color: white;
+}
+
+.player-names input {
+  background-color: black;
+  padding-top: 8px;
+}
+
+.player-names button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+#loading {
+  height: 0px;
+}
+
+#loadingspinner {
+  z-index: 300;
+  position: relative;
+  display: inline;
+  top: -250px;
+  img { 
+    width: 50px;
+    height: 50px;
+  }
+}
