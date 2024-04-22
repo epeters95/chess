@@ -70,7 +70,7 @@ class Game < ApplicationRecord
   end
 
   def is_computer?(color)
-    name_for(color).nil?
+    name_for(color).to_s == "" 
   end
 
   def name_for(color)

@@ -5,9 +5,14 @@ canvas.height = canvas.width;
 
 
 const newGameSubmit = document.getElementById("new-game");
+const nextMoveSubmit = document.getElementById("next-move");
 const player1Name = document.getElementById("player1-name").value;
 const player2Name = document.getElementById("player2-name").value;
 newGameSubmit.addEventListener('click', newGame);
+
+nextMoveSubmit.addEventListener('click', nextMove);
+
+var gameId = 0;
 
 function newGame() {
 
@@ -43,14 +48,39 @@ function newGame() {
   })
 }
 
+function nextMove() {
+  fetch("http://localhost:3000/api/games/" + gameId, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  })
+  .then(response => response.json())
+  .then(function(json) {
+    if (json.error === undefined){
+      drawGame(json)
+    }else{
+      alert(json.error)
+    }
+  })
+  .catch(function(error){ 
+    alert("Error: " + error)
+  })
+}
+
+
 function drawGame(json) {
+  gameId = json["id"];
 
   let context = canvas.getContext("2d");
+  context.clearRect(0, 0, canvas.width, canvas.height);
   let pieces = JSON.parse(json["pieces"]);
 
   var length = canvas.width;
   var squareSize = canvas.width / 8.0;
-  var halfSize = squareSize / 2.0;
+  var smallSize = squareSize * 0.9;
+  var tinySize = squareSize * 0.1;
 
   var colorW = "#97aaac";
   var colorB = "#556567";
@@ -78,18 +108,18 @@ function drawGame(json) {
   }
 
   function drawPieces(pieces){
-    context.font = `40px Verdana`;
+    context.font = `50px Verdana`;
       pieces["black"].forEach(function(el) {
         context.fillStyle = "black";
         let x = fileIndexOf(el.position[0]) * squareSize;
         let y = rankIndexOf(el.position[1]) * squareSize;
-        context.fillText(el.char, x + halfSize, y + halfSize);
+        context.fillText(el.char, x + tinySize, y + smallSize);
       })
       pieces["white"].forEach(function(el) {
         context.fillStyle = "white";
         let x = fileIndexOf(el.position[0]) * squareSize;
         let y = rankIndexOf(el.position[1]) * squareSize;
-        context.fillText(el.char, x + halfSize, y + halfSize);
+        context.fillText(el.char, x + tinySize, y + smallSize);
       })
   }
 

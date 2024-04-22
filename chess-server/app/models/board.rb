@@ -10,7 +10,7 @@ class Board < ApplicationRecord
   attr_accessor :status_bar
 
   def refresh_pieces
-    @pieces ||= get_pieces_from_positions_array
+    @pieces = get_pieces_from_positions_array
   end
 
   def get_pieces_from_positions_array
@@ -106,7 +106,7 @@ class Board < ApplicationRecord
           elsif !target_passant.nil? && target_passant.is_a?(Pawn) && 
                 target_passant.color != color &&
                 target_passant.played_moves.size == 1 &&
-                self.move_count == target_passant.played_moves.last.move_count &&
+                self.move_count == target_passant.played_moves.last["move_count"] &&
                 rank_idx(atk_n) == (color == "white" ? 5 : 2)
 
             moves << Move.new(
@@ -221,28 +221,31 @@ class Board < ApplicationRecord
       return nil
     end
 
-    target = move.other_piece
-    move_piece(move.piece, move.new_position)
+    piece = @pieces[move.piece.color].find {|pc| pc.position == move.piece.position}
+    unless move.other_piece.nil?
+      other_piece = @pieces[switch(move.piece.color)].find {|pc| pc.position == move.other_piece.position }
+    end
+    move_piece(piece, move.new_position)
 
     if move.move_type == "attack" || move.move_type == "attack_promotion"
-      @pieces[target.color].delete target
-      target.take
+      @pieces[other_piece.color].delete other_piece
+      other_piece.take
     end
     if move.move_type == "castle_kingside" || move.move_type == "castle_queenside"
-      move_piece(move.other_piece, move.rook_position)
-      move.other_piece.set_played(move)
-      move.other_piece.set_castleable
-      move.piece.set_castleable
+      move_piece(other_piece, move.rook_position)
+      other_piece.set_played(move)
+      other_piece.set_castleable
+      piece.set_castleable
     end
     if move.move_type == "promotion" || move.move_type == "attack_promotion"
-      @pieces[move.piece.color].delete move.piece
-      piece = Piece.generate(move.promotion_choice, move.piece.color, move.new_position)
-      @pieces[move.piece.color] << piece
+      @pieces[move.piece.color].delete piece
+      new_piece = Piece.generate(move.promotion_choice, move.piece.color, move.new_position)
+      @pieces[move.piece.color] << new_piece
     end
     
     self.move_count += 1
     move.completed = true
-    move.piece.set_played(move)
+    piece.set_played(move)
     
     self.turn = switch(self.turn)
     # TODO: persist/refresh status correctly
@@ -252,7 +255,7 @@ class Board < ApplicationRecord
 
   # This method ensures the board @legal_moves variable is populated
   def refresh_legal_moves(ignore_check=false)
-    refresh_pieces
+    @pieces ||= get_pieces_from_positions_array
     # Generate real moves for the next turn
     generate_legal_moves(ignore_check)
 
@@ -336,6 +339,7 @@ class Board < ApplicationRecord
     piece_to_delete = get_n(new_pos)
     @pieces[switch(piece.color)].delete(piece_to_delete)
     piece.position = new_pos
+    save_pieces_to_positions_array
   end
 
   def deep_dup
