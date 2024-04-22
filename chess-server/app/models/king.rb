@@ -4,7 +4,7 @@ class King < Piece
   def initialize(color, position, castleable=true, played_moves=[])
     super(color, position)
     @letter = "K "
-    @char = "\u265a "
+    @char = "\u265a"
     @val = 77
     @castleable = castleable
   end

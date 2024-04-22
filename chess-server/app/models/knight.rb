@@ -3,7 +3,7 @@ class Knight < Piece
   def initialize(color, position, played_moves=[])
     super
     @letter = "N "
-    @char = "\u265e "
+    @char = "\u265e"
     @val = 3
   end
   def piece_directions

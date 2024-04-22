@@ -4,7 +4,7 @@ class Rook < Piece
   def initialize(color, position, castleable=true, played_moves=[])
     super(color, position)
     @letter = "R "
-    @char = "\u265c "
+    @char = "\u265c"
     @castleable = castleable
     @val = 5
   end

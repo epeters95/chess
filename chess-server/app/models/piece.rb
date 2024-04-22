@@ -95,7 +95,7 @@ class Piece
   end
 
   def to_json(exclude_moves=false, options = {})
-    exclude_vars = [:@char, :@val, :@letter]
+    exclude_vars = [:@val, :@letter]
     exclude_vars << [:@current_legal_moves] if exclude_moves
     vars = instance_variables.excluding exclude_vars
     merged_hash = vars.to_h do |iv|

@@ -1,6 +1,6 @@
 let canvas = document.getElementById("gameView");
 
-canvas.width = (screen.height * .5) * .75 - 100;
+canvas.width = (screen.height * .4) - 100;
 canvas.height = canvas.width;
 
 
@@ -45,7 +45,54 @@ function newGame() {
 
 function drawGame(json) {
 
-  let ctx = canvas.getContext("2d");
-  ctx.strokeText(json["pieces"],50,50)
+  let context = canvas.getContext("2d");
+  let pieces = JSON.parse(json["pieces"]);
 
+  var length = canvas.width;
+  var squareSize = canvas.width / 8.0;
+  var halfSize = squareSize / 2.0;
+
+  var colorW = "#97aaac";
+  var colorB = "#556567";
+  var squareColor = colorB;
+  switchSquareColor = function() {
+    squareColor = (squareColor === colorW ? colorB : colorW);
+    return squareColor
+  }
+
+  function fileIndexOf(letter) {
+    return "abcdefgh".indexOf(letter);
+  }
+  function rankIndexOf(num) {
+    return "12345678".indexOf(num);
+  }
+
+
+  function drawBoard(){
+      for (let x = 0; x <= length; x += squareSize) {
+        for (let y = 0; y <= length; y += squareSize) {
+            context.fillStyle = switchSquareColor();
+            context.fillRect(x, y, squareSize, squareSize);
+        }
+      }
+  }
+
+  function drawPieces(pieces){
+    context.font = `40px Verdana`;
+      pieces["black"].forEach(function(el) {
+        context.fillStyle = "black";
+        let x = fileIndexOf(el.position[0]) * squareSize;
+        let y = rankIndexOf(el.position[1]) * squareSize;
+        context.fillText(el.char, x + halfSize, y + halfSize);
+      })
+      pieces["white"].forEach(function(el) {
+        context.fillStyle = "white";
+        let x = fileIndexOf(el.position[0]) * squareSize;
+        let y = rankIndexOf(el.position[1]) * squareSize;
+        context.fillText(el.char, x + halfSize, y + halfSize);
+      })
+  }
+
+  drawBoard();
+  drawPieces(pieces);
 }

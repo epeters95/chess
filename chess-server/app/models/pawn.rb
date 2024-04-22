@@ -3,7 +3,7 @@ class Pawn < Piece
   def initialize(color, position, played_moves=[])
     super
     @letter = "p "
-    @char = "\u265f "
+    @char = "\u265f"
     @val = 1
     @moved = false
   end

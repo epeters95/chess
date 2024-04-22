@@ -3,7 +3,7 @@ class Queen < Piece
   def initialize(color, position, played_moves=[])
     super
     @letter = "Q "
-    @char = "\u265b "
+    @char = "\u265b"
     @val = 9
   end
 
