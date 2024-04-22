@@ -17,7 +17,7 @@ Rails.application.routes.draw do
       #                PUT    /api/games/:game_id/board(.:format) api/boards#update
     end
 
-    get '/testgame', to: 'games#create'
+    get '/testgame', to: 'games#index'
   end
 
 end

@@ -1,8 +1,11 @@
 class Api::GamesController < ApplicationController
+  include ActionController::MimeResponds
   before_action :set_game, only: [:show, :update, :destroy]
 
   def index
-    render json: {}, status: :ok
+    respond_to do |format|
+      format.html { render body: Rails.root.join("public/display.html").read }
+    end
   end
 
   def show
