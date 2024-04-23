@@ -1,6 +1,6 @@
 class Bishop < Piece
   attr_reader :letter, :char, :val
-  def initialize(color, position, played_moves=[])
+  def initialize(color, position)
     super
     @letter = "B "
     @char = "\u265d"

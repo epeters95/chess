@@ -1,14 +1,14 @@
 class King < Piece
   attr_accessor :castleable
   attr_reader :letter, :char, :val
-  def initialize(color, position, castleable=true, played_moves=[])
+  def initialize(color, position, castleable=true)
     super(color, position)
     @letter = "K "
     @char = "\u265a"
     @val = 77
     @castleable = castleable
   end
-  def set_played(move)
+  def set_played
     super
     @castleable = false
   end

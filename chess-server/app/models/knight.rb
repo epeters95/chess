@@ -1,6 +1,6 @@
 class Knight < Piece
   attr_reader :letter, :char, :val
-  def initialize(color, position, played_moves=[])
+  def initialize(color, position)
     super
     @letter = "N "
     @char = "\u265e"

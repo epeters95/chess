@@ -1,11 +1,20 @@
 class Pawn < Piece
   attr_reader :letter, :char, :val
-  def initialize(color, position, played_moves=[])
+  def initialize(color, position)
     super
     @letter = "p "
     @char = "\u265f"
     @val = 1
-    @moved = false
+    @move_count = 0
+  end
+
+  def passantable?
+    @move_count == 1
+  end
+
+  def set_played
+    super
+    @move_count += 1
   end
 
   def pawn_dir
@@ -34,6 +43,10 @@ class Pawn < Piece
       attacks << new_place
     end
     attacks
+  end
+
+  def deep_dup
+    return self.class.new(@color, @position, @move_count)
   end
 
 end

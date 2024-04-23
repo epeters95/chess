@@ -13,12 +13,11 @@ class Piece
   def self.crown_moves;  [[1,1],[1,-1],[-1,1],[-1,-1],[0,1],[1,0],[0,-1],[-1,0]]; end
 
   attr_accessor :color, :position, :val
-  attr_reader :char, :ranged, :played_moves, :taken
+  attr_reader :char, :ranged, :taken
 
-  def initialize(color, position, played_moves=[])
+  def initialize(color, position)
     @color = color
     @position = position
-    @played_moves = played_moves
     @current_legal_moves = []
     @ranged = (self.is_a?(Rook) || self.is_a?(Bishop) || self.is_a?(Queen))
     @taken = false
@@ -58,7 +57,7 @@ class Piece
 
   def deep_dup
     # TODO: determine if necessary to rewrite the mv.deep_dup action considering played_moves is generated from JSON
-    return self.class.new(@color, @position, @played_moves.map{|mv| mv.deep_dup(mv.piece, mv.other_piece)})
+    return self.class.new(@color, @position)
   end
 
   def take
@@ -66,8 +65,7 @@ class Piece
     @position = nil
   end
 
-  def set_played(move)
-    @played_moves << move
+  def set_played
     @current_legal_moves = []
   end
 
@@ -94,7 +92,12 @@ class Piece
     notation
   end
 
-  def to_json(exclude_moves=false, options = {})
+  def to_json(exclude_moves=true, options = {})
+    merged_hash = to_json_obj(exclude_moves)
+    JSON.generate(merged_hash, options)
+  end
+
+  def to_json_obj(exclude_moves=true)
     exclude_vars = [:@val, :@letter]
     exclude_vars << [:@current_legal_moves] if exclude_moves
     vars = instance_variables.excluding exclude_vars
@@ -106,7 +109,7 @@ class Piece
         class_name: self.class.name
       }
     )
-    JSON.generate(merged_hash, options)
+    merged_hash
   end
 
   def self.from_json_str(piece_str, exclude_moves=false)
@@ -121,7 +124,7 @@ class Piece
     init_arg_names = klass.instance_method(:initialize).parameters.map{|pm| pm[1].to_s }
     args = init_arg_names.map{|arg| json_obj[arg] }
     piece_obj = klass.new(*args)
-    unless exclude_moves
+    if json_obj["current_legal_moves"]
       piece_obj.add_moves(json_obj["current_legal_moves"].map{|lm| Move.from_json(lm)})
     end
     piece_obj

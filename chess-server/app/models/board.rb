@@ -21,7 +21,10 @@ class Board < ApplicationRecord
   end
 
   def save_pieces_to_positions_array
-    self.positions_array = JSON.generate(@pieces)
+    self.positions_array = JSON.generate({
+      "white" => @pieces["white"].map {|pc| pc.to_json_obj },
+      "black" => @pieces["black"].map {|pc| pc.to_json_obj }
+      })
     # Currently, non-persisting board objects are used to calculate legal moves,
     # therefore the save method must be called externally to persist pieces in db
   end
@@ -105,8 +108,7 @@ class Board < ApplicationRecord
 
           elsif !target_passant.nil? && target_passant.is_a?(Pawn) && 
                 target_passant.color != color &&
-                target_passant.played_moves.size == 1 &&
-                self.move_count == target_passant.played_moves.last["move_count"] &&
+                target_passant.passantable? &&
                 rank_idx(atk_n) == (color == "white" ? 5 : 2)
 
             moves << Move.new(
@@ -123,6 +125,9 @@ class Board < ApplicationRecord
 
       if piece.is_a?(King) and piece.castleable
         get_castleable_rooks(color).each do |rook|
+          # if file_idx(rook.file).nil? || file(file_idx(rook.file) + 3).nil? || file(file_idx(rook.file) - 2).nil? || rook.rank.nil?
+          #   debugger
+          # end
           if file_idx(rook.position) < file_idx(piece.position)
             # Queenside
             moves << Move.new(
@@ -170,6 +175,10 @@ class Board < ApplicationRecord
   def is_king_checked?(color)
     if legal_moves[switch color].empty?
       # Checking for checkmate, need moves generated
+      # all_pieces = @pieces["white"] + @pieces["black"]
+      # if !all_pieces.select{|pc| pc.nil? }.empty?
+      #   debugger
+      # end
       generate_legal_moves(true, switch(color))
     end
     !legal_moves[switch color].select { |mv| mv.other_piece.is_a?(King) }.empty?
@@ -223,7 +232,7 @@ class Board < ApplicationRecord
 
     piece = @pieces[move.piece.color].find {|pc| pc.position == move.piece.position}
     unless move.other_piece.nil?
-      other_piece = @pieces[switch(move.piece.color)].find {|pc| pc.position == move.other_piece.position }
+      other_piece = @pieces[move.other_piece.color].find {|pc| pc.position == move.other_piece.position }
     end
     move_piece(piece, move.new_position)
 
@@ -233,7 +242,7 @@ class Board < ApplicationRecord
     end
     if move.move_type == "castle_kingside" || move.move_type == "castle_queenside"
       move_piece(other_piece, move.rook_position)
-      other_piece.set_played(move)
+      other_piece.set_played
       other_piece.set_castleable
       piece.set_castleable
     end
@@ -245,17 +254,20 @@ class Board < ApplicationRecord
     
     self.move_count += 1
     move.completed = true
-    piece.set_played(move)
+    piece.set_played
     
     self.turn = switch(self.turn)
     # TODO: persist/refresh status correctly
     set_status("> #{self.turn.upcase} TO MOVE", "global")
-    refresh_legal_moves(ignore_check)
   end
 
   # This method ensures the board @legal_moves variable is populated
   def refresh_legal_moves(ignore_check=false)
     @pieces ||= get_pieces_from_positions_array
+    # all_pieces = @pieces["white"] + @pieces["black"]
+    # if !all_pieces.select{|pc| pc.nil? }.empty?
+    #   debugger
+    # end
     # Generate real moves for the next turn
     generate_legal_moves(ignore_check)
 
@@ -266,6 +278,7 @@ class Board < ApplicationRecord
   def play_move!(move, ignore_check=false)
     play_move(move, ignore_check)
     move.save!
+    refresh_legal_moves(ignore_check)
     save_pieces_to_positions_array
     self.save!
   end
@@ -301,6 +314,9 @@ class Board < ApplicationRecord
   # TODO: consider better ways of organizing pieces for position lookup
   def get(col, row)
     all_pieces = @pieces["white"] + @pieces["black"]
+    # if !all_pieces.select{|pc| pc.nil? }.empty?
+    #   debugger
+    # end
     found = all_pieces.select{|pc| pc.position == (file(col) + rank(row)) }
     if found.empty?
       return nil
@@ -361,6 +377,10 @@ class Board < ApplicationRecord
     duped_piece = dummy_board.get_n(move.piece.position)
     duped_other_piece = (move.other_piece.nil? ? nil : dummy_board.get_n(move.other_piece.position))
     dummy_board.play_move(move.deep_dup(duped_piece,duped_other_piece), true)
+    # all_pieces = @pieces["white"] + @pieces["black"]
+    # if !all_pieces.select{|pc| pc.nil? }.empty?
+    #   debugger
+    # end
     return !dummy_board.is_king_checked?(self.turn)
   end
 

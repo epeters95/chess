@@ -1,7 +1,7 @@
 class Rook < Piece
   attr_accessor :castleable
   attr_reader :letter, :char, :val
-  def initialize(color, position, castleable=true, played_moves=[])
+  def initialize(color, position, castleable=true)
     super(color, position)
     @letter = "R "
     @char = "\u265c"
@@ -17,7 +17,7 @@ class Rook < Piece
     @castleable = false
   end
 
-  def set_played(move)
+  def set_played
     super
     @castleable = false
   end
