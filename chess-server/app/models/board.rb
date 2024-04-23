@@ -2,12 +2,10 @@ class Board < ApplicationRecord
 
   belongs_to :game, optional: true
   has_many   :played_moves, -> { where "completed = 1" }, class_name: "Move"
-  has_many   :saved_legal_moves, -> { where "completed = 0" }, class_name: "Move"
 
   after_create :init_vars, :generate_legal_moves
 
   include Util
-  attr_accessor :status_bar
 
   def refresh_pieces
     @pieces = get_pieces_from_positions_array
@@ -188,8 +186,6 @@ class Board < ApplicationRecord
     all_remaining = @pieces.values.flatten.find_all{|pc| !pc.taken }
     insufficient = false
     if all_remaining.size <= 4
-      dbg = "REMAINING: \n" + all_remaining.map{|r| "#{r.color} #{r.notation} #{r.position}, taken=#{r.taken}\n" }.join("") + "****\n"
-      set_status(dbg, "global")
       ["black", "white"].each do |color|
         my_remaining = all_remaining.find_all{|pc| pc.color == color}
         their_remaining = all_remaining.find_all{|pc| pc.color == switch(color)}
@@ -257,8 +253,6 @@ class Board < ApplicationRecord
     piece.set_played
     
     self.turn = switch(self.turn)
-    # TODO: persist/refresh status correctly
-    set_status("> #{self.turn.upcase} TO MOVE", "global")
   end
 
   # This method ensures the board @legal_moves variable is populated
@@ -283,15 +277,6 @@ class Board < ApplicationRecord
     self.save!
   end
 
-  def set_status(str, color)
-    @status_bar ||= {"white" => "", "black" => "", "global" => ""}
-    if color == "global"
-      @status_bar[color] = "#{str}"
-    else
-      @status_bar[color] = "#{color}: #{str}"
-    end
-  end
-
   def prompt_piece_choice
     return "queen"
   end
@@ -301,7 +286,6 @@ class Board < ApplicationRecord
 
   def init_vars(pieces=nil)
     @pieces = pieces || place_pieces
-    @status_bar = {"white" => "", "black" => "", "global" => ""}
     @legal_moves = {"black" => [], "white" => []}
     self.move_count = 1
     save_pieces_to_positions_array

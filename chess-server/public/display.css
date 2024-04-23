@@ -101,3 +101,8 @@ checker{
     height: 50px;
   }
 }
+
+.status {
+  color: rgb(221, 193, 98);
+  margin: 3px;
+}

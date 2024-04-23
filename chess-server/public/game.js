@@ -8,6 +8,7 @@ const newGameSubmit = document.getElementById("new-game");
 const nextMoveSubmit = document.getElementById("next-move");
 const player1Name = document.getElementById("player1-name").value;
 const player2Name = document.getElementById("player2-name").value;
+const statusSpan = document.getElementById("status");
 newGameSubmit.addEventListener('click', newGame);
 
 nextMoveSubmit.addEventListener('click', nextMove);
@@ -72,6 +73,9 @@ function nextMove() {
 
 function drawGame(json) {
   gameId = json["id"];
+  status = json["status_str"];
+
+  statusSpan.innerText = status;
 
   let context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);

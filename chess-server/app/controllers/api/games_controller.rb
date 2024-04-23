@@ -35,10 +35,10 @@ class Api::GamesController < ApplicationController
         @game.play_move_and_evaluate!(chosen_move)
         render json: @game, status: :ok
       else
-        render json: {errors: "Game is over"}, status: :unprocessable_entity
+        render json: {error: "Game is over"}, status: :unprocessable_entity
       end
     else
-      render json: {errors: "Game not found"}, status: :unprocessable_entity
+      render json: {error: "Game not found"}, status: :unprocessable_entity
     end
   end
 

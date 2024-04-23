@@ -61,4 +61,8 @@ module Util
     end
     result
   end
+
+  def uppercase(str)
+    "#{str[0].upcase}#{str[1..]}"
+  end
 end

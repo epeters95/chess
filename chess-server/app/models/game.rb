@@ -21,9 +21,11 @@ class Game < ApplicationRecord
     # end
     king_checked = self.board.play_move!(move)
 
-    status_string = "#{display_name_for(switch(self.board.turn))} made move #{move.get_notation}"
-    status_string += ", check" if king_checked
-    self.board.set_status(status_string, switch(self.board.turn))
+    status_str = "#{display_name_for(switch(self.board.turn))} made move #{move.get_notation}"
+    status_str += ", check" if self.board.is_king_checked?(self.board.turn)
+    status_str += ". #{uppercase(self.board.turn)} to move."
+
+    self.board.update(status_str: status_str)
 
     evaluate_outcomes
   end
@@ -32,13 +34,13 @@ class Game < ApplicationRecord
     previous_turn = switch(self.board.turn)
 
     if self.board.is_insuff_material_stalemate?
-      self.board.set_status("The game is a draw due to insufficient mating material.", "global")
+      self.board.update(status_str: "The game is a draw due to insufficient mating material.")
 
     elsif self.board.is_checkmate?(self.board.turn)
-      self.board.set_status("#{display_name_for(previous_turn)} has won by checkmate!", "global")
+      self.board.update(status_str: "#{display_name_for(previous_turn)} has won by checkmate!")
 
     elsif self.board.is_nomoves_stalemate?(self.board.turn)
-      self.board.set_status("The game is a draw. #{display_name_for(self.board.turn)} has survived by stalemate!", "global")
+      self.board.update(status_str: "The game is a draw. #{display_name_for(self.board.turn)} has survived by stalemate!")
 
     else
 
@@ -54,7 +56,7 @@ class Game < ApplicationRecord
       {
         id:             self.id,
         turn:           self.board.turn,
-        # status_bar:     self.board.status_bar,
+        status_str:     self.board.status_str,
         pieces:         self.board.positions_array,
         legal_moves:    self.board.legal_moves[self.board.turn],
         move_count:     self.board.move_count
