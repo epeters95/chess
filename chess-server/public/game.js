@@ -20,6 +20,22 @@ var turnName;
 var status = "";
 var pieces = {};
 
+var selectedPiece= "";
+var selectedMoves = [];
+
+ var length = canvas.width;
+  var squareSize = canvas.width / 8.0;
+  var smallSize = squareSize * 0.9;
+  var tinySize = squareSize * 0.1;
+
+  var colorW = "#97aaac";
+  var colorB = "#556567";
+  var squareColor = colorB;
+  var switchSquareColor = function() {
+    squareColor = (squareColor === colorW ? colorB : colorW);
+    return squareColor
+  }
+
 function newGame() {
 
   let spinner = document.createElement('div');
@@ -105,6 +121,21 @@ function selectMove(move) {
   })
 }
 
+function selectPiece(piece) {
+  if (selectedPiece === "") {
+    selectedPiece = piece
+    selectedMoves = moves.filter(function(move) {
+      let pc = JSON.parse(move.piece_str)
+      return pc.position === selectedPiece.position
+    })
+  }
+  else {
+    selectedPiece = "";
+    selectedMoves = [];
+  }
+  drawGame()
+}
+
 
 function setVars(json) {
   gameId =   json["id"];
@@ -115,6 +146,96 @@ function setVars(json) {
   moves =    json["legal_moves"];
 }
 
+function addFunctionOnClick(x, y, func) {
+  canvas.addEventListener('click', function(event) {
+    let eventX = event.offsetX;
+    let eventY = event.offsetY;
+
+    if (eventY > y && eventY < y + squareSize 
+        && eventX > x && eventX < x + squareSize) {
+        func();
+    }
+  })
+}
+
+function fileIndexOf(letter) {
+  return "abcdefgh".indexOf(letter);
+}
+function rankIndexOf(num) {
+  return "12345678".indexOf(num);
+}
+
+function drawBoard(){
+    for (let x = 0; x <= length; x += squareSize) {
+      for (let y = 0; y <= length; y += squareSize) {
+          context.fillStyle = switchSquareColor();
+          context.fillRect(x, y, squareSize, squareSize);
+      }
+    }
+}
+
+function drawPieces(){
+  context.font = `50px Verdana`;
+  ["black", "white"].forEach(function(color) {
+    pieces[color].forEach(function(el) {
+      context.fillStyle = color;
+      let x, y;
+      if (turn === "white" || turnName === "") {
+        x = fileIndexOf(el.position[0]) * squareSize;
+        y = (7 - rankIndexOf(el.position[1])) * squareSize;
+      } else {
+        x = (7 - fileIndexOf(el.position[0])) * squareSize;
+        y = rankIndexOf(el.position[1]) * squareSize;
+      }
+      context.fillText(el.char, x + tinySize, y + smallSize);
+      // Add click handler
+      addFunctionOnClick(x, y, function() {
+        selectPiece(el);
+      });
+      
+    })
+  })
+}
+
+function drawMoves() {
+  selectedMoves.forEach(function(move) {
+    let x, y;
+    if (turn === "white") {
+      x = fileIndexOf(move.new_position[0]) * squareSize;
+      y = (7 - rankIndexOf(move.new_position[1])) * squareSize;
+    } else {
+      x = (7 - fileIndexOf(move.new_position[0])) * squareSize;
+      y = rankIndexOf(move.new_position[1]) * squareSize;
+    }
+    let halfSquare = squareSize / 2.0;
+    let bgColor = ( (fileIndexOf(move.new_position[0]) + rankIndexOf(move.new_position[1])) % 2 === 1) ? colorB : colorW;
+    const grd = context.createRadialGradient(
+      x + halfSquare,
+      y + halfSquare,
+      0,
+      x + halfSquare,
+      y + halfSquare,
+      tinySize
+      );
+
+    grd.addColorStop(0, turn);
+    grd.addColorStop(1, bgColor);
+    // Draw a filled Rectangle
+    context.fillStyle = grd;
+    context.fillRect(
+      x,
+      y,
+      squareSize,
+      squareSize
+      );
+
+    // Add click handler
+    addFunctionOnClick(x, y, function() {
+      selectMove(move);
+    });
+  })
+}
+
 
 function drawGame() {
 
@@ -122,97 +243,7 @@ function drawGame() {
 
   context.clearRect(0, 0, canvas.width, canvas.height);
 
-  var length = canvas.width;
-  var squareSize = canvas.width / 8.0;
-  var smallSize = squareSize * 0.9;
-  var tinySize = squareSize * 0.1;
-
-  var colorW = "#97aaac";
-  var colorB = "#556567";
-  var squareColor = colorB;
-  switchSquareColor = function() {
-    squareColor = (squareColor === colorW ? colorB : colorW);
-    return squareColor
-  }
-
-  function fileIndexOf(letter) {
-    return "abcdefgh".indexOf(letter);
-  }
-  function rankIndexOf(num) {
-    return "12345678".indexOf(num);
-  }
-
-  function drawBoard(){
-      for (let x = 0; x <= length; x += squareSize) {
-        for (let y = 0; y <= length; y += squareSize) {
-            context.fillStyle = switchSquareColor();
-            context.fillRect(x, y, squareSize, squareSize);
-        }
-      }
-  }
-
-  function drawPieces(){
-    context.font = `50px Verdana`;
-    ["black", "white"].forEach(function(color) {
-      pieces[color].forEach(function(el) {
-        context.fillStyle = color;
-        let x, y;
-        if (turn === "white" || turnName === "") {
-          x = fileIndexOf(el.position[0]) * squareSize;
-          y = (7 - rankIndexOf(el.position[1])) * squareSize;
-        } else {
-          x = (7 - fileIndexOf(el.position[0])) * squareSize;
-          y = rankIndexOf(el.position[1]) * squareSize;
-        }
-        context.fillText(el.char, x + tinySize, y + smallSize);
-      })
-    })
-  }
-
-  function drawMoves() {
-    moves.forEach(function(move) {
-      let x, y;
-      if (turn === "white") {
-        x = fileIndexOf(move.new_position[0]) * squareSize;
-        y = (7 - rankIndexOf(move.new_position[1])) * squareSize;
-      } else {
-        x = (7 - fileIndexOf(move.new_position[0])) * squareSize;
-        y = rankIndexOf(move.new_position[1]) * squareSize;
-      }
-      let halfSquare = squareSize / 2.0;
-      let bgColor = ( (fileIndexOf(move.new_position[0]) + rankIndexOf(move.new_position[1])) % 2 === 0) ? colorB : colorW;
-      const grd = context.createRadialGradient(
-        x + halfSquare,
-        y + halfSquare,
-        0,
-        x + halfSquare,
-        y + halfSquare,
-        tinySize
-        );
-
-      grd.addColorStop(0, turn);
-      grd.addColorStop(1, bgColor);
-      // Draw a filled Rectangle
-      context.fillStyle = grd;
-      context.fillRect(
-        x,
-        y,
-        squareSize,
-        squareSize
-        );
-
-      // Add click handler
-      canvas.addEventListener('click', function(event) {
-        let eventX = event.offsetX;
-        let eventY = event.offsetY;
-        
-        if (eventY > y && eventY < y + squareSize 
-            && eventX > x && eventX < x + squareSize) {
-            selectMove(move);
-        }
-      });
-    })
-  }
+  switchSquareColor()
 
   drawBoard();
   drawPieces();
