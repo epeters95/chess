@@ -19,18 +19,16 @@ class Game < ApplicationRecord
     # unless self.board.legal_moves.include?(move)
     #   raise IllegalMoveError
     # end
-    king_checked = self.board.play_move!(move)
+    self.board.play_move!(move)
 
     status_str = "#{display_name_for(switch(self.board.turn))} made move #{move.get_notation}"
     status_str += ", check" if self.board.is_king_checked?(self.board.turn)
     status_str += ". #{uppercase(self.board.turn)} to move."
-
-    self.board.update(status_str: status_str)
-
-    evaluate_outcomes
+    
+    evaluate_outcomes(status_str)
   end
 
-  def evaluate_outcomes
+  def evaluate_outcomes(status_str)
     previous_turn = switch(self.board.turn)
 
     if self.board.is_insuff_material_stalemate?
@@ -44,7 +42,9 @@ class Game < ApplicationRecord
 
     else
 
-      set_waiting_status
+      self.board.update(status_str: status_str)
+
+      # set_waiting_status
       return
     end
     # Game Over
@@ -68,6 +68,7 @@ class Game < ApplicationRecord
 
   def init_board
     self.create_board(turn: "white")
+    self.board.status_str = "White to move - #{display_name_for("white")}"
     self.board.save!  # Manually saving board persists pieces in db
     set_waiting_status
   end

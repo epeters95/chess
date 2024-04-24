@@ -30,7 +30,8 @@ class Api::GamesController < ApplicationController
           chosen_move = Computer.new(@game.board).get_move
         else
           # Else, initiate a player move specified in params
-          chosen_move = Move.create!(move_params)
+          chosen_move = Move.new(move_params)
+
         end
         @game.play_move_and_evaluate!(chosen_move)
         render json: @game, status: :ok

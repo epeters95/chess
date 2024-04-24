@@ -23,18 +23,19 @@ var pieces = {};
 var selectedPiece= "";
 var selectedMoves = [];
 
- var length = canvas.width;
-  var squareSize = canvas.width / 8.0;
-  var smallSize = squareSize * 0.9;
-  var tinySize = squareSize * 0.1;
+var length = canvas.width;
+var squareSize = canvas.width / 8.0;
+var smallSize = squareSize * 0.9;
+var tinySize = squareSize * 0.1;
 
-  var colorW = "#97aaac";
-  var colorB = "#556567";
-  var squareColor = colorB;
-  var switchSquareColor = function() {
-    squareColor = (squareColor === colorW ? colorB : colorW);
-    return squareColor
-  }
+var colorW = "#97aaac";
+var colorB = "#556567";
+var squareColor = colorB;
+var switchSquareColor = function() {
+  squareColor = (squareColor === colorW ? colorB : colorW);
+  return squareColor
+}
+var eventListeners = [];
 
 function newGame() {
 
@@ -70,7 +71,7 @@ function newGame() {
     spinner.classList.add("hidden");
   })
   .catch(function(error){ 
-    alert("Please ensure the chess development server is running locally.")
+    alert("Error: " + error)
   })
 }
 
@@ -144,10 +145,12 @@ function setVars(json) {
   turnName = json["turn_name"];
   pieces =   JSON.parse(json["pieces"]);
   moves =    json["legal_moves"];
+  selectedMoves = [];
+  selectedPiece = "";
 }
 
 function addFunctionOnClick(x, y, func) {
-  canvas.addEventListener('click', function(event) {
+  let myFunc = function(event) {
     let eventX = event.offsetX;
     let eventY = event.offsetY;
 
@@ -155,7 +158,9 @@ function addFunctionOnClick(x, y, func) {
         && eventX > x && eventX < x + squareSize) {
         func();
     }
-  })
+  }
+  canvas.addEventListener('click', myFunc);
+  eventListeners.push(myFunc);
 }
 
 function fileIndexOf(letter) {
@@ -189,10 +194,11 @@ function drawPieces(){
       }
       context.fillText(el.char, x + tinySize, y + smallSize);
       // Add click handler
-      addFunctionOnClick(x, y, function() {
-        selectPiece(el);
-      });
-      
+      if (color === turn) {
+        addFunctionOnClick(x, y, function() {
+          selectPiece(el);
+        });
+      }
     })
   })
 }
@@ -242,6 +248,9 @@ function drawGame() {
   statusSpan.innerText = status;
 
   context.clearRect(0, 0, canvas.width, canvas.height);
+  eventListeners.forEach(function(el) {
+    canvas.removeEventListener('click', el);
+  })
 
   switchSquareColor()
 
@@ -249,5 +258,8 @@ function drawGame() {
   drawPieces();
   if (turnName !== "") {
     drawMoves();
+    nextMoveSubmit.setAttribute("disabled", true)
+  } else {
+    nextMoveSubmit.removeAttribute("disabled")
   }
 }
