@@ -6,21 +6,26 @@ canvas.height = canvas.width;
 
 const newGameSubmit = document.getElementById("new-game");
 const nextMoveSubmit = document.getElementById("next-move");
-const player1Name = document.getElementById("player1-name").value;
-const player2Name = document.getElementById("player2-name").value;
 const statusSpan = document.getElementById("status");
 newGameSubmit.addEventListener('click', newGame);
 
 nextMoveSubmit.addEventListener('click', nextMove);
 
 var gameId = 0;
+var turn;
+var turnName;
+var status = "";
+var pieces = {};
 
 function newGame() {
 
-  let card = document.createElement('div');
-  card.id = "loading";
-  card.innerHTML = '<div id="loadingspinner"><img src="spinner.gif"></div>';
-  document.getElementById("canvas-window").appendChild(card);
+  let spinner = document.createElement('div');
+  spinner.id = "loading";
+  spinner.innerHTML = '<div id="loadingspinner"><img src="spinner.gif"></div>';
+  document.getElementById("canvas-window").appendChild(spinner);
+
+  const player1Name = document.getElementById("player1-name").value;
+  const player2Name = document.getElementById("player2-name").value;
 
   fetch("http://localhost:3000/api/games", {
     method: "POST",
@@ -38,11 +43,12 @@ function newGame() {
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      drawGame(json)
+      setVars(json)
+      drawGame()
     }else{
       alert(json.error)
     }
-    card.classList.add("hidden");
+    spinner.classList.add("hidden");
   })
   .catch(function(error){ 
     alert("Please ensure the chess development server is running locally.")
@@ -60,7 +66,9 @@ function nextMove() {
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      drawGame(json)
+      setVars(json)
+      drawGame()
+      
     }else{
       alert(json.error)
     }
@@ -71,15 +79,22 @@ function nextMove() {
 }
 
 
-function drawGame(json) {
-  gameId = json["id"];
-  status = json["status_str"];
+function setVars(json) {
+  gameId =   json["id"];
+  status =   json["status_str"];
+  turn =     json["turn"];
+  turnName = json["turn_name"];
+  pieces =   JSON.parse(json["pieces"]);
+  moves =    json["legal_moves"];
+}
+
+
+function drawGame() {
 
   statusSpan.innerText = status;
 
   let context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
-  let pieces = JSON.parse(json["pieces"]);
 
   var length = canvas.width;
   var squareSize = canvas.width / 8.0;
@@ -111,22 +126,61 @@ function drawGame(json) {
       }
   }
 
-  function drawPieces(pieces){
+  function drawPieces(){
     context.font = `50px Verdana`;
-      pieces["black"].forEach(function(el) {
-        context.fillStyle = "black";
-        let x = fileIndexOf(el.position[0]) * squareSize;
-        let y = rankIndexOf(el.position[1]) * squareSize;
+    ["black", "white"].forEach(function(color) {
+      pieces[color].forEach(function(el) {
+        context.fillStyle = color;
+        let x, y;
+        if (turn === "white" || turnName === "") {
+          x = fileIndexOf(el.position[0]) * squareSize;
+          y = (7 - rankIndexOf(el.position[1])) * squareSize;
+        } else {
+          x = (7 - fileIndexOf(el.position[0])) * squareSize;
+          y = rankIndexOf(el.position[1]) * squareSize;
+        }
         context.fillText(el.char, x + tinySize, y + smallSize);
       })
-      pieces["white"].forEach(function(el) {
-        context.fillStyle = "white";
-        let x = fileIndexOf(el.position[0]) * squareSize;
-        let y = rankIndexOf(el.position[1]) * squareSize;
-        context.fillText(el.char, x + tinySize, y + smallSize);
-      })
+    })
+  }
+
+  function drawMoves() {
+    moves.forEach(function(move) {
+      let x, y;
+      if (turn === "white") {
+        x = fileIndexOf(move.new_position[0]) * squareSize;
+        y = (7 - rankIndexOf(move.new_position[1])) * squareSize;
+      } else {
+        x = (7 - fileIndexOf(move.new_position[0])) * squareSize;
+        y = rankIndexOf(move.new_position[1]) * squareSize;
+      }
+      let halfSquare = squareSize / 2.0;
+      let bgColor = ( (fileIndexOf(move.new_position[0]) + rankIndexOf(move.new_position[1])) % 2 === 0) ? colorB : colorW;
+      const grd = context.createRadialGradient(
+        x + halfSquare,
+        y + halfSquare,
+        0,
+        x + halfSquare,
+        y + halfSquare,
+        tinySize
+        );
+
+      grd.addColorStop(0, turn);
+      grd.addColorStop(1, bgColor);
+      // Draw a filled Rectangle
+      context.fillStyle = grd;
+      context.fillRect(
+        x + (tinySize),
+        y + (tinySize),
+        halfSquare + tinySize,
+        halfSquare + tinySize
+        );
+    })
   }
 
   drawBoard();
-  drawPieces(pieces);
+  drawPieces();
+  if (turnName !== "") {
+    drawMoves();
+  }
 }
