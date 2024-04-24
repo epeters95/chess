@@ -1,4 +1,7 @@
 let canvas = document.getElementById("gameView");
+let context = canvas.getContext("2d");
+let canvasLeft = canvas.offsetLeft + canvas.clientLeft;
+let canvasTop = canvas.offsetTop + canvas.clientTop;
 
 canvas.width = (screen.height * .4) - 100;
 canvas.height = canvas.width;
@@ -78,6 +81,30 @@ function nextMove() {
   })
 }
 
+function selectMove(move) {
+  fetch("http://localhost:3000/api/games/" + gameId, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({ "move": move })
+  })
+  .then(response => response.json())
+  .then(function(json) {
+    if (json.error === undefined){
+      setVars(json)
+      drawGame()
+      
+    }else{
+      alert(json.error)
+    }
+  })
+  .catch(function(error){ 
+    alert("Error: " + error)
+  })
+}
+
 
 function setVars(json) {
   gameId =   json["id"];
@@ -93,7 +120,6 @@ function drawGame() {
 
   statusSpan.innerText = status;
 
-  let context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
 
   var length = canvas.width;
@@ -115,7 +141,6 @@ function drawGame() {
   function rankIndexOf(num) {
     return "12345678".indexOf(num);
   }
-
 
   function drawBoard(){
       for (let x = 0; x <= length; x += squareSize) {
@@ -170,11 +195,22 @@ function drawGame() {
       // Draw a filled Rectangle
       context.fillStyle = grd;
       context.fillRect(
-        x + (tinySize),
-        y + (tinySize),
-        halfSquare + tinySize,
-        halfSquare + tinySize
+        x,
+        y,
+        squareSize,
+        squareSize
         );
+
+      // Add click handler
+      canvas.addEventListener('click', function(event) {
+        let eventX = event.offsetX;
+        let eventY = event.offsetY;
+        
+        if (eventY > y && eventY < y + squareSize 
+            && eventX > x && eventX < x + squareSize) {
+            selectMove(move);
+        }
+      });
     })
   }
 
