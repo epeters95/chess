@@ -27,6 +27,10 @@ class Board < ApplicationRecord
     # therefore the save method must be called externally to persist pieces in db
   end
 
+  def played_moves_in_order
+    self.played_moves.order(move_count: :asc)
+  end
+
   def generate_legal_moves(ignore_check=false,color=self.turn)
     legal_moves[color] = []
     @pieces[color].each do |piece|
