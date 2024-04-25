@@ -14,18 +14,23 @@ class Game < ApplicationRecord
     is_computer?(color) ? "Computer" : name_for(color)
   end
 
-  def play_move_and_evaluate!(move)
+  def play_move_and_evaluate(move)
     # TODO: write move comparison method for the following:
     # unless self.board.legal_moves.include?(move)
     #   raise IllegalMoveError
     # end
-    self.board.play_move!(move)
+    result = self.board.play_move_and_save(move)
 
     status_str = "#{display_name_for(switch(self.board.turn))} made move #{move.get_notation}"
     status_str += ", check" if self.board.is_king_checked?(self.board.turn)
     status_str += ". #{uppercase(self.board.turn)} to move."
     
-    evaluate_outcomes(status_str)
+    if !result
+      self.errors = self.board.errors + move.errors
+    else
+      evaluate_outcomes(status_str)
+    end
+    return result
   end
 
   def evaluate_outcomes(status_str)

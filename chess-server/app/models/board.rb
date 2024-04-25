@@ -123,9 +123,6 @@ class Board < ApplicationRecord
 
       if piece.is_a?(King) and piece.castleable
         get_castleable_rooks(color).each do |rook|
-          # if file_idx(rook.file).nil? || file(file_idx(rook.file) + 3).nil? || file(file_idx(rook.file) - 2).nil? || rook.rank.nil?
-          #   debugger
-          # end
           if file_idx(rook.position) < file_idx(piece.position)
             # Queenside
             moves << Move.new(
@@ -269,12 +266,15 @@ class Board < ApplicationRecord
     generate_legal_moves(true, switch(self.turn))
   end
 
-  def play_move!(move, ignore_check=false)
+  def play_move_and_save(move, ignore_check=false)
     play_move(move, ignore_check)
-    move.save!
-    refresh_legal_moves(ignore_check)
-    save_pieces_to_positions_array
-    self.save!
+    unless move.save
+      return false
+    else
+      refresh_legal_moves(ignore_check)
+      save_pieces_to_positions_array
+      return self.save
+    end
   end
 
   def prompt_piece_choice

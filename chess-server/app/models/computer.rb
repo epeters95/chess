@@ -13,10 +13,11 @@ class Computer
     under_attack = nil
     attacker = nil
     # 1. Detect threats
+    legal_moves = @board.legal_moves
     pieces = @board.get_pieces_from_positions_array
+
     pieces[switch @color].each do |piece|
-      moves = piece.get_moves
-      moves.find_all{|mv| !mv.other_piece.nil? }.each do |attack|
+      legal_moves[switch @color].find_all{|mv| mv.piece.position == piece.position && !mv.other_piece.nil? }.each do |attack|
         # Get greatest threat
         target = attack.other_piece
         under_attack ||= target
@@ -30,7 +31,7 @@ class Computer
     # Identify counter to threat
     pieces[@color].shuffle.each do |my_piece|
       # TODO: implement blocking
-      my_moves = my_piece.get_moves
+      my_moves = legal_moves[@color].find_all{|mv| mv.piece.position == my_piece.position }
       atks = my_moves.select { |mv| !mv.other_piece.nil? }
       mvs = my_moves.select { |mv| mv.other_piece.nil? }
       if !atks.empty?

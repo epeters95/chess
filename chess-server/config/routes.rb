@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  root "api/games#index"
+  root "test#index"
+
+  get '/404', to: 'errors#not_found'
+  get '/500', to: 'errors#server_error'
 
   namespace :api do
 
@@ -17,7 +20,11 @@ Rails.application.routes.draw do
       #                PUT    /api/games/:game_id/board(.:format) api/boards#update
     end
 
-    get '/testgame', to: 'games#index'
+    get '/testgame', to: 'test#index'
+
+
+
+
   end
 
 end

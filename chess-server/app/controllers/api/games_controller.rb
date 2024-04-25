@@ -1,11 +1,9 @@
 class Api::GamesController < ApplicationController
-  include ActionController::MimeResponds
+  
   before_action :set_game, only: [:show, :update, :destroy]
 
   def index
-    respond_to do |format|
-      format.html { render body: Rails.root.join("public/display.html").read }
-    end
+    render json: {games: Game.all.map(&:id)}, status: :ok
   end
 
   def show
@@ -13,33 +11,50 @@ class Api::GamesController < ApplicationController
   end
 
   def create
-    @game = Game.new(game_params)
-    if @game.save
-      # Game is ready for first move from white
-      render json: @game, status: :created
-    else
-      render json: @game.errors, status: :unprocessable_entity
+    begin
+      @game = Game.new(game_params)
+      if @game.save
+        # Game is ready for first move from white
+        render json: @game, status: :created
+      else
+        render json: {errors: @game.errors}, status: :unprocessable_entity
+      end
+    rescue Exception => e  
+      #NameError, NoMethodError, ArgumentError, SyntaxError
+      render json: {errors: e.message }, status: :unprocessable_entity
     end
   end
 
   def update
-    if @game.errors.empty?
-      if @game.status != "completed"
-        if @game.is_computers_turn?
-          # PATCH/PUT to a game on the computer's turn will initiate a computer move
-          chosen_move = Computer.new(@game.board).get_move
-        else
-          # Else, initiate a player move specified in params
-          chosen_move = Move.new(move_params)
+    begin
+      if @game.errors.empty?
+        if @game.status != "completed"
+          if @game.is_computers_turn?
+            # PATCH/PUT to a game on the computer's turn will initiate a computer move
+            chosen_move = Computer.new(@game.board).get_move
+          else
+            # Else, initiate a player move specified in params
+            chosen_move = Move.new(move_params)
 
+          end
+          success = @game.play_move_and_evaluate(chosen_move)
+          if success
+            render json: @game, status: :ok
+          else
+            debugger
+            render json: {error: @game.errors}, status: :unprocessable_entity
+          end
+        else
+          render json: {error: "Game is over"}, status: :unprocessable_entity
         end
-        @game.play_move_and_evaluate!(chosen_move)
-        render json: @game, status: :ok
       else
-        render json: {error: "Game is over"}, status: :unprocessable_entity
+        debugger
+        render json: {error: "Game not found"}, status: :unprocessable_entity
       end
-    else
-      render json: {error: "Game not found"}, status: :unprocessable_entity
+    rescue Exception => e
+      #NameError, NoMethodError, ArgumentError, SyntaxError
+      debugger
+      render json: {errors: e.message }, status: :unprocessable_entity
     end
   end
 
