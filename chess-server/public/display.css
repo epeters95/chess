@@ -60,6 +60,10 @@ body {
   text-align: center;
 }
 
+body b {
+  color: white;
+}
+
 h1 {
   font-size: 72;
 }
@@ -105,6 +109,7 @@ checker{
   color: rgb(221, 193, 98);
   margin: 3px;
   display: inline-block;
+  width: 400px;
 }
 
 table#gameTable {
@@ -115,6 +120,10 @@ table#gameTable {
     height: 180px;
     margin: 5px;
   }
+}
+
+.gameThumbnail {
+  top: 20%;
 }
 
 .modal {
@@ -166,6 +175,7 @@ table#gameTable {
 #movesList table td {
   border-bottom: 1px wheat dotted;
   padding-bottom: 8px;
+  cursor: pointer;
 }
 
 #movesList * {
@@ -177,4 +187,17 @@ table#gameTable {
 #movesList .selected {
   background-color: yellow;
   color: black;
+}
+
+#modalCloseButton {
+  position: absolute;
+  top: 10px;
+  right: 20%;
+}
+#modalCloseButton button {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  background-color: black;
+  color: white;
 }

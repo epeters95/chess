@@ -19,7 +19,7 @@ class Api::BoardsController < ApplicationController
     initial_board.init_vars
 
     pieces_history = [initial_board.positions_array]
-    moves = []
+    moves = [nil]
     @board.played_moves_in_order.each do |move|
       initial_board.play_move(move)
       pieces_history << initial_board.positions_array

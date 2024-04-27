@@ -1,6 +1,10 @@
 let table = document.getElementById("gameTable");
 
 let modal = document.getElementsByClassName("modal")[0];
+let modalCloseBtn = document.getElementById("modalCloseButton");
+modalCloseBtn.addEventListener("click", function(event) {
+  modal.classList.add("hidden");
+})
 
 let movesList = document.getElementById("movesList");
 
@@ -83,7 +87,11 @@ function populateGameAndMoves(json) {
   
   // Populate snapshots of the game at each move
   json["moves"].forEach(function(move, i) {
-    moveToPiecesMap[move.id] = json["pieces_history"][i];
+    let id = 0;
+    if (move) {
+      id = move.id
+    }
+    moveToPiecesMap[id] = json["pieces_history"][i];
   })
 
   showBoardRefresh(json, moveToPiecesMap)
@@ -101,6 +109,8 @@ function drawMoveList(json, moveToPiecesMap, selectedId) {
   let list = document.createElement("table");
   let row;
   json["moves"].forEach(function(move, index) {
+    if (!move)
+      return;
     function clickFunction(event) {
       event.target.classList.add("selected")
       json["game"]["pieces"] = moveToPiecesMap[move.id];
@@ -118,7 +128,7 @@ function drawMoveList(json, moveToPiecesMap, selectedId) {
     notationCell.addEventListener("click", clickFunction)
 
     // For white, create a new row
-    if (index % 2 === 0) {
+    if (index % 2 === 1) {
       row = document.createElement("tr")
       row.appendChild(moveCell)
       row.appendChild(notationCell)
@@ -132,7 +142,6 @@ function drawMoveList(json, moveToPiecesMap, selectedId) {
   })
   movesList.appendChild(list);
   if (selectedId) {
-    debugger
     let cell = document.querySelector("[data-id='" + selectedId + "']");
     cell.classList.add("selected");
   }
@@ -159,11 +168,13 @@ function gameViewHtml(game) {
    + id + "/board";
   let htmlString = "<div class='gameThumbnail' style='width:100%; height:100%'>";
 
-  htmlString += "<div style='width: 90%; height: 90%; margin: auto; position: relative; background-color: rgba(0,0,0,0.1);'>";
-  htmlString += "<span><b><u>" +
+  htmlString += "<div style='width: 90%; height: 90%; margin: auto; position: relative; background-color: rgba(0,0,0,0.2);'>";
+  htmlString += "<span><b>" +
                 getName(name1) + " vs. " +
                 getName(name2) +
-                "</u></b></span>";
+                "</b></span>";
+  htmlString += "<br><br>"
+  htmlString += "<span style='color: white;'>" + game.move_count + " moves</span>";
   htmlString += "<br>";
   htmlString += "<a href='#' class='getBoard' id='getBoard' data-id='" + id + "'>";
   htmlString += "<span>View Game</span>";

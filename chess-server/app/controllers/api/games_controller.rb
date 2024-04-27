@@ -6,7 +6,8 @@ class Api::GamesController < ApplicationController
     games = Game.where(status: "completed").map do |game|
       { id: game.id,
         white_name: game.white_name,
-        black_name: game.black_name }
+        black_name: game.black_name,
+        move_count: game.board.move_count }
     end
     render json: {games: games}, status: :ok
   end
