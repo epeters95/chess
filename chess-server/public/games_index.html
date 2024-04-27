@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <title>Chess</title>
+  <link rel="stylesheet" href="display.css">
+</head>
+<body>
+  <div class="header">
+  </div>
+  
+  <div class="main">
+    
+    <div class="title">
+      <div id="chessimg">
+        <img class="chessgif" src="loading.gif">
+      </div>
+      <h1 id="chesstitle">Chess</h1>
+    </div>
+    <div id="content">
+    <span><h3>Browse Games</h3></span>
+    <br>
+    <br>
+
+      <div id="gameTableView">
+        <table id="gameTable">
+        </table>
+      </div>
+
+    </div>
+    <br>
+  </div>
+  
+  <div class="footer">
+  </div>
+
+  <div class="modal hidden">
+    <div class="modalContent">
+      <div class="contentContainer">
+        <div class="mainbar">
+
+          <div id="canvas-window">
+            <canvas id="gameView"></canvas>
+          </div>
+          <br>
+          <span class="status" id="status"></span>
+          <br>
+        </div>
+        <div class="sidebar">
+          <div id="movesList">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+</body>
+<script type="text/javascript" src="get_games.js"></script>
+<script type="text/javascript" src="game.js"></script>
+
+</html>

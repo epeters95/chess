@@ -10,9 +10,13 @@ canvas.height = canvas.width;
 const newGameSubmit = document.getElementById("new-game");
 const nextMoveSubmit = document.getElementById("next-move");
 const statusSpan = document.getElementById("status");
-newGameSubmit.addEventListener('click', newGame);
 
-nextMoveSubmit.addEventListener('click', nextMove);
+if (newGameSubmit !== null) {
+  newGameSubmit.addEventListener('click', newGame);
+}
+if (nextMoveSubmit !== null) {
+  nextMoveSubmit.addEventListener('click', nextMove);
+}
 
 var gameId = 0;
 var turn;
@@ -65,6 +69,7 @@ function newGame() {
     if (json.error === undefined){
       setVars(json)
       drawGame()
+      drawMovePlay()
     }else{
       alert(json.error)
     }
@@ -88,6 +93,7 @@ function nextMove() {
     if (json.error === undefined){
       setVars(json)
       drawGame()
+      drawMovePlay()
       
     }else{
       alert(json.error)
@@ -112,6 +118,7 @@ function selectMove(move) {
     if (json.error === undefined){
       setVars(json)
       drawGame()
+      drawMovePlay()
       
     }else{
       alert(json.error)
@@ -181,9 +188,12 @@ function drawBoard(){
 
 function drawPieces(){
   context.font = `50px Verdana`;
-  ["black", "white"].forEach(function(color) {
-    pieces[color].forEach(function(el) {
-      context.fillStyle = color;
+  fillPieces("white");
+  fillPieces("black");
+
+  function fillPieces(col) {
+    pieces[col].forEach(function(el) {
+      context.fillStyle = col;
       let x, y;
       if (turn === "white" || turnName === "") {
         x = fileIndexOf(el.position[0]) * squareSize;
@@ -194,13 +204,13 @@ function drawPieces(){
       }
       context.fillText(el.char, x + tinySize, y + smallSize);
       // Add click handler
-      if (color === turn) {
+      if (col === turn) {
         addFunctionOnClick(x, y, function() {
-          selectPiece(el);
+          selectPiece(el)
         });
       }
     })
-  })
+  }
 }
 
 function drawMoves() {
@@ -256,6 +266,10 @@ function drawGame() {
 
   drawBoard();
   drawPieces();
+  
+}
+
+function drawMovePlay() {
   if (turnName !== "") {
     drawMoves();
     nextMoveSubmit.setAttribute("disabled", true)
