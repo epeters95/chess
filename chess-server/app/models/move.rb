@@ -77,8 +77,9 @@ class Move < ApplicationRecord
   end
 
   def self.from_json(json_obj)
-
-    move_obj = self.new(json_obj.symbolize_keys.delete(:notation))
+    args = json_obj.symbolize_keys
+    args.delete(:notation)
+    move_obj = self.new(args)
     move_obj
   end
 

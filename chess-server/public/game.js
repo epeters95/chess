@@ -142,6 +142,7 @@ function selectPiece(piece) {
     selectedMoves = [];
   }
   drawGame()
+  drawMovePlay()
 }
 
 
