@@ -8,6 +8,8 @@ class Move < ApplicationRecord
 
   belongs_to :board, inverse_of: "played_moves"
 
+  after_initialize :set_notation
+
   include Util
 
   def piece
@@ -81,6 +83,12 @@ class Move < ApplicationRecord
     args.delete(:notation)
     move_obj = self.new(args)
     move_obj
+  end
+
+  private
+
+  def set_notation
+    self.notation = get_notation
   end
 
 end
