@@ -1,12 +1,10 @@
 class Api::BoardsController < ApplicationController
-  before_action :set_board, only: [:show, :update, :destroy]
+  before_action :set_game_board, only: [:show, :update, :destroy]
 
   def show
     begin
-      result = { board: @board}
-      if params[:with_history] == true || params[:with_history] == "true"
-        result.merge get_moves_pieces_history
-      end
+      result = { board: @board, game: @game.as_json, pieces: @board.positions_array}
+      result.merge! get_moves_pieces_history
       render json: result, status: :ok
     rescue Exception => e
       render json: {errors: e.message }, status: :unprocessable_entity
@@ -30,8 +28,9 @@ class Api::BoardsController < ApplicationController
     { pieces_history: pieces_history, moves:  moves }
   end
 
-  def set_board
-    @board = Board.find(params[:id])
+  def set_game_board
+    @game = Game.find(params[:game_id])
+    @board = @game.board
   end
 
 end

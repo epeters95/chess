@@ -3,7 +3,12 @@ class Api::GamesController < ApplicationController
   before_action :set_game, only: [:show, :update, :destroy]
 
   def index
-    render json: {games: Game.all.map(&:id)}, status: :ok
+    games = Game.where(status: "completed").map do |game|
+      { id: game.id,
+        white_name: game.white_name,
+        black_name: game.black_name }
+    end
+    render json: {games: games}, status: :ok
   end
 
   def show

@@ -56,17 +56,20 @@ class Game < ApplicationRecord
     self.update(status: "completed")
   end
 
+  def as_json()
+    {
+      id:             self.id,
+      turn:           self.board.turn,
+      turn_name:      name_for(self.board.turn),
+      status_str:     self.board.status_str,
+      pieces:         self.board.positions_array,
+      legal_moves:    self.board.legal_moves[self.board.turn],
+      move_count:     self.board.move_count
+    }
+  end
+
   def to_json(options = {})
-    JSON.pretty_generate(
-      {
-        id:             self.id,
-        turn:           self.board.turn,
-        turn_name:      name_for(self.board.turn),
-        status_str:     self.board.status_str,
-        pieces:         self.board.positions_array,
-        legal_moves:    self.board.legal_moves[self.board.turn],
-        move_count:     self.board.move_count
-      }, options)
+    JSON.pretty_generate(as_json, options)
   end
 
   private

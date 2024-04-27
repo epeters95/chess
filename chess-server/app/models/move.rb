@@ -19,6 +19,11 @@ class Move < ApplicationRecord
   end
 
   def get_notation(disamb=false)
+    # TODO: prevent creation of moves with piece == nil
+    if piece.nil?
+      "nil"
+      return
+    end
     if self.move_type == "castle_kingside"
       "O-O"
     elsif self.move_type == "castle_queenside"
@@ -65,13 +70,15 @@ class Move < ApplicationRecord
       move_type:        self.move_type,
       new_position:     self.new_position,
       rook_position:    self.rook_position,
-      move_count:       self.move_count
+      move_count:       self.move_count,
+      notation:         get_notation(true)
     }
     JSON.generate(hsh, options)
   end
 
   def self.from_json(json_obj)
-    move_obj = self.new(json_obj.symbolize_keys)
+
+    move_obj = self.new(json_obj.symbolize_keys.delete(:notation))
     move_obj
   end
 

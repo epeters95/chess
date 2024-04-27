@@ -285,15 +285,15 @@ class Board < ApplicationRecord
     return "queen"
   end
 
-
-  protected
-
   def init_vars(pieces=nil)
     @pieces = pieces || place_pieces
     @legal_moves = {"black" => [], "white" => []}
     self.move_count = 1
     save_pieces_to_positions_array
   end
+
+
+  protected
 
   def get_n(pos)
     get(file_idx(pos), rank_idx(pos))
