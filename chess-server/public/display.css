@@ -136,6 +136,7 @@ table#gameTable {
 
 .modalContent {
   margin: auto;
+  min-width: 960px;
   width: 60%;
   height: 100%;
   padding-top: 40px;

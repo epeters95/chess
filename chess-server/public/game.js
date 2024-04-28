@@ -79,7 +79,7 @@ function newGame(liveGame=false) {
   .then(function(json) {
     if (json.error === undefined){
       if (liveGame) {
-        alert("Your access code is: " + json.["access_code"]);
+        alert("Your access code is: " + json["access_code"]);
       }
       setVars(json["game"])
       drawGame()

@@ -1,6 +1,7 @@
 class Game < ApplicationRecord
 
   has_one :board, dependent: :destroy
+  has_one :live_game
 
   after_create :init_board
 

@@ -10,4 +10,8 @@ class LiveGame < ApplicationRecord
     4.times { code << alphanum[rand(alphanum.size)] }
     self.update(access_code: code)
   end
+
+  def self.generate_token
+    SecureRandom::urlsafe_base64
+  end
 end
