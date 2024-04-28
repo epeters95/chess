@@ -8,11 +8,15 @@ canvas.height = canvas.width;
 
 
 const newGameSubmit = document.getElementById("new-game");
+const newLiveGameSubmit = document.getElementById("new-live-game");
 const nextMoveSubmit = document.getElementById("next-move");
 const statusSpan = document.getElementById("status");
 
 if (newGameSubmit !== null) {
   newGameSubmit.addEventListener('click', newGame);
+}
+if (newLiveGameSubmit !== null) {
+  newLiveGameSubmit.addEventListener('click', newLiveGame);
 }
 if (nextMoveSubmit !== null) {
   nextMoveSubmit.addEventListener('click', nextMove);
@@ -41,7 +45,11 @@ var switchSquareColor = function() {
 }
 var eventListeners = [];
 
-function newGame() {
+function newLiveGame() {
+  newGame(true);
+}
+
+function newGame(liveGame=false) {
 
   let spinner = document.createElement('div');
   spinner.id = "loading";
@@ -51,23 +59,29 @@ function newGame() {
   const player1Name = document.getElementById("player1-name").value;
   const player2Name = document.getElementById("player2-name").value;
 
+  let requestBody = {
+    "game": {
+      "white_name": player1Name,
+      "black_name": player2Name
+    },
+    "live": liveGame
+  }
+
   fetch("http://localhost:3000/api/games", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json"
     },
-    body: JSON.stringify({
-      "game": {
-        "white_name": player1Name,
-        "black_name": player2Name
-      }
-    })
+    body: JSON.stringify(requestBody)
   })
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      setVars(json)
+      if (liveGame) {
+        alert("Your access code is: " + json.["access_code"]);
+      }
+      setVars(json["game"])
       drawGame()
       drawMovePlay()
     }else{

@@ -21,7 +21,12 @@ class Api::GamesController < ApplicationController
       @game = Game.new(game_params)
       if @game.save
         # Game is ready for first move from white
-        render json: @game, status: :created
+        code = nil
+        if params[:live] == "true"
+          lg = @game.create_livegame
+          code = lg.access_code
+        end
+        render json: {game: @game, access_code: code }, status: :created
       else
         render json: {errors: @game.errors}, status: :unprocessable_entity
       end
