@@ -54,6 +54,32 @@
   <div class="footer">
   </div>
   
+  <div class="modal hidden">
+  <div class="modalContent">
+    <div class="contentContainer">
+      <div class="mainbar">
+
+        <p>Share this access code with  another player:</p>
+        <div id="canvasCodeWindow">
+          <canvas id="codeView"></canvas>
+        </div>
+      </div>
+      <div class="sidebar">
+        <input type="radio" id="whiteRadio" name="colorChoice">Play as White:
+          <input id="whitePlayerInput" type="text" placeholder="Player name"></input>
+        </input>
+        <br>
+        <input type="radio" id="blackRadio" name="colorChoice">Play as Black:
+          <input id="blackPlayerInput" type="text" placeholder="Player name"></input>
+        </input>
+        <br>
+        <button id="requestCodeButton">Request Game Code</button>
+      </div>
+    </div>
+  </div>
+  <div id="modalCloseButton">
+    <button>X</button>
+  </div>
 
 </body>
 <script type="text/javascript" src="game.js"></script>

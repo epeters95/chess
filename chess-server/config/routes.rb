@@ -20,7 +20,7 @@ Rails.application.routes.draw do
       #                PUT    /api/games/:game_id/board(.:format) api/boards#update
     end
 
-    resources :live_games, only: [:update]
+    resources :live_games, only: [:create, :update]
     # api_live_games  PATCH    /api/      games(.:format)           api/live_games#update
 
   end

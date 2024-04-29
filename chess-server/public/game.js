@@ -11,6 +11,7 @@ const newGameSubmit = document.getElementById("new-game");
 const newLiveGameSubmit = document.getElementById("new-live-game");
 const nextMoveSubmit = document.getElementById("next-move");
 const statusSpan = document.getElementById("status");
+const modal = document.getElementsByClassName("modal")[0];
 
 if (newGameSubmit !== null) {
   newGameSubmit.addEventListener('click', newGame);
@@ -45,11 +46,7 @@ var switchSquareColor = function() {
 }
 var eventListeners = [];
 
-function newLiveGame() {
-  newGame(true);
-}
-
-function newGame(liveGame=false) {
+function newGame() {
 
   let spinner = document.createElement('div');
   spinner.id = "loading";
@@ -63,8 +60,7 @@ function newGame(liveGame=false) {
     "game": {
       "white_name": player1Name,
       "black_name": player2Name
-    },
-    "live": liveGame
+    }
   }
 
   fetch("http://localhost:3000/api/games", {
@@ -78,9 +74,6 @@ function newGame(liveGame=false) {
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      if (liveGame) {
-        alert("Your access code is: " + json["access_code"]);
-      }
       setVars(json["game"])
       drawGame()
       drawMovePlay()
@@ -291,4 +284,101 @@ function drawMovePlay() {
   } else {
     nextMoveSubmit.removeAttribute("disabled")
   }
+}
+
+function drawCodeWindow(code) {
+  modal.classList.remove("hidden");
+  let spinner = document.createElement('div');
+  spinner.id = "loading";
+  spinner.innerHTML = '<div id="loadingspinner"><img src="spinner.gif"></div>';
+  let canv = document.getElementById("canvasCodeWindow");
+  canv.width = (screen.height * .2) - 100;
+  canv.height = canv.width / 2.0;
+
+  let cx = canv.getContext("2d");
+  cx.font = `50px Verdana`;
+  cx.fillStyle = "blue"
+  cx.fillText(code, 5, 5);
+
+  let submit = document.getElementById("requestCodeButton")
+  let whiteRadio = document.getElementById("whiteRadio");
+  let whitePlayerInput = document.getElementById('whitePlayerInput')
+  let blackRadio = document.getElementById("blackRadio");
+  let blackPlayerInput = document.getElementById('blackPlayerInput')
+
+  submit.addEventListener("click", function(event) {
+    let playerName = null;
+    let playerTeam = "";
+    if (!whiteRadio.checked && !blackRadio.checked) {
+      return null;
+    } else {
+      if (blackRadio.checked && blackPlayerInput !== "") {
+        playerName = blackPlayerInput
+        playerTeam = "black"
+      } else if (whiteRadio.checked && whitePlayerInput !== "") {
+        playerName = whitePlayerInput
+        playerTeam = "white"
+      }
+      if (playerName !== null) {
+        newLiveGame(playerName, playerTeam)
+      }
+    }
+  })
+
+}
+
+function newLiveGame() {
+
+  // Try the #create endpoint 
+  fetch("http://localhost:3000/api/live_games", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  })
+  .then(response => response.json())
+  .then(function(json) {
+    if (json.error === undefined){
+      drawCodeWindow(json["access_code"])
+      alert("Your access code is: " + );
+    }else{
+      alert(json.error)
+    }
+    spinner.classList.add("hidden");
+  })
+  .catch(function(error){ 
+    alert("Error: " + error)
+  })
+}
+
+function updateLiveGame(playerName, playerTeam) {
+  let requestBody = {
+    // "white_name": (playerTeam === "white" ? playerName : ""),
+    // "black_name": (playerTeam === "black" ? playerName : "")
+    // or
+    "playerName": playerName,
+    "playerTeam": playerTeam
+  }
+  fetch("http://localhost:3000/api/live_games", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(requestBody)
+  })
+  .then(response => response.json())
+  .then(function(json) {
+    if (json.error === undefined){
+      // go to live game page,
+      // await confirmation of first move
+    }else{
+      alert(json.error)
+    }
+    spinner.classList.add("hidden");
+  })
+  .catch(function(error){ 
+    alert("Error: " + error)
+  })
 }
