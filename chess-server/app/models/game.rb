@@ -57,7 +57,7 @@ class Game < ApplicationRecord
     self.update(status: "completed")
   end
 
-  def as_json()
+  def as_json(options = {})
     {
       id:             self.id,
       turn:           self.board.turn,
@@ -71,6 +71,10 @@ class Game < ApplicationRecord
 
   def to_json(options = {})
     JSON.pretty_generate(as_json, options)
+  end
+
+  def is_live?
+    !self.live_game.nil?
   end
 
   private

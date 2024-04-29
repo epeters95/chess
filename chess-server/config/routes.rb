@@ -19,8 +19,13 @@ Rails.application.routes.draw do
       #                PATCH  /api/games/:game_id/board(.:format) api/boards#update
       #                PUT    /api/games/:game_id/board(.:format) api/boards#update
     end
+
+    resources :live_games, only: [:update]
+    # api_live_games  PATCH    /api/      games(.:format)           api/live_games#update
+
   end
 
+  get '/game/:code', to: 'live_games#update'
   get '/testgame', to: 'test#index'
   get '/games', to: 'test#games_index'
 

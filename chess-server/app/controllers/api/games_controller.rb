@@ -40,13 +40,18 @@ class Api::GamesController < ApplicationController
     begin
       if @game.errors.empty?
         if @game.status != "completed"
-          if @game.is_computers_turn?
-            # PATCH/PUT to a game on the computer's turn will initiate a computer move
-            chosen_move = Computer.new(@game.board).get_move
+          if @game.is_live?
+            validate_move_access(@game, params)
           else
-            # Else, initiate a player move specified in params
-            chosen_move = Move.new(move_params)
 
+            if @game.is_computers_turn?
+              # PATCH/PUT to a game on the computer's turn will initiate a computer move
+              chosen_move = Computer.new(@game.board).get_move
+            else
+              # Else, initiate a player move specified in params
+              chosen_move = Move.new(move_params)
+
+            end
           end
           success = @game.play_move_and_evaluate(chosen_move)
           if success
@@ -70,6 +75,14 @@ class Api::GamesController < ApplicationController
   end
 
   private
+    def validate_move_access(game, params)
+      if game.board.turn == "white"
+        return (session[:token] || params[:token]) == game.live_game.white_token
+      else
+        return (session[:token] || params[:token]) == game.live_game.black_token
+      end
+    end
+
     def set_game
       @game = Game.find(params[:id])
     end
