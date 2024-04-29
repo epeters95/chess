@@ -3,6 +3,19 @@ class LiveGame < ApplicationRecord
 
   after_create :generate_access_code
 
+  def request_black
+    token = self.class.generate_token
+    self.update(black_token: token)
+    token
+  end
+
+  def request_white
+    token = self.class.generate_token
+    self.update(white_token: token)
+    token
+  end
+
+
   private
   def generate_access_code
     alphanum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
