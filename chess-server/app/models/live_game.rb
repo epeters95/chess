@@ -1,5 +1,5 @@
 class LiveGame < ApplicationRecord
-  belongs_to :game
+  belongs_to :game, required: false
 
   after_create :generate_access_code
 

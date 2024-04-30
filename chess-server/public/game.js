@@ -291,20 +291,34 @@ function drawCodeWindow(code) {
   let spinner = document.createElement('div');
   spinner.id = "loading";
   spinner.innerHTML = '<div id="loadingspinner"><img src="spinner.gif"></div>';
-  let canv = document.getElementById("canvasCodeWindow");
-  canv.width = (screen.height * .2) - 100;
+  let canv = document.getElementById("codeView");
+  canv.width = (screen.height * .2) - 110;
   canv.height = canv.width / 2.0;
 
   let cx = canv.getContext("2d");
+  cx.fillStyle = "black";
+  cx.fillRect(0, 0, canvas.width, canvas.height);
   cx.font = `50px Verdana`;
   cx.fillStyle = "blue"
-  cx.fillText(code, 5, 5);
+  cx.fillText(code, 5, 50);
 
   let submit = document.getElementById("requestCodeButton")
   let whiteRadio = document.getElementById("whiteRadio");
   let whitePlayerInput = document.getElementById('whitePlayerInput')
   let blackRadio = document.getElementById("blackRadio");
   let blackPlayerInput = document.getElementById('blackPlayerInput')
+
+  whiteRadio.addEventListener("change", function() {
+    // disable black player input text and enable white
+    blackPlayerInput.setAttribute("disabled", true)
+    whitePlayerInput.removeAttribute("disabled")
+  })
+  blackRadio.addEventListener("change", function() {
+    // disable white player input text and enable black
+    whitePlayerInput.setAttribute("disabled", true)
+    blackPlayerInput.removeAttribute("disabled")
+  })
+  
 
   submit.addEventListener("click", function(event) {
     let playerName = null;
@@ -320,7 +334,7 @@ function drawCodeWindow(code) {
         playerTeam = "white"
       }
       if (playerName !== null) {
-        newLiveGame(playerName, playerTeam)
+        updateLiveGame(playerName, playerTeam, code)
       }
     }
   })
@@ -341,24 +355,20 @@ function newLiveGame() {
   .then(function(json) {
     if (json.error === undefined){
       drawCodeWindow(json["access_code"])
-      alert("Your access code is: " + );
     }else{
       alert(json.error)
     }
-    spinner.classList.add("hidden");
   })
   .catch(function(error){ 
     alert("Error: " + error)
   })
 }
 
-function updateLiveGame(playerName, playerTeam) {
+function updateLiveGame(playerName, playerTeam, code) {
   let requestBody = {
-    // "white_name": (playerTeam === "white" ? playerName : ""),
-    // "black_name": (playerTeam === "black" ? playerName : "")
-    // or
     "playerName": playerName,
-    "playerTeam": playerTeam
+    "playerTeam": playerTeam,
+    "access_code": code
   }
   fetch("http://localhost:3000/api/live_games", {
     method: "PATCH",

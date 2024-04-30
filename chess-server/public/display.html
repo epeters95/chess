@@ -57,19 +57,23 @@
   <div class="modal hidden">
   <div class="modalContent">
     <div class="contentContainer">
-      <div class="mainbar">
+      <div class="mainbar large">
 
-        <p>Share this access code with  another player:</p>
-        <div id="canvasCodeWindow">
-          <canvas id="codeView"></canvas>
+        <div class="codeBackground">
+          <p>Share this access code with  another player:</p>
+          <div id="canvasCodeWindow">
+            <canvas id="codeView"></canvas>
+          </div>
+
         </div>
       </div>
-      <div class="sidebar">
-        <input type="radio" id="whiteRadio" name="colorChoice">Play as White:
+      <div class="sidebar small">
+        <p>Play as:</p>
+        <input type="radio" id="whiteRadio" name="colorChoice"><span> White<span> 
           <input id="whitePlayerInput" type="text" placeholder="Player name"></input>
         </input>
         <br>
-        <input type="radio" id="blackRadio" name="colorChoice">Play as Black:
+        <input type="radio" id="blackRadio" name="colorChoice"><span> Black<span> 
           <input id="blackPlayerInput" type="text" placeholder="Player name"></input>
         </input>
         <br>

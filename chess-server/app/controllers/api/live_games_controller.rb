@@ -4,7 +4,11 @@ class Api::LiveGamesController < ApplicationController
     # TODO: allow for multi-stage creation
 
     @livegame = LiveGame.create
-    render json: { access_code: @livegame.access_code }, status: :ok
+    if @livegame.errors.empty?
+      render json: { access_code: @livegame.access_code }, status: :ok
+    else
+      render json: { errors: @livegame.errors }, status: :unprocessable_entity
+    end
   end
 
   def update
@@ -12,7 +16,7 @@ class Api::LiveGamesController < ApplicationController
     p_team = params[:playerTeam]
 
     @livegame = LiveGame.find_by(access_code: params[:access_code])
-    if @livegame
+    if @livegame.errors.empty?
       if p_team == "white"
         token = @livegame.request_white
       else
