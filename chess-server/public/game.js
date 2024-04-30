@@ -88,11 +88,7 @@ function findGame() {
 }
 
 function newGame() {
-
-  let spinner = document.createElement('div');
-  spinner.id = "loading";
-  spinner.innerHTML = '<div id="loadingspinner"><img src="spinner.gif"></div>';
-  document.getElementById("canvas-window").appendChild(spinner);
+  let spinner = showSpinner("canvas-window");
 
   const player1Name = document.getElementById("player1-name").value;
   const player2Name = document.getElementById("player2-name").value;
@@ -121,7 +117,7 @@ function newGame() {
     }else{
       alert(json.error)
     }
-    spinner.classList.add("hidden");
+    spinner.hide();
   })
   .catch(function(error){ 
     alert("Error: " + error)
@@ -329,18 +325,21 @@ function drawMovePlay() {
 
 function drawCodeWindow(code, id) {
   modal.classList.remove("hidden");
-  let spinner = document.createElement('div');
-  spinner.id = "loading";
-  spinner.innerHTML = '<div id="loadingspinner"><img src="spinner.gif"></div>';
   let canv = document.getElementById("codeView");
-  canv.width = (screen.height * .2) - 110;
+  canv.width = (screen.height * .2) - 50;
   canv.height = canv.width / 2.0;
 
+
+  function randColorVal() {
+    Math.floor(Math.random() * 255).toString(16);;
+  }
+
   let cx = canv.getContext("2d");
-  cx.fillStyle = "black";
-  cx.fillRect(0, 0, canvas.width, canvas.height);
-  cx.font = `50px Verdana`;
-  cx.fillStyle = "blue"
+  cx.font = `48pt Algerian`;
+  let r = randColorVal();
+  let g = randColorVal();
+  let b = randColorVal();
+  cx.fillStyle = "#" + r + g + b;
   cx.fillText(code, 5, 50);
 
   let submit = document.getElementById("requestCodeButton")
@@ -383,6 +382,8 @@ function drawCodeWindow(code, id) {
 }
 
 function newLiveGame() {
+
+  let spinner = showSpinner("canvasCodeWindow");
   // Try the #create endpoint 
   fetch("http://localhost:3000/api/live_games", {
     method: "POST",
@@ -398,6 +399,7 @@ function newLiveGame() {
     }else{
       alert(json.error)
     }
+    spinner.hide();
   })
   .catch(function(error){ 
     alert("Error: " + error)
@@ -405,6 +407,7 @@ function newLiveGame() {
 }
 
 function updateLiveGame(playerName, playerTeam, code, id) {
+  let spinner = showSpinner("canvasCodeWindow");
   let requestBody = {
     "player_name": playerName,
     "player_team": playerTeam,
@@ -434,9 +437,23 @@ function updateLiveGame(playerName, playerTeam, code, id) {
     }else{
       alert(json.error)
     }
-    spinner.classList.add("hidden");
+    spinner.hide();
   })
   .catch(function(error){ 
     alert("Error: " + error)
   })
+}
+
+function showSpinner(canvasParentId) {
+  let spinner = document.createElement('div');
+  spinner.id = "loading";
+  spinner.innerHTML = '<div id="loadingspinner"><img src="spinner2.gif"></div>';
+  document.getElementById(canvasParentId).appendChild(spinner);
+
+  // Add hide function for spinner
+  spinner.hide = function() {
+    this.classList.add("hidden");
+  }
+
+  return spinner
 }
