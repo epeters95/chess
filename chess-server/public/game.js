@@ -286,7 +286,7 @@ function drawMovePlay() {
   }
 }
 
-function drawCodeWindow(code) {
+function drawCodeWindow(code, id) {
   modal.classList.remove("hidden");
   let spinner = document.createElement('div');
   spinner.id = "loading";
@@ -327,14 +327,14 @@ function drawCodeWindow(code) {
       return null;
     } else {
       if (blackRadio.checked && blackPlayerInput !== "") {
-        playerName = blackPlayerInput
+        playerName = blackPlayerInput.value
         playerTeam = "black"
       } else if (whiteRadio.checked && whitePlayerInput !== "") {
-        playerName = whitePlayerInput
+        playerName = whitePlayerInput.value
         playerTeam = "white"
       }
       if (playerName !== null) {
-        updateLiveGame(playerName, playerTeam, code)
+        updateLiveGame(playerName, playerTeam, code, id)
       }
     }
   })
@@ -342,7 +342,6 @@ function drawCodeWindow(code) {
 }
 
 function newLiveGame() {
-
   // Try the #create endpoint 
   fetch("http://localhost:3000/api/live_games", {
     method: "POST",
@@ -354,7 +353,7 @@ function newLiveGame() {
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      drawCodeWindow(json["access_code"])
+      drawCodeWindow(json["access_code"], json["id"])
     }else{
       alert(json.error)
     }
@@ -364,13 +363,13 @@ function newLiveGame() {
   })
 }
 
-function updateLiveGame(playerName, playerTeam, code) {
+function updateLiveGame(playerName, playerTeam, code, id) {
   let requestBody = {
-    "playerName": playerName,
-    "playerTeam": playerTeam,
+    "player_name": playerName,
+    "player_team": playerTeam,
     "access_code": code
   }
-  fetch("http://localhost:3000/api/live_games", {
+  fetch("http://localhost:3000/api/live_games/" + id , {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -383,6 +382,14 @@ function updateLiveGame(playerName, playerTeam, code) {
     if (json.error === undefined){
       // go to live game page,
       // await confirmation of first move
+
+      // set token to allow future moves on the game
+      if (json["token"] !== undefined) {
+        document.cookie = 'gametoken=' + json["token"] + '; path=/'
+        newUrl = "http://localhost:3000/api/live_games/" + json["id"]
+        // TODO: create game view page
+        window.location.href = newUrl
+      }
     }else{
       alert(json.error)
     }
