@@ -9,6 +9,8 @@ canvas.height = canvas.width;
 
 const newGameSubmit = document.getElementById("new-game");
 const newLiveGameSubmit = document.getElementById("new-live-game");
+const accessCodeInput = document.getElementById("accessCodeInput");
+const getAccessCode = document.getElementById("getAccessCode");
 const nextMoveSubmit = document.getElementById("next-move");
 const statusSpan = document.getElementById("status");
 const modal = document.getElementsByClassName("modal")[0];
@@ -21,6 +23,22 @@ if (newLiveGameSubmit !== null) {
 }
 if (nextMoveSubmit !== null) {
   nextMoveSubmit.addEventListener('click', nextMove);
+}
+
+
+if (getAccessCode !== null) {
+  
+  getAccessCode.addEventListener('click', findGame);
+  getAccessCode.setAttribute('disabled', true);
+
+  // Only trigger findGame on click when a full code is entered
+  accessCodeInput.addEventListener('keyup', function(event) {
+    if (this.value.length === 4) {
+      getAccessCode.removeAttribute('disabled');
+    } else {
+      getAccessCode.setAttribute('disabled', true);
+    }
+  })
 }
 
 var gameId = 0;
@@ -45,6 +63,29 @@ var switchSquareColor = function() {
   return squareColor
 }
 var eventListeners = [];
+
+function findGame() {
+  // get game from the api
+  debugger
+  fetch("http://localhost:3000/api/live_games/?access_code=" + accessCodeInput.value, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  })
+  .then(response => response.json())
+  .then(function(json) {
+    if (json.error === undefined){
+      drawCodeWindow(json["access_code"], json["id"])
+    }else{
+      alert(json.error)
+    }
+  })
+  .catch(function(error){ 
+    alert("Error: " + error)
+  })
+}
 
 function newGame() {
 

@@ -12,9 +12,14 @@ class Api::LiveGamesController < ApplicationController
   end
 
   def show
-    @livegame = LiveGame.find(params[:id])
+    if params[:access_code]
+      @livegame = LiveGame.find_by(access_code: params[:access_code])
+    end
+    if @livegame.nil? && params[:id]
+      @livegame = LiveGame.find(params[:id])
+    end
     unless @livegame.nil?
-      render json: { live_game: @livegame } 
+      render json: { id: @livegame.id, access_code: @livegame.access_code, live_game: @livegame } 
     else
       render json: { errors: "Not found" }, status: :not_found
     end
@@ -23,6 +28,8 @@ class Api::LiveGamesController < ApplicationController
   def update
     p_name = params[:player_name]
     p_team = params[:player_team]
+
+    debugger
 
     whitename = ( p_team == "white" ? p_name : "" )
     blackname = ( p_team == "black" ? p_name : "" )
@@ -47,8 +54,7 @@ class Api::LiveGamesController < ApplicationController
       elsif p_team == "black"
         @livegame.game.update(black_name: p_name, status: "ready")
       end
-      if (p_team == "white" && @livegame.white_token !== "") ||
-         (p_team == "black" && @livegame.black_token !== "")
+      if (p_team == "white" && @livegame.white_token != "") || (p_team == "black" && @livegame.black_token != "")
 
         return render json: { errors: "Team already taken"}, status: :unprocessable_entity
       else
@@ -70,6 +76,6 @@ class Api::LiveGamesController < ApplicationController
   end
 
   def game_params
-      params.require(:game).permit(:white_name, :black_name, :status)
-    end
+    params.require(:game).permit(:white_name, :black_name, :status)
+  end
 end

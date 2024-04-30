@@ -23,9 +23,12 @@ Rails.application.routes.draw do
     resources :live_games, only: [:create, :update, :show]
     # api_live_games  PATCH    /api/      games(.:format)           api/live_games#update
 
+    # Viewing game via access code
+    get '/live_games/', to: 'live_games#show'
   end
 
-  get '/game/:code', to: 'live_games#update'
+
+  # Test endpoints rendering html
   get '/testgame', to: 'test#index'
   get '/games', to: 'test#games_index'
 
