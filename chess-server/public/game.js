@@ -475,8 +475,10 @@ function updateLiveGame(playerName, playerTeam, code, id) {
       else {
       // set token to allow future moves on the game
         if (json["token"] !== undefined) {
+          let current_token = document.cookie;
+          if (!document.cookie.split("; ").find((row) => row.startsWith("gametoken") )  ) {
           document.cookie = 'gametoken=' + json["token"] + '; path=/'
-          
+          document.getElementById("cookieholder").innerText = json["token"];
           
           // newUrl = "http://localhost:3000/api/live_games/" + json["id"]
           // fetch(newUrl, {

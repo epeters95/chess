@@ -163,8 +163,8 @@ table#gameTable {
   min-height: 280px;
 }
 
-.contentContainer .mainbar.large {
-  width: 70%;
+.contentContainer .mainbar.small {
+  width: 50%;
 }
 
 .contentContainer .mainbar #canvas-window{
@@ -256,8 +256,8 @@ table#gameTable {
   }
 }
 
-.sidebar.small {
-  width: 30%;
+.sidebar.large {
+  width: 50%;
 }
 
 #requestCodeButton {
