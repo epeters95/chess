@@ -15,6 +15,10 @@ class LiveGame < ApplicationRecord
     token
   end
 
+  def is_ready?
+    !self.black_token.nil? && !self.white_token.nil?
+  end
+
 
   private
   def generate_access_code

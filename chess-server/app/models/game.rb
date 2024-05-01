@@ -62,6 +62,8 @@ class Game < ApplicationRecord
       id:             self.id,
       turn:           self.board.turn,
       turn_name:      name_for(self.board.turn),
+      white_name:     self.white_name,
+      black_name:     self.black_name,
       status_str:     self.board.status_str,
       pieces:         self.board.positions_array,
       legal_moves:    self.board.legal_moves[self.board.turn],

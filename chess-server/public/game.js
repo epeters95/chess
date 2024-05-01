@@ -14,6 +14,10 @@ const getAccessCode = document.getElementById("getAccessCode");
 const nextMoveSubmit = document.getElementById("next-move");
 const statusSpan = document.getElementById("status");
 const modal = document.getElementsByClassName("modal")[0];
+const modalCloseBtn = document.getElementById("modalCloseButton");
+modalCloseBtn.addEventListener("click", function(event) {
+  modal.classList.add("hidden");
+})
 
 if (newGameSubmit !== null) {
   newGameSubmit.addEventListener('click', newGame);
@@ -66,7 +70,7 @@ var eventListeners = [];
 
 function findGame() {
   // get game from the api
-  debugger
+  let spinner = showSpinner("canvas-window");
   fetch("http://localhost:3000/api/live_games/?access_code=" + accessCodeInput.value, {
     method: "GET",
     headers: {
@@ -77,10 +81,11 @@ function findGame() {
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      drawCodeWindow(json["access_code"], json["id"])
+      drawCodeWindow(json["access_code"], json["id"], json["game"]["white_name"], json["game"]["black_name"])
     }else{
       alert(json.error)
     }
+    spinner.hide()
   })
   .catch(function(error){ 
     alert("Error: " + error)
@@ -315,6 +320,7 @@ function drawGame() {
 }
 
 function drawMovePlay() {
+  // TODO: allow this method to work with live games
   if (turnName !== "") {
     drawMoves();
     nextMoveSubmit.setAttribute("disabled", true)
@@ -323,7 +329,7 @@ function drawMovePlay() {
   }
 }
 
-function drawCodeWindow(code, id) {
+function drawCodeWindow(code, id, whiteName="", blackName="") {
   modal.classList.remove("hidden");
   let canv = document.getElementById("codeView");
   canv.width = (screen.height * .2) - 50;
@@ -331,7 +337,7 @@ function drawCodeWindow(code, id) {
 
 
   function randColorVal() {
-    Math.floor(Math.random() * 255).toString(16);;
+    return Math.floor(Math.random() * 255).toString(16);
   }
 
   let cx = canv.getContext("2d");
@@ -348,16 +354,49 @@ function drawCodeWindow(code, id) {
   let blackRadio = document.getElementById("blackRadio");
   let blackPlayerInput = document.getElementById('blackPlayerInput')
 
-  whiteRadio.addEventListener("change", function() {
-    // disable black player input text and enable white
-    blackPlayerInput.setAttribute("disabled", true)
-    whitePlayerInput.removeAttribute("disabled")
+  whitePlayerInput.addEventListener("keyup", function(event) {
+    if (this.value.length === 0) {
+      submit.setAttribute("disabled", true)
+    } else {
+      submit.removeAttribute("disabled")
+    }
   })
-  blackRadio.addEventListener("change", function() {
-    // disable white player input text and enable black
+
+  blackPlayerInput.addEventListener("keyup", function(event) {
+    if (this.value.length === 0) {
+      submit.setAttribute("disabled", true)
+    } else {
+      submit.removeAttribute("disabled")
+    }
+  })
+
+  // Populate/disable player names already chosen
+  if (whiteName !== "") {
+    whitePlayerInput.value = whiteName
     whitePlayerInput.setAttribute("disabled", true)
-    blackPlayerInput.removeAttribute("disabled")
-  })
+    whiteRadio.setAttribute("disabled", true)
+  }
+  if (blackName !== "") {
+    blackPlayerInput.value = blackName
+    blackPlayerInput.setAttribute("disabled", true)
+    blackRadio.setAttribute("disabled", true)
+  }
+
+  // disable entering for both teams
+  if (blackName === "" && whiteName === "") {
+    whiteRadio.addEventListener("change", function() {
+      blackPlayerInput.setAttribute("disabled", true)
+      whitePlayerInput.removeAttribute("disabled")
+    })
+    blackRadio.addEventListener("change", function() {
+      // disable white player input text and enable black
+      whitePlayerInput.setAttribute("disabled", true)
+      blackPlayerInput.removeAttribute("disabled")
+    })
+  }
+  if (blackName !== "" && whiteName !== "") {
+    submit.setAttribute("disabled", true)
+  }
   
 
   submit.addEventListener("click", function(event) {
@@ -424,15 +463,40 @@ function updateLiveGame(playerName, playerTeam, code, id) {
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      // go to live game page,
+      // if both players ready, draw live game on current page,
       // await confirmation of first move
+      if (json["is_ready"] === "true") {
+        modal.classList.add("hidden");
+        setVars(json["game"])
+        drawGame()
+        drawMovePlay()
+      }
 
+      else {
       // set token to allow future moves on the game
-      if (json["token"] !== undefined) {
-        document.cookie = 'gametoken=' + json["token"] + '; path=/'
-        newUrl = "http://localhost:3000/api/live_games/" + json["id"]
-        // TODO: create game view page
-        window.location.href = newUrl
+        if (json["token"] !== undefined) {
+          document.cookie = 'gametoken=' + json["token"] + '; path=/'
+          
+          
+          // newUrl = "http://localhost:3000/api/live_games/" + json["id"]
+          // fetch(newUrl, {
+          //   method: "GET",
+          //   headers: {
+          //     "Content-Type": "application/json",
+          //     "Accept": "application/json"
+          //   }
+          // }).then(response => response.json())
+          // .then(function(json) {
+          //   if (json.error === undefined) {
+          //     // show game status
+          //   }
+          // })
+        }
+        if (json["is_ready"] === "true") {
+          alert("Game ready to begin")
+        } else {
+          alert("Now waiting on someone to join your game.")
+        }
       }
     }else{
       alert(json.error)

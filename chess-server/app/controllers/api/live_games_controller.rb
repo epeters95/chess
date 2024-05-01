@@ -19,7 +19,13 @@ class Api::LiveGamesController < ApplicationController
       @livegame = LiveGame.find(params[:id])
     end
     unless @livegame.nil?
-      render json: { id: @livegame.id, access_code: @livegame.access_code, live_game: @livegame } 
+      render json: {
+        id:          @livegame.id,
+        access_code: @livegame.access_code,
+        is_ready:    @livegame.is_ready?,
+        game:        @livegame.game,
+        live_game:   @livegame
+      } 
     else
       render json: { errors: "Not found" }, status: :not_found
     end
@@ -63,7 +69,12 @@ class Api::LiveGamesController < ApplicationController
     end
 
     if @livegame.errors.empty?
-      render json: { id: @livegame.id, token: token }, status: :ok
+      render json: {
+        id:       @livegame.id,
+        token:    token,
+        game:     @livegame.game,
+        is_ready: @livegame.is_ready?
+      }, status: :ok
     else
       render json: { errors: @livegame.errors }, status: :unprocessable_entity
     end
