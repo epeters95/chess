@@ -71,7 +71,8 @@ var eventListeners = [];
 function findGame() {
   // get game from the api
   let spinner = showSpinner("canvas-window");
-  fetch("http://localhost:3000/api/live_games/?access_code=" + accessCodeInput.value, {
+  let params = "?access_code=" + accessCodeInput.value + "&token=" + getTokenCookie()
+  fetch("http://localhost:3000/api/live_games/" + params, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -330,6 +331,7 @@ function drawMovePlay() {
 }
 
 function drawCodeWindow(code, id, whiteName="", blackName="") {
+  // TODO: just use white name and black name from params
   modal.classList.remove("hidden");
   let canv = document.getElementById("codeView");
   canv.width = (screen.height * .2) - 50;
@@ -353,6 +355,22 @@ function drawCodeWindow(code, id, whiteName="", blackName="") {
   let whitePlayerInput = document.getElementById('whitePlayerInput')
   let blackRadio = document.getElementById("blackRadio");
   let blackPlayerInput = document.getElementById('blackPlayerInput')
+
+  whiteRadio.checked = false;
+  blackRadio.checked = false;
+  whitePlayerInput.value = "";
+  blackPlayerInput.value = "";
+
+  let hasCookie = !!(getTokenCookie())
+
+  if (hasCookie) {
+    alert("Note: You can only be in one game at a time")
+    whitePlayerInput.setAttribute("disabled", true)
+    whiteRadio.setAttribute("disabled", true)
+    blackPlayerInput.setAttribute("disabled", true)
+    blackRadio.setAttribute("disabled", true)
+    submit.setAttribute("disabled", true)
+  }
 
   whitePlayerInput.addEventListener("keyup", function(event) {
     if (this.value.length === 0) {
@@ -445,6 +463,17 @@ function newLiveGame() {
   })
 }
 
+function getTokenCookie() {
+  // let tokenIdFilled = document.getElementById("cookieholder").innerText !== ""
+  // return (tokenIdFilled || cookieSaved)
+  return document.cookie.split("; ").find((row) => row.startsWith("gametoken"))
+}
+
+function setTokenCookie(token) {
+  document.cookie = 'gametoken=' + token + '; path=/'
+  document.getElementById("cookieholder").innerText = token;
+}
+
 function updateLiveGame(playerName, playerTeam, code, id) {
   let spinner = showSpinner("canvasCodeWindow");
   let requestBody = {
@@ -465,8 +494,9 @@ function updateLiveGame(playerName, playerTeam, code, id) {
     if (json.error === undefined){
       // if both players ready, draw live game on current page,
       // await confirmation of first move
-      if (json["is_ready"] === "true") {
+      if (json["is_ready"]) {
         modal.classList.add("hidden");
+        alert("Game ready to begin")
         setVars(json["game"])
         drawGame()
         drawMovePlay()
@@ -475,11 +505,11 @@ function updateLiveGame(playerName, playerTeam, code, id) {
       else {
       // set token to allow future moves on the game
         if (json["token"] !== undefined) {
-          let current_token = document.cookie;
-          if (!document.cookie.split("; ").find((row) => row.startsWith("gametoken") )  ) {
-          document.cookie = 'gametoken=' + json["token"] + '; path=/'
-          document.getElementById("cookieholder").innerText = json["token"];
-          
+
+          // No cookie set
+          if (!getTokenCookie()) {
+            setTokenCookie(json["token"])
+          }
           // newUrl = "http://localhost:3000/api/live_games/" + json["id"]
           // fetch(newUrl, {
           //   method: "GET",
@@ -494,13 +524,9 @@ function updateLiveGame(playerName, playerTeam, code, id) {
           //   }
           // })
         }
-        if (json["is_ready"] === "true") {
-          alert("Game ready to begin")
-        } else {
-          alert("Now waiting on someone to join your game.")
-        }
+        drawCodeWindow(json["access_code"], json["id"])
       }
-    }else{
+    } else {
       alert(json.error)
     }
     spinner.hide();

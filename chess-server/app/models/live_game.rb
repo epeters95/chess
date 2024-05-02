@@ -16,7 +16,7 @@ class LiveGame < ApplicationRecord
   end
 
   def is_ready?
-    !self.black_token.nil? && !self.white_token.nil?
+    !self.black_token.blank? && !self.white_token.blank?
   end
 
 

@@ -19,13 +19,24 @@ class Api::LiveGamesController < ApplicationController
       @livegame = LiveGame.find(params[:id])
     end
     unless @livegame.nil?
-      render json: {
+      return_obj = {
         id:          @livegame.id,
         access_code: @livegame.access_code,
         is_ready:    @livegame.is_ready?,
         game:        @livegame.game,
         live_game:   @livegame
-      } 
+      }
+      if params[:token]
+
+        # Acknowledge if the token provided is legitimate
+
+        if [@livegame.white_token, @livegame.black_token].include? params[:token]
+          return_obj[:token] = params[:token]
+        end
+        # Note: still allows #show method to be used publicly without token
+      end
+
+      render json: return_obj 
     else
       render json: { errors: "Not found" }, status: :not_found
     end
