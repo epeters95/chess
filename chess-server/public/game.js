@@ -82,7 +82,7 @@ function findGame() {
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      drawCodeWindow(json["access_code"], json["id"], json["game"]["white_name"], json["game"]["black_name"])
+      drawCodeWindow(json)
     }else{
       alert(json.error)
     }
@@ -330,12 +330,23 @@ function drawMovePlay() {
   }
 }
 
-function drawCodeWindow(code, id, whiteName="", blackName="") {
+// This background modal displays the status of a "live game"
+// which includes which players have joined. This method depends on a
+// successful response (json) from either #show or #update on /api/live_games
+
+function drawCodeWindow(json) {
   // TODO: just use white name and black name from params
   modal.classList.remove("hidden");
   let canv = document.getElementById("codeView");
   canv.width = (screen.height * .2) - 50;
   canv.height = canv.width / 2.0;
+  
+  let whiteName = "";
+  let blackName = "";
+  if (json["game"]) {
+    whiteName = json["game"]["white_name"]
+    blackName = json["game"]["black_name"]
+  }
 
 
   function randColorVal() {
@@ -343,12 +354,12 @@ function drawCodeWindow(code, id, whiteName="", blackName="") {
   }
 
   let cx = canv.getContext("2d");
-  cx.font = `48pt Algerian`;
+  cx.font = `48pt Comic Sans MS`;
   let r = randColorVal();
   let g = randColorVal();
   let b = randColorVal();
   cx.fillStyle = "#" + r + g + b;
-  cx.fillText(code, 5, 50);
+  cx.fillText(json["access_code"], 5, 80);
 
   let submit = document.getElementById("requestCodeButton")
   let whiteRadio = document.getElementById("whiteRadio");
@@ -361,15 +372,25 @@ function drawCodeWindow(code, id, whiteName="", blackName="") {
   whitePlayerInput.value = "";
   blackPlayerInput.value = "";
 
-  let hasCookie = !!(getTokenCookie())
+  let tokenCookie = getTokenCookie()
 
-  if (hasCookie) {
-    alert("Note: You can only be in one game at a time")
-    whitePlayerInput.setAttribute("disabled", true)
-    whiteRadio.setAttribute("disabled", true)
-    blackPlayerInput.setAttribute("disabled", true)
-    blackRadio.setAttribute("disabled", true)
-    submit.setAttribute("disabled", true)
+  if (!!tokenCookie) {
+    if (json["is_ready"] && json["token"] === tokenCookie ) {
+      // Close out and show live game
+      modal.classList.add("hidden")
+      setVars(json["game"])
+      drawGame()
+      drawMovePlay()
+      return null;
+
+    } else  {
+      alert("Note: You can only be in one game at a time")
+      whitePlayerInput.setAttribute("disabled", true)
+      whiteRadio.setAttribute("disabled", true)
+      blackPlayerInput.setAttribute("disabled", true)
+      blackRadio.setAttribute("disabled", true)
+      submit.setAttribute("disabled", true)
+    }
   }
 
   whitePlayerInput.addEventListener("keyup", function(event) {
@@ -431,7 +452,7 @@ function drawCodeWindow(code, id, whiteName="", blackName="") {
         playerTeam = "white"
       }
       if (playerName !== null) {
-        updateLiveGame(playerName, playerTeam, code, id)
+        updateLiveGame(playerName, playerTeam, json)
       }
     }
   })
@@ -452,7 +473,7 @@ function newLiveGame() {
   .then(response => response.json())
   .then(function(json) {
     if (json.error === undefined){
-      drawCodeWindow(json["access_code"], json["id"])
+      drawCodeWindow(json)
     }else{
       alert(json.error)
     }
@@ -474,7 +495,9 @@ function setTokenCookie(token) {
   document.getElementById("cookieholder").innerText = token;
 }
 
-function updateLiveGame(playerName, playerTeam, code, id) {
+function updateLiveGame(playerName, playerTeam, prevJson) {
+  let code = prevJson["access_code"];
+  let id = prevJson["id"];
   let spinner = showSpinner("canvasCodeWindow");
   let requestBody = {
     "player_name": playerName,
@@ -494,7 +517,9 @@ function updateLiveGame(playerName, playerTeam, code, id) {
     if (json.error === undefined){
       // if both players ready, draw live game on current page,
       // await confirmation of first move
-      if (json["is_ready"]) {
+      if (json["is_ready"] ) {
+        // No validation needed because response function is executed
+        // by the client who joined the game and who is issued a token
         modal.classList.add("hidden");
         alert("Game ready to begin")
         setVars(json["game"])
@@ -524,7 +549,8 @@ function updateLiveGame(playerName, playerTeam, code, id) {
           //   }
           // })
         }
-        drawCodeWindow(json["access_code"], json["id"])
+        json["access_code"] = prevJson["access_code"]
+        drawCodeWindow(json)
       }
     } else {
       alert(json.error)

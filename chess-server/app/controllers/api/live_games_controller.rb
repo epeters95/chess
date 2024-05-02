@@ -46,12 +46,10 @@ class Api::LiveGamesController < ApplicationController
     p_name = params[:player_name]
     p_team = params[:player_team]
 
-    debugger
-
     whitename = ( p_team == "white" ? p_name : "" )
     blackname = ( p_team == "black" ? p_name : "" )
 
-    @livegame = LiveGame.find_by(access_code: params.require(:live_game).permit(:access_code)[:access_code])
+    @livegame = LiveGame.find_by(access_code: params[:access_code])
     if @livegame.nil?
       return render json: { errors: "Not found" }, status: :not_found
     end
