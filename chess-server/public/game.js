@@ -237,16 +237,28 @@ function drawBoard(){
       }
     }
 }
+function fillPieces(thisCol) {
+  pieces[thisCol].forEach(function(el) {
+    context.fillStyle = thisCol;
+    let x, y;
+    if (team !== null) {
 
-function drawPieces(){
-  context.font = `50px Verdana`;
-  fillPieces("white");
-  fillPieces("black");
+      if (team === "white") {
+        x = fileIndexOf(el.position[0]) * squareSize;
+        y = (7 - rankIndexOf(el.position[1])) * squareSize;
+      } else {
+        x = (7 - fileIndexOf(el.position[0])) * squareSize;
+        y = rankIndexOf(el.position[1]) * squareSize;
+      }
+      context.fillText(el.char, x + tinySize, y + smallSize);
+      // Add click handler
+      if (thisCol === team) {
+        addFunctionOnClick(x, y, function() {
+          selectPiece(el)
+        });
+      }
 
-  function fillPieces(col) {
-    pieces[col].forEach(function(el) {
-      context.fillStyle = col;
-      let x, y;
+    } else {
       if (turn === "white" || turnName === "") {
         x = fileIndexOf(el.position[0]) * squareSize;
         y = (7 - rankIndexOf(el.position[1])) * squareSize;
@@ -256,13 +268,21 @@ function drawPieces(){
       }
       context.fillText(el.char, x + tinySize, y + smallSize);
       // Add click handler
-      if (col === turn) {
+      if (thisCol === turn) {
         addFunctionOnClick(x, y, function() {
           selectPiece(el)
         });
       }
-    })
-  }
+
+    }
+  })
+}
+
+function drawPieces(team=null){
+  context.font = `50px Verdana`;
+  fillPieces("white");
+  fillPieces("black");
+
 }
 
 function drawMoves() {
@@ -305,7 +325,7 @@ function drawMoves() {
 }
 
 
-function drawGame() {
+function drawGame(color=null) {
 
   statusSpan.innerText = status;
 
@@ -316,8 +336,10 @@ function drawGame() {
 
   switchSquareColor()
 
+  let showTeam = (color || getTokenColor());
+
   drawBoard();
-  drawPieces();
+  drawPieces(showTeam);
   
 }
 
@@ -484,15 +506,20 @@ function newLiveGame() {
   })
 }
 
+function getTokenColor() {
+  return document.getElementById("cookieholder-color").innerText;
+}
+
 function getTokenCookie() {
   // let tokenIdFilled = document.getElementById("cookieholder").innerText !== ""
   // return (tokenIdFilled || cookieSaved)
   return document.cookie.split("; ").find((row) => row.startsWith("gametoken"))
 }
 
-function setTokenCookie(token) {
+function setTokenCookie(token, color=null) {
   document.cookie = 'gametoken=' + token + '; path=/'
   document.getElementById("cookieholder").innerText = token;
+  document.getElementById("cookieholder-color").innerText = color;
 }
 
 function updateLiveGame(playerName, playerTeam, prevJson) {
@@ -522,8 +549,9 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
         // by the client who joined the game and who is issued a token
         modal.classList.add("hidden");
         alert("Game ready to begin")
+        setTokenCookie(json["token"], json["color"])
         setVars(json["game"])
-        drawGame()
+        drawGame(getTokenColor())
         drawMovePlay()
       }
 
@@ -533,21 +561,8 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
 
           // No cookie set
           if (!getTokenCookie()) {
-            setTokenCookie(json["token"])
+            setTokenCookie(json["token"], json["color"])
           }
-          // newUrl = "http://localhost:3000/api/live_games/" + json["id"]
-          // fetch(newUrl, {
-          //   method: "GET",
-          //   headers: {
-          //     "Content-Type": "application/json",
-          //     "Accept": "application/json"
-          //   }
-          // }).then(response => response.json())
-          // .then(function(json) {
-          //   if (json.error === undefined) {
-          //     // show game status
-          //   }
-          // })
         }
         json["access_code"] = prevJson["access_code"]
         drawCodeWindow(json)

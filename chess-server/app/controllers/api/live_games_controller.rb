@@ -30,8 +30,10 @@ class Api::LiveGamesController < ApplicationController
 
         # Acknowledge if the token provided is legitimate
 
-        if [@livegame.white_token, @livegame.black_token].include? params[:token]
-          return_obj[:token] = params[:token]
+        if @livegame.white_token == params[:token]
+          return_obj[:token] = "white"
+        elsif @livegame.black_token == params[:token]
+          return_obj[:token] = "black"
         end
         # Note: still allows #show method to be used publicly without token
       end
@@ -81,6 +83,7 @@ class Api::LiveGamesController < ApplicationController
       render json: {
         id:       @livegame.id,
         token:    token,
+        color:    p_team,
         game:     @livegame.game,
         is_ready: @livegame.is_ready?
       }, status: :ok
