@@ -33,21 +33,38 @@
       <br>
       <br>
       <div class="player-names">
-        <label>White:</label>
-        <input type="text" id="player1-name" placeholder="Leave blank for Computer"/>
-        <br>
-        <label>Black:</label>
-        <input type="text" id="player2-name" placeholder="Leave blank for Computer"/>
-        <div class="newgame">
-          <button id="new-game">New Game</button>
-        </div>
-        <br>
-        <div class="newgame">
-          <button id="new-live-game">New Live Game</button>
-        </div>
-        <br>
-        <input id="accessCodeInput" placeholder="Enter Code" type="text">
-        <button id="getAccessCode">Find Game</button>
+        <table class="inputs-table">
+
+          <tr>
+            <td class="double-width">
+              <label>White:</label>
+              <input type="text" id="player1-name" placeholder="Leave blank for Computer"/>
+              <br>
+              <label>Black:</label>
+              <input type="text" id="player2-name" placeholder="Leave blank for Computer"/>
+              <div class="newgame">
+                <button id="new-game">New Local Game</button>
+              </div>
+            </td>
+            <td>
+              <table>
+                <tr><td class="border-right"></td><td></td></tr>
+                <tr><td></td><td><span class="border-separator">or</span></td></tr>
+                <tr><td class="border-right"></td><td></td></tr>
+              </table>
+
+            </td>
+            <td class="double-width">
+              <br>
+              <div class="newgame">
+                <button id="new-live-game">New Live Game</button>
+              </div>
+              <input id="accessCodeInput" placeholder="Enter Code" type="text">
+              <button id="getAccessCode">Find Game</button>
+            </td>
+          </tr>
+
+        </table>
       </div>
 
     </div>

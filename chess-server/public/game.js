@@ -81,10 +81,11 @@ function findGame() {
   })
   .then(response => response.json())
   .then(function(json) {
-    if (json.error === undefined){
+      debugger
+    if (json.errors === undefined){
       drawCodeWindow(json)
     }else{
-      alert(json.error)
+      alert(json.errors)
     }
     spinner.hide()
   })
@@ -116,7 +117,7 @@ function newGame() {
   })
   .then(response => response.json())
   .then(function(json) {
-    if (json.error === undefined){
+    if (json.errors === undefined){
       setVars(json["game"])
       drawGame()
       drawMovePlay()
@@ -140,13 +141,13 @@ function nextMove() {
   })
   .then(response => response.json())
   .then(function(json) {
-    if (json.error === undefined){
+    if (json.error === undefined && json.errors === undefined){
       setVars(json)
       drawGame()
       drawMovePlay()
       
-    }else{
-      alert(json.error)
+    } else {
+      alert("Error:" + json.error + " " + json.errors)
     }
   })
   .catch(function(error){ 
@@ -165,13 +166,13 @@ function selectMove(move) {
   })
   .then(response => response.json())
   .then(function(json) {
-    if (json.error === undefined){
+    if (json.error === undefined && json.errors === undefined){
       setVars(json)
       drawGame()
       drawMovePlay()
       
-    }else{
-      alert(json.error)
+    } else {
+      alert("Error:" + json.error + " " + json.errors)
     }
   })
   .catch(function(error){ 
@@ -384,7 +385,6 @@ function drawCodeWindow(json) {
       return null;
 
     } else  {
-      alert("Note: You can only be in one game at a time")
       whitePlayerInput.setAttribute("disabled", true)
       whiteRadio.setAttribute("disabled", true)
       blackPlayerInput.setAttribute("disabled", true)
@@ -472,10 +472,10 @@ function newLiveGame() {
   })
   .then(response => response.json())
   .then(function(json) {
-    if (json.error === undefined){
+    if (json.errors === undefined){
       drawCodeWindow(json)
     }else{
-      alert(json.error)
+      alert(json.errors)
     }
     spinner.hide();
   })
@@ -514,7 +514,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
   })
   .then(response => response.json())
   .then(function(json) {
-    if (json.error === undefined){
+    if (json.errors === undefined){
       // if both players ready, draw live game on current page,
       // await confirmation of first move
       if (json["is_ready"] ) {
@@ -553,7 +553,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
         drawCodeWindow(json)
       }
     } else {
-      alert(json.error)
+      alert(json.errors)
     }
     spinner.hide();
   })

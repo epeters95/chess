@@ -268,3 +268,33 @@ table#gameTable {
 #codeView {
   background-color: #e4e1db;
 }
+
+table.inputs-table {
+  min-height: 300px;
+  top: -80px;
+  position: relative;
+  margin: auto;
+
+  td {
+    height: 20px;
+    width: 60px;
+  }
+
+  td.double-width {
+    min-width: 300px;
+  }
+}
+
+.border-right {
+  border-right: 1px dashed wheat;
+}
+
+.border-separator {
+  color: wheat;
+  position: relative;
+  left: -20px;
+}
+#new-live-game {
+  width: 93%;
+  margin-bottom: 8px;
+}
