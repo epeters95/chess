@@ -35,6 +35,10 @@ class Api::GamesController < ApplicationController
     begin
       if @game.errors.empty?
         if @game.status != "completed"
+          if params[:end_game]
+            @game.update(status: "completed")
+            return render json: @game, status: :ok
+          end
           if @game.is_live?
             validate_move_access(@game, params)
           else
@@ -52,14 +56,12 @@ class Api::GamesController < ApplicationController
           if success
             render json: @game, status: :ok
           else
-            debugger
             render json: {error: @game.errors}, status: :unprocessable_entity
           end
         else
           render json: {error: "Game is over"}, status: :unprocessable_entity
         end
       else
-        debugger
         render json: {error: "Game not found"}, status: :unprocessable_entity
       end
     rescue Exception => e

@@ -5,7 +5,7 @@ class Api::LiveGamesController < ApplicationController
 
     @livegame = LiveGame.create
     if @livegame.errors.empty?
-      render json: { id: @livegame.id, access_code: @livegame.access_code }, status: :ok
+      render json: { id: @livegame.id, access_code: @livegame.access_code }, status: :created
     else
       render json: { errors: @livegame.errors }, status: :unprocessable_entity
     end
