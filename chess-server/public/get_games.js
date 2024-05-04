@@ -1,7 +1,7 @@
-let table = document.getElementById("gameTable");
+let table = document.getElementById("game-table");
 
 let modal = document.getElementsByClassName("modal")[0];
-let modalCloseBtn = document.getElementById("modalCloseButton");
+let modalCloseBtn = document.getElementById("modal-close-button");
 modalCloseBtn.addEventListener("click", function(event) {
   modal.classList.add("hidden");
 })
@@ -12,8 +12,8 @@ let movesList = document.getElementById("movesList");
 function getGames() {
   let spinner = document.createElement('div');
   spinner.id = "loading";
-  spinner.innerHTML = '<div id="loadingspinner"><img src="spinner.gif"></div>';
-  document.getElementById("gameTableView").appendChild(spinner);
+  spinner.innerHTML = '<div id="loading-spinner"><img src="spinner.gif"></div>';
+  document.getElementById("game-table-view").appendChild(spinner);
 
   fetch("http://localhost:3000/api/games", {
     method: "GET",
@@ -54,7 +54,7 @@ function populateTable(json) {
     }
   }
   table.innerHTML = htmlString;
-  Array.from(document.getElementsByClassName("getBoard")).forEach(function(el) {
+  Array.from(document.getElementsByClassName("get-board")).forEach(function(el) {
     let id = el.getAttribute("data-id");
     let boardUrl = "http://localhost:3000/api/games/" + id + "/board"
     boardUrl += "#with_history=true"
@@ -166,7 +166,7 @@ function gameViewHtml(game) {
   let name2 = game["black_name"];
 
    + id + "/board";
-  let htmlString = "<div class='gameThumbnail' style='width:100%; height:100%'>";
+  let htmlString = "<div class='game-thumbnail' style='width:100%; height:100%'>";
 
   htmlString += "<div style='width: 90%; height: 90%; margin: auto; position: relative; background-color: rgba(0,0,0,0.2);'>";
   htmlString += "<span><b>" +
@@ -176,7 +176,7 @@ function gameViewHtml(game) {
   htmlString += "<br><br>"
   htmlString += "<span style='color: white;'>" + game.move_count + " moves</span>";
   htmlString += "<br>";
-  htmlString += "<a href='#' class='getBoard' id='getBoard' data-id='" + id + "'>";
+  htmlString += "<a href='#' class='get-board' id='get-board' data-id='" + id + "'>";
   htmlString += "<span>View Game</span>";
   htmlString += "</a>";
   htmlString += "</div>";

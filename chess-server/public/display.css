@@ -4,29 +4,29 @@
   position: absolute;
   z-index: 100;
 }
-#chessimg {
+#chess-img {
   margin: auto;
   display: inline-block;
   width: 80px;
 }
 
-.chessgif {
+.chess-gif {
   height: 100%;
   width: 100%;
 }
 
-#chesstitle {
+#chess-title {
   display: inline;
   top: -40px;
   position: relative;
   font-size: 40pt;
 }
 
-.newgame {
+.new-game {
   z-index: 1000;
 }
 
-.newgame button {
+.new-game button {
   width: 200px;
 }
 
@@ -94,7 +94,7 @@ checker{
   height: 0px;
 }
 
-#loadingspinner {
+#loading-spinner {
   z-index: 300;
   position: relative;
   display: inline;
@@ -112,7 +112,7 @@ checker{
   width: 400px;
 }
 
-table#gameTable {
+table#game-table {
   margin: auto;
 
   td {
@@ -122,7 +122,7 @@ table#gameTable {
   }
 }
 
-.gameThumbnail {
+.game-thumbnail {
   top: 20%;
 }
 
@@ -134,7 +134,7 @@ table#gameTable {
   z-index: 1000;
 }
 
-.modalContent {
+.modal-content {
   margin: auto;
   min-width: 960px;
   width: 60%;
@@ -142,13 +142,13 @@ table#gameTable {
   padding-top: 40px;
 }
 
-.modalContent.codeModal {
+.modal-content.code-modal {
   min-width: 600px;
   width: 48%;
 
 }
 
-.contentContainer {
+.content-container {
   padding-top: 60px;
   background-color: rgba(82,28,48,0.3);
   width: 100%;
@@ -157,21 +157,21 @@ table#gameTable {
   border: 1px solid black;
   box-shadow: 0px 0px 9px 1px rgba(0,0,0,0.7);
 }
-.contentContainer .mainbar {
+.content-container .mainbar {
   width: 60%;
   display: inline-block;
   min-height: 280px;
 }
 
-.contentContainer .mainbar.small {
+.content-container .mainbar.small {
   width: 50%;
 }
 
-.contentContainer .mainbar #canvas-window{
+.content-container .mainbar #canvas-window{
   float: right;
   margin-right: 80px;
 }
-.contentContainer .sidebar {
+.content-container .sidebar {
   width: 40%;
   display: inline-block;
   margin-bottom: 30px;
@@ -188,41 +188,41 @@ table#gameTable {
   }
 }
 
-#movesList {
+#moves-list {
   width: 70%;
   background-color: rgba(0,0,0,0.3);
   height: 700px;
   overflow-y: scroll;
 }
 
-#movesList table {
+#moves-list table {
   border: 1px wheat dotted;
   width: 100%;
 }
 
-#movesList table td {
+#moves-list table td {
   border-bottom: 1px wheat dotted;
   padding-bottom: 8px;
   cursor: pointer;
 }
 
-#movesList * {
+#moves-list * {
   color: white;
   padding: 5px;
   font-size: 14pt;
 }
 
-#movesList .selected {
+#moves-list .selected {
   background-color: rgb(221, 193, 98);
   color: black;
 }
 
-#modalCloseButton {
+#modal-close-button {
   position: absolute;
   top: 40px;
   right: 20%;
 }
-#modalCloseButton button {
+#modal-close-button button {
   cursor: pointer;
   width: 40px;
   height: 40px;
@@ -230,7 +230,7 @@ table#gameTable {
   color: white;
   border-radius: 6px;
 }
-.codeModal > #modalCloseButton {
+.code-modal > #modal-close-button {
   right: 27%;
 }
 .header {
@@ -245,7 +245,7 @@ table#gameTable {
   font-size: 16pt;
 }
 
-.codeBackground {
+.code-background {
   width: 100%;
   height: 90%;
   background-color: rgba(0,0,0,0.3);
@@ -260,12 +260,12 @@ table#gameTable {
   width: 50%;
 }
 
-#requestCodeButton {
+#request-codebutton {
   height: 28px;
   font-size: 13pt;
 }
 
-#codeView {
+#code-view {
   background-color: #e4e1db;
 }
 

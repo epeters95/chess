@@ -13,21 +13,21 @@
   
   <div class="main">
     <div class="title">
-      <div id="chessimg">
-        <img class="chessgif" src="loading.gif">
+      <div id="chess-img">
+        <img class="chess-gif" src="loading.gif">
       </div>
-      <h1 id="chesstitle">Chess</h1>
+      <h1 id="chess-title">Chess</h1>
     </div>
     <div id="content">
 
 
       <div id="canvas-window">
-        <canvas id="gameView"></canvas>
+        <canvas id="game-view"></canvas>
       </div>
       <span class="status" id="status"></span>
       <br>
       <br>
-      <div class="nextmove">
+      <div class="next-move">
         <button disabled id="next-move">Get Computer Move</button>
       </div>
       <br>
@@ -42,7 +42,7 @@
               <br>
               <label>Black:</label>
               <input type="text" id="player2-name" placeholder="Leave blank for Computer"/>
-              <div class="newgame">
+              <div class="new-game">
                 <button id="new-game">New Local Game</button>
               </div>
             </td>
@@ -56,11 +56,11 @@
             </td>
             <td class="double-width">
               <br>
-              <div class="newgame">
+              <div class="new-game">
                 <button id="new-live-game">New Live Game</button>
               </div>
-              <input id="accessCodeInput" placeholder="Enter Code" type="text">
-              <button id="getAccessCode">Find Game</button>
+              <input id="access-code-input" placeholder="Enter Code" type="text">
+              <button id="get-access-code">Find Game</button>
             </td>
           </tr>
 
@@ -74,35 +74,35 @@
   <div class="footer">
   </div>
   
-  <div class="modal codeModal hidden">
-  <div class="modalContent codeModal">
-    <div class="contentContainer">
+  <div class="modal code-modal hidden">
+  <div class="modal-content code-modal">
+    <div class="content-container">
       <div class="mainbar small">
 
-        <div class="codeBackground">
+        <div class="code-background">
           <p>Share this access code with  another player:</p>
-          <div id="canvasCodeWindow">
-            <canvas id="codeView"></canvas>
+          <div id="canvas-code-window">
+            <canvas id="code-view"></canvas>
           </div>
 
         </div>
       </div>
       <div class="sidebar large">
         <p>Play as:</p>
-        <input type="radio" id="whiteRadio" name="colorChoice"><span> White</span> 
-          <input id="whitePlayerInput" type="text" placeholder="Player name"></input>
+        <input type="radio" id="white-radio" name="color-choice"><span> White</span> 
+          <input id="white-player-input" type="text" placeholder="Player name"></input>
         </input>
         <br>
-        <input type="radio" id="blackRadio" name="colorChoice"><span> Black</span> 
-          <input id="blackPlayerInput" type="text" placeholder="Player name"></input>
+        <input type="radio" id="black-radio" name="color-choice"><span> Black</span> 
+          <input id="black-player-input" type="text" placeholder="Player name"></input>
         </input>
         <br>
         <br>
-        <button id="requestCodeButton">Submit Choice</button>
+        <button id="request-code-button">Submit Choice</button>
       </div>
     </div>
   </div>
-  <div id="modalCloseButton">
+  <div id="modal-close-button">
     <button>X</button>
   </div>
   <div id="cookieholder"></div>

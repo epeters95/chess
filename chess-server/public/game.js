@@ -1,4 +1,4 @@
-let canvas = document.getElementById("gameView");
+let canvas = document.getElementById("game-view");
 let context = canvas.getContext("2d");
 let canvasLeft = canvas.offsetLeft + canvas.clientLeft;
 let canvasTop = canvas.offsetTop + canvas.clientTop;
@@ -9,12 +9,12 @@ canvas.height = canvas.width;
 
 const newGameSubmit = document.getElementById("new-game");
 const newLiveGameSubmit = document.getElementById("new-live-game");
-const accessCodeInput = document.getElementById("accessCodeInput");
-const getAccessCode = document.getElementById("getAccessCode");
+const accessCodeInput = document.getElementById("access-codeinput");
+const getAccessCode = document.getElementById("get-access-code");
 const nextMoveSubmit = document.getElementById("next-move");
 const statusSpan = document.getElementById("status");
 const modal = document.getElementsByClassName("modal")[0];
-const modalCloseBtn = document.getElementById("modalCloseButton");
+const modalCloseBtn = document.getElementById("modal-close-button");
 modalCloseBtn.addEventListener("click", function(event) {
   modal.classList.add("hidden");
 })
@@ -237,7 +237,7 @@ function drawBoard(){
       }
     }
 }
-function fillPieces(thisCol) {
+function fillPieces(thisCol, team=null) {
   pieces[thisCol].forEach(function(el) {
     context.fillStyle = thisCol;
     let x, y;
@@ -280,8 +280,8 @@ function fillPieces(thisCol) {
 
 function drawPieces(team=null){
   context.font = `50px Verdana`;
-  fillPieces("white");
-  fillPieces("black");
+  fillPieces("white", team);
+  fillPieces("black", team);
 
 }
 
@@ -360,7 +360,7 @@ function drawMovePlay() {
 function drawCodeWindow(json) {
   // TODO: just use white name and black name from params
   modal.classList.remove("hidden");
-  let canv = document.getElementById("codeView");
+  let canv = document.getElementById("code-view");
   canv.width = (screen.height * .2) - 50;
   canv.height = canv.width / 2.0;
   
@@ -384,11 +384,11 @@ function drawCodeWindow(json) {
   cx.fillStyle = "#" + r + g + b;
   cx.fillText(json["access_code"], 5, 80);
 
-  let submit = document.getElementById("requestCodeButton")
-  let whiteRadio = document.getElementById("whiteRadio");
-  let whitePlayerInput = document.getElementById('whitePlayerInput')
-  let blackRadio = document.getElementById("blackRadio");
-  let blackPlayerInput = document.getElementById('blackPlayerInput')
+  let submit = document.getElementById("request-code-button")
+  let whiteRadio = document.getElementById("white-radio");
+  let whitePlayerInput = document.getElementById('white-player-input')
+  let blackRadio = document.getElementById("black-radio");
+  let blackPlayerInput = document.getElementById('black-player-input')
 
   whiteRadio.checked = false;
   blackRadio.checked = false;
@@ -483,7 +483,7 @@ function drawCodeWindow(json) {
 
 function newLiveGame() {
 
-  let spinner = showSpinner("canvasCodeWindow");
+  let spinner = showSpinner("canvas-code-window");
   // Try the #create endpoint 
   fetch("http://localhost:3000/api/live_games", {
     method: "POST",
@@ -525,7 +525,7 @@ function setTokenCookie(token, color=null) {
 function updateLiveGame(playerName, playerTeam, prevJson) {
   let code = prevJson["access_code"];
   let id = prevJson["id"];
-  let spinner = showSpinner("canvasCodeWindow");
+  let spinner = showSpinner("canvas-code-window");
   let requestBody = {
     "player_name": playerName,
     "player_team": playerTeam,
@@ -580,7 +580,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
 function showSpinner(canvasParentId) {
   let spinner = document.createElement('div');
   spinner.id = "loading";
-  spinner.innerHTML = '<div id="loadingspinner"><img src="spinner2.gif"></div>';
+  spinner.innerHTML = '<div id="loading-spinner"><img src="spinner2.gif"></div>';
   document.getElementById(canvasParentId).appendChild(spinner);
 
   // Add hide function for spinner
