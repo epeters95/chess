@@ -70,113 +70,43 @@ var eventListeners = [];
 
 function findGame() {
   // get game from the api
-  let spinner = showSpinner("canvas-window");
   let params = "?access_code=" + accessCodeInput.value + "&token=" + getTokenCookie()
-  fetch("http://localhost:3000/api/live_games/" + params, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
-  })
-  .then(response => response.json())
-  .then(function(json) {
-      debugger
-    if (json.errors === undefined){
-      drawCodeWindow(json)
-    }else{
-      alert(json.errors)
-    }
-    spinner.hide()
-  })
-  .catch(function(error){ 
-    alert("Error: " + error)
+
+  fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
+    debugger
+    drawCodeWindow(json)
   })
 }
 
 function newGame() {
-  let spinner = showSpinner("canvas-window");
-
-  const player1Name = document.getElementById("player1-name").value;
-  const player2Name = document.getElementById("player2-name").value;
-
   let requestBody = {
     "game": {
-      "white_name": player1Name,
-      "black_name": player2Name
+      "white_name": document.getElementById("player1-name").value,
+      "black_name": document.getElementById("player2-name").value
     }
   }
 
-  fetch("http://localhost:3000/api/games", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    body: JSON.stringify(requestBody)
-  })
-  .then(response => response.json())
-  .then(function(json) {
-    if (json.errors === undefined){
-      setVars(json["game"])
-      drawGame()
-      drawMovePlay()
-    }else{
-      alert(json.error)
-    }
-    spinner.hide();
-  })
-  .catch(function(error){ 
-    alert("Error: " + error)
+  fetchFromApi("/api/games", "POST", requestBody, function(json) {
+    setVars(json["game"])
+    drawGame()
+    drawMovePlay()
   })
 }
 
 function nextMove() {
-  fetch("http://localhost:3000/api/games/" + gameId, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
-  })
-  .then(response => response.json())
-  .then(function(json) {
-    if (json.error === undefined && json.errors === undefined){
-      setVars(json)
-      drawGame()
-      drawMovePlay()
-      
-    } else {
-      alert("Error:" + json.error + " " + json.errors)
-    }
-  })
-  .catch(function(error){ 
-    alert("Error: " + error)
+  fetchFromApi("/api/games/" + gameId, "PATCH", null, function(json) {
+    setVars(json)
+    drawGame()
+    drawMovePlay()
   })
 }
 
 function selectMove(move) {
-  fetch("http://localhost:3000/api/games/" + gameId, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    },
-    body: JSON.stringify({ "move": move })
-  })
-  .then(response => response.json())
-  .then(function(json) {
-    if (json.error === undefined && json.errors === undefined){
-      setVars(json)
-      drawGame()
-      drawMovePlay()
-      
-    } else {
-      alert("Error:" + json.error + " " + json.errors)
-    }
-  })
-  .catch(function(error){ 
-    alert("Error: " + error)
+
+  fetchFromApi("/api/games/", "PATCH", { "move": move }, function(json) {
+    setVars(json)
+    drawGame()
+    drawMovePlay()
   })
 }
 
@@ -482,28 +412,7 @@ function drawCodeWindow(json) {
 }
 
 function newLiveGame() {
-
-  let spinner = showSpinner("canvas-code-window");
-  // Try the #create endpoint 
-  fetch("http://localhost:3000/api/live_games", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
-  })
-  .then(response => response.json())
-  .then(function(json) {
-    if (json.errors === undefined){
-      drawCodeWindow(json)
-    }else{
-      alert(json.errors)
-    }
-    spinner.hide();
-  })
-  .catch(function(error){ 
-    alert("Error: " + error)
-  })
+  fetchFromApi("/api/live_games", "POST")
 }
 
 function getTokenColor() {
@@ -525,54 +434,67 @@ function setTokenCookie(token, color=null) {
 function updateLiveGame(playerName, playerTeam, prevJson) {
   let code = prevJson["access_code"];
   let id = prevJson["id"];
-  let spinner = showSpinner("canvas-code-window");
   let requestBody = {
     "player_name": playerName,
     "player_team": playerTeam,
     "access_code": code
   }
-  fetch("http://localhost:3000/api/live_games/" + id , {
-    method: "PATCH",
+  fetchFromApi("/api/live_games/" + id, "PATCH", requestBody, function(json) {
+    if (json["is_ready"] ) {
+      // No validation needed because response function is executed
+      // by the client who joined the game and who is issued a token
+      modal.classList.add("hidden");
+      alert("Game ready to begin")
+      setTokenCookie(json["token"], json["color"])
+      setVars(json["game"])
+      drawGame(getTokenColor())
+      drawMovePlay()
+    }
+
+    else {
+    // set token to allow future moves on the game
+      if (json["token"] !== undefined) {
+
+        // No cookie set
+        if (!getTokenCookie()) {
+          setTokenCookie(json["token"], json["color"])
+        }
+      }
+      json["access_code"] = prevJson["access_code"]
+      drawCodeWindow(json)
+    }
+  })
+}
+
+function fetchFromApi(endpoint, method, params=null, successCallback=null) {
+  let spinner = showSpinner("canvas-code-window");
+  let apiUrl = "http://localhost:3000" + endpoint;
+  let requestObj = {
+    method: method,
     headers: {
       "Content-Type": "application/json",
       "Accept": "application/json"
-    },
-    body: JSON.stringify(requestBody)
-  })
+    }
+  }
+  if (params !== null) {
+    requestObj.body = JSON.stringify(params);
+  }
+
+  fetch(apiUrl, requestObj)
   .then(response => response.json())
   .then(function(json) {
-    if (json.errors === undefined){
-      // if both players ready, draw live game on current page,
-      // await confirmation of first move
-      if (json["is_ready"] ) {
-        // No validation needed because response function is executed
-        // by the client who joined the game and who is issued a token
-        modal.classList.add("hidden");
-        alert("Game ready to begin")
-        setTokenCookie(json["token"], json["color"])
-        setVars(json["game"])
-        drawGame(getTokenColor())
-        drawMovePlay()
+    if (json.errors === undefined && json.error === undefined){
+
+      if (successCallback !== null) {
+        successCallback(json);
       }
 
-      else {
-      // set token to allow future moves on the game
-        if (json["token"] !== undefined) {
-
-          // No cookie set
-          if (!getTokenCookie()) {
-            setTokenCookie(json["token"], json["color"])
-          }
-        }
-        json["access_code"] = prevJson["access_code"]
-        drawCodeWindow(json)
-      }
     } else {
-      alert(json.errors)
+      alert("Error:" + json.error + " " + json.errors)
     }
-    spinner.hide();
+    spinner.hide()
   })
-  .catch(function(error){ 
+  .catch(function(error) {
     alert("Error: " + error)
   })
 }

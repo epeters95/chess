@@ -10,25 +10,11 @@ let movesList = document.getElementById("movesList");
 
 
 function getGames() {
-  let spinner = document.createElement('div');
-  spinner.id = "loading";
-  spinner.innerHTML = '<div id="loading-spinner"><img src="spinner.gif"></div>';
-  document.getElementById("game-table-view").appendChild(spinner);
 
-  fetch("http://localhost:3000/api/games", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
+  fetchFromApi("/api/games", "GET", null, function(json) {
+    populateTable(json)
   })
-  .then(response => response.json())
-  .then(function(json) {
-    if (json.error === undefined) {
-      populateTable(json)
-    }
-    spinner.classList.add("hidden");
-  })
+
 }
 
 function populateTable(json) {
@@ -59,21 +45,9 @@ function populateTable(json) {
     let boardUrl = "http://localhost:3000/api/games/" + id + "/board"
     boardUrl += "#with_history=true"
     el.addEventListener("click", function(event) {
-      modal.classList.remove("hidden");
-      fetch(boardUrl, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        }
-      })
-      .then(response => response.json())
-      .then(function(json) {
-        if (json.error === undefined) {
-          populateGameAndMoves(json);
-        } else {
-          alert("Error: " + json.error);
-        }
+
+      fetchFromApi(boardUrl, "GET", null, function(json) {
+        populateGameAndMoves(json);
       })
 
     })
