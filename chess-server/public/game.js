@@ -215,7 +215,6 @@ function drawPieces(team=null){
   context.font = `50px Verdana`;
   fillPieces("white", team);
   fillPieces("black", team);
-
 }
 
 function drawMoves() {
@@ -258,7 +257,7 @@ function drawMoves() {
 }
 
 
-function drawGame(color=null) {
+function drawGame() {
 
   statusSpan.innerText = status;
 
@@ -269,7 +268,7 @@ function drawGame(color=null) {
 
   switchSquareColor()
 
-  let showTeam = (color || getTokenColor());
+  let showTeam = getTokenColor();
 
   drawBoard();
   drawPieces(showTeam);
@@ -278,7 +277,8 @@ function drawGame(color=null) {
 
 function drawMovePlay() {
   // TODO: allow this method to work with live games
-  if (turnName !== "") {
+  let isNotComputer = (turnName !== "");
+  if (isNotComputer && json["turn"] === getTokenColor()) {
     drawMoves();
     nextMoveSubmit.setAttribute("disabled", true)
   } else {
@@ -291,7 +291,6 @@ function drawMovePlay() {
 // successful response (json) from either #show or #update on /api/live_games
 
 function drawCodeWindow(json) {
-  // TODO: just use white name and black name from params
   modal.classList.remove("hidden");
   let canv = document.getElementById("code-view");
   canv.width = (screen.height * .2) - 50;
@@ -303,7 +302,6 @@ function drawCodeWindow(json) {
     whiteName = json["game"]["white_name"]
     blackName = json["game"]["black_name"]
   }
-
 
   function randColorVal() {
     return Math.floor(Math.random() * 255).toString(16);
@@ -333,6 +331,7 @@ function drawCodeWindow(json) {
   if (!!tokenCookie) {
     if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
+      debugger
       modal.classList.add("hidden")
       setVars(json["game"])
       drawGame()
@@ -421,7 +420,9 @@ function newLiveGame() {
 }
 
 function getTokenColor() {
-  return document.getElementById("cookieholder-color").innerText;
+
+  let cookie = document.cookie.split("; ").find((row) => row.startsWith("color"));
+  return (cookie || document.getElementById("cookieholder-color").innerText);
 }
 
 function getTokenCookie() {
@@ -432,6 +433,7 @@ function getTokenCookie() {
 
 function setTokenCookie(token, color=null) {
   document.cookie = 'gametoken=' + token + '; path=/'
+  document.cookie = 'color=' + color + '; path=/'
   document.getElementById("cookieholder").innerText = token;
   document.getElementById("cookieholder-color").innerText = color;
 }
@@ -452,7 +454,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       alert("Game ready to begin")
       setTokenCookie(json["token"], json["color"])
       setVars(json["game"])
-      drawGame(getTokenColor())
+      drawGame()
       drawMovePlay()
     }
 
