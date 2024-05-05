@@ -9,7 +9,7 @@ canvas.height = canvas.width;
 
 const newGameSubmit = document.getElementById("new-game");
 const newLiveGameSubmit = document.getElementById("new-live-game");
-const accessCodeInput = document.getElementById("access-codeinput");
+const accessCodeInput = document.getElementById("access-code-input");
 const getAccessCode = document.getElementById("get-access-code");
 const nextMoveSubmit = document.getElementById("next-move");
 const statusSpan = document.getElementById("status");
@@ -70,10 +70,13 @@ var eventListeners = [];
 
 function findGame() {
   // get game from the api
-  let params = "?access_code=" + accessCodeInput.value + "&token=" + getTokenCookie()
+  let tokenCookie = getTokenCookie()
+  if (!!tokenCookie) {
+    tokenCookie = tokenCookie.split("gametoken=")[1]
+  }
+  let params = "?access_code=" + accessCodeInput.value + "&token=" + tokenCookie
 
   fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
-    debugger
     drawCodeWindow(json)
   })
 }
@@ -328,7 +331,7 @@ function drawCodeWindow(json) {
   let tokenCookie = getTokenCookie()
 
   if (!!tokenCookie) {
-    if (json["is_ready"] && json["token"] === tokenCookie ) {
+    if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
       modal.classList.add("hidden")
       setVars(json["game"])
@@ -412,7 +415,9 @@ function drawCodeWindow(json) {
 }
 
 function newLiveGame() {
-  fetchFromApi("/api/live_games", "POST")
+  fetchFromApi("/api/live_games", "POST", null, function(json) {
+    drawCodeWindow(json)
+  })
 }
 
 function getTokenColor() {
