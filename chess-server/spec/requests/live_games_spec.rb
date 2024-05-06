@@ -38,13 +38,39 @@ RSpec.describe "LiveGames", type: :request do
 
       expect(response.status).to eql(200)
 
-      expect(JSON.parse(response.body)["id"]).to eql(id)
+      expect(JSON.parse(response.body)["id"]).to eq(id)
 
       livegame_fields.each do |field|
         expect(JSON.parse(response.body)[field]).not_to eq(nil)
       end
 
-      expect(JSON.parse(response.body)["game"]).to eql(nil)
+      expect(JSON.parse(response.body)["game"]).to eq(nil)
+
+    end
+
+    it 'acknowledges if request token matches' do
+
+      post '/api/live_games'
+
+      id = JSON.parse(response.body)["id"]
+      access_code = JSON.parse(response.body)["access_code"]
+
+      lg = LiveGame.find(id)
+      expect(lg).to_not eq(nil)
+
+      token = lg.request_white
+
+      get '/api/live_games/?access_code=' + access_code.to_s + '&token=' + token
+
+      expect(response.status).to eql(200)
+      expect(JSON.parse(response.body)["token"]).to eq("white")
+
+      token = lg.request_black
+
+      get '/api/live_games/?access_code=' + access_code.to_s + '&token=' + token
+
+      expect(response.status).to eql(200)
+      expect(JSON.parse(response.body)["token"]).to eq("black")
 
     end
   end
@@ -61,20 +87,57 @@ RSpec.describe "LiveGames", type: :request do
       id = JSON.parse(response.body)["id"]
 
       requestBody = {
-        "player_name": "Boofy",
+        "player_name": "Bill",
         "player_team": "white",
         "access_code": access_code
       }
 
       patch '/api/live_games/' + id.to_s, params: requestBody
 
-      expect(response.status).to eql(200)
+      expect(response.status).to eq(200)
 
       livegame_fields_created.each do |field|
         
         expect(JSON.parse(response.body)[field]).not_to eq(nil)
 
       end
+    end
+
+    it "does not update a live game's team twice" do
+      
+      post '/api/live_games'
+
+      access_code = JSON.parse(response.body)["access_code"]
+      id = JSON.parse(response.body)["id"]
+
+      requestBody = {
+        "player_name": "John",
+        "player_team": "white",
+        "access_code": access_code
+      }
+
+      patch '/api/live_games/' + id.to_s, params: requestBody
+
+      expect(response.status).to eq(200)
+
+      patch '/api/live_games/' + id.to_s, params: requestBody
+
+      expect(response.status).to eq(422)
+
+      requestBody = {
+        "player_name": "Jim",
+        "player_team": "black",
+        "access_code": access_code
+      }
+
+      patch '/api/live_games/' + id.to_s, params: requestBody
+
+      expect(response.status).to eq(200)
+
+      patch '/api/live_games/' + id.to_s, params: requestBody
+
+      expect(response.status).to eq(422)
+
     end
 
   end
