@@ -47,7 +47,6 @@ canvas {
   top: 128px;
   background-color: transparent;
   margin: auto;
-  width: 800px;
   height: 800px;
   border-radius: 3px;
 }
@@ -146,6 +145,10 @@ table#game-table {
   min-width: 600px;
   width: 48%;
 
+}
+#content #canvas-window-wrapper {
+  width: 473px !important;
+  margin: auto;
 }
 
 .content-container {
@@ -297,4 +300,7 @@ table.inputs-table {
 #new-live-game {
   width: 93%;
   margin-bottom: 8px;
+}
+.highlighted {
+  border: 2px solid gold;
 }

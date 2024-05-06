@@ -67,6 +67,7 @@ var switchSquareColor = function() {
   return squareColor
 }
 var eventListeners = [];
+var json;
 
 function findGame() {
   // get game from the api
@@ -139,6 +140,7 @@ function setVars(json) {
   moves =    json["legal_moves"];
   selectedMoves = [];
   selectedPiece = "";
+  json = json; // TODO: Figure out what feels wrong here
 }
 
 function addFunctionOnClick(x, y, func) {
@@ -165,6 +167,16 @@ function rankIndexOf(num) {
 function drawBoard(){
     for (let x = 0; x <= length; x += squareSize) {
       for (let y = 0; y <= length; y += squareSize) {
+          let div = document.createElement("div");
+          let leftAmt = x + 473 + 9;
+          div.setAttribute("style", "position: absolute; left: " + leftAmt + "px; top: " + (y - 2)+ "px; width: " + squareSize + "px; height: " + squareSize + "px;");
+          div.addEventListener("mouseenter", function(event) {
+            this.classList.add("highlighted");
+          })
+          div.addEventListener("mouseleave", function(event) {
+            this.classList.remove("highlighted");
+          })
+          document.getElementById("canvas-window-wrapper").append(div)
           context.fillStyle = switchSquareColor();
           context.fillRect(x, y, squareSize, squareSize);
       }
@@ -278,7 +290,7 @@ function drawGame() {
 function drawMovePlay() {
   // TODO: allow this method to work with live games
   let isNotComputer = (turnName !== "");
-  if (isNotComputer && json["turn"] === getTokenColor()) {
+  if (json !== undefined && isNotComputer && json["turn"] === getTokenColor()) {
     drawMoves();
     nextMoveSubmit.setAttribute("disabled", true)
   } else {
@@ -331,7 +343,6 @@ function drawCodeWindow(json) {
   if (!!tokenCookie) {
     if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
-      debugger
       modal.classList.add("hidden")
       setVars(json["game"])
       drawGame()
