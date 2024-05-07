@@ -174,22 +174,26 @@ function rankIndexOf(num) {
 }
 
 function drawBoard(){
-    for (let x = 0; x <= length; x += squareSize) {
-      for (let y = 0; y <= length; y += squareSize) {
-          let div = document.createElement("div");
-          let leftAmt = x + 473 + 9;
-          div.setAttribute("style", "position: absolute; left: " + leftAmt + "px; top: " + (y - 2)+ "px; width: " + squareSize + "px; height: " + squareSize + "px;");
-          div.addEventListener("mouseenter", function(event) {
-            this.classList.add("highlighted");
-          })
-          div.addEventListener("mouseleave", function(event) {
-            this.classList.remove("highlighted");
-          })
-          document.getElementById("canvas-window-wrapper").append(div)
-          context.fillStyle = switchSquareColor();
-          context.fillRect(x, y, squareSize, squareSize);
-      }
+  let quoteSpan = document.getElementsByClassName("quote-span")[0]
+  if (quoteSpan !== undefined) {
+    quoteSpan.remove()
+  }
+  for (let x = 0; x <= length; x += squareSize) {
+    for (let y = 0; y <= length; y += squareSize) {
+        let div = document.createElement("div");
+        let leftAmt = x + 473 + 9;
+        div.setAttribute("style", "position: absolute; left: " + leftAmt + "px; top: " + (y - 2)+ "px; width: " + squareSize + "px; height: " + squareSize + "px;");
+        div.addEventListener("mouseenter", function(event) {
+          this.classList.add("highlighted");
+        })
+        div.addEventListener("mouseleave", function(event) {
+          this.classList.remove("highlighted");
+        })
+        document.getElementById("canvas-window-wrapper").append(div)
+        context.fillStyle = switchSquareColor();
+        context.fillRect(x, y, squareSize, squareSize);
     }
+  }
 }
 function fillPieces(thisCol, team=null) {
   pieces[thisCol].forEach(function(el) {
