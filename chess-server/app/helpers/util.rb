@@ -36,6 +36,10 @@ module Util
     end
   end
 
+  def get_quote_html
+    get_quote.sub('\n', '<br>')
+  end
+
   def get_quote
     justify_str(QUOTES.shuffle[0])
   end

@@ -1,4 +1,6 @@
 class Api::GamesController < ApplicationController
+
+  include Util
   
   before_action :set_game, only: [:show, :update, :destroy]
 
@@ -69,6 +71,10 @@ class Api::GamesController < ApplicationController
       debugger
       render json: {errors: e.message }, status: :unprocessable_entity
     end
+  end
+
+  def quote
+      render json: {quote: get_quote_html}, status: :ok
   end
 
   private

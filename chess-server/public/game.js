@@ -68,6 +68,15 @@ var switchSquareColor = function() {
 }
 var eventListeners = [];
 var json;
+let wrapper = document.getElementById("canvas-window-wrapper");
+let quoteSpan = document.createElement("span")
+quoteSpan.classList.add("quote-span");
+fetchFromApi("/api/quote", "GET", null, function(json) {
+  quoteSpan.innerText = json;
+  wrapper.appendChild(quoteSpan);
+})
+
+
 
 function findGame() {
   // get game from the api

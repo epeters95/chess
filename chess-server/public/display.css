@@ -151,6 +151,16 @@ table#game-table {
   margin: auto;
 }
 
+#canvas-window-wrapper .quote-span{
+  color: white;
+  font-size: 16pt;
+  font-family: serif;
+  position: absolute;
+  top: 200px;
+  margin: auto;
+  margin: 0 -220px auto;
+}
+
 .content-container {
   padding-top: 60px;
   background-color: rgba(82,28,48,0.3);
