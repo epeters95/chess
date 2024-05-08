@@ -2,6 +2,8 @@ class Game < ApplicationRecord
 
   has_one :board, dependent: :destroy
   has_one :live_game
+  has_one :white_player, class_name: "Player", foreign_key: "white_id"
+  has_one :black_player, class_name: "Player", foreign_key: "black_id"
 
   after_create :init_board
 
