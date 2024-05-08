@@ -10,13 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_08_063734) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_08_065216) do
   create_table "boards", force: :cascade do |t|
     t.string "turn"
     t.string "status_str", default: ""
     t.integer "move_count", default: 0
     t.text "positions_array"
-    t.integer "game_id", null: false
+    t.integer "game_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_boards_on_game_id"

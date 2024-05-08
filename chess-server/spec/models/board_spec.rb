@@ -4,16 +4,11 @@ RSpec.describe Board, type: :model do
   describe 'creating a board' do
 
     params = {
-      game_id: 1,
       turn: "white",
       status_str: "Ready to test"
     }
 
     it 'creates a board with expected fields' do
-
-      g = Game.create()
-      params[:game_id] = g.id
-      # TODO: remove null false and fk restraint on game/board
       b = Board.create(params)
 
       expect(b).to_not eq(nil)
@@ -23,20 +18,30 @@ RSpec.describe Board, type: :model do
     end
 
     it 'init_vars called after creation' do
+      b = Board.new(params)
+      
+      expect(b).to receive(:init_vars).once
+      b.save
 
-      g = Game.create()
-      params[:game_id] = g.id
-      b = Board.create(params)
-
-      # TODO: test actual method call
-      # expect(b.pieces).to_not eq(nil)
       expect(b.move_count).to eq(1)
-      # expect(b.legal_moves).to_not eq(nil)
+    end
 
+    it 'save_pieces_to_positions_array called within init_vars after creation' do
+      b = Board.new(params)
+
+      expect(b).to receive(:save_pieces_to_positions_array).once
+      b.save
+      
+      expect(b.positions_array).to_not eq(nil)
     end
 
     it 'generate_legal_moves called after creation' do
+      b = Board.new(params)
 
+      expect(b).to receive(:generate_legal_moves).once
+      b.save
+      
+      expect(b.legal_moves).to_not eq(nil)
     end
 
   end
