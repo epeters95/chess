@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_04_28_055645) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_08_063226) do
   create_table "boards", force: :cascade do |t|
     t.string "turn"
     t.string "status_str", default: ""
@@ -28,6 +28,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_28_055645) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
+    t.integer "player_id"
+    t.index ["player_id"], name: "index_games_on_player_id"
   end
 
   create_table "live_games", force: :cascade do |t|
@@ -56,7 +58,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_04_28_055645) do
     t.index ["board_id"], name: "index_moves_on_board_id"
   end
 
+  create_table "players", force: :cascade do |t|
+    t.string "name"
+    t.string "active_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_players_on_name", unique: true
+  end
+
   add_foreign_key "boards", "games"
+  add_foreign_key "games", "players"
   add_foreign_key "live_games", "games"
   add_foreign_key "moves", "boards"
 end

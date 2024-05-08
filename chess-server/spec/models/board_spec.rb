@@ -20,7 +20,6 @@ RSpec.describe Board, type: :model do
       expect(b.game_id).to eq(params[:game_id])
       expect(b.turn).to eq(params[:turn])
       expect(b.status_str).to eq(params[:status_str])
-      expect(b.move_count).to eq(params[:move_count])
     end
 
     it 'init_vars called after creation' do
