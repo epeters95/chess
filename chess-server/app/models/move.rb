@@ -58,6 +58,13 @@ class Move < ApplicationRecord
     @notation ||= self.get_notation
   end
 
+  def ==(other_move)
+    self.new_position == other_move.new_position &&
+    self.rook_position == other_move.rook_position &&
+    self.move_type == other_move.move_type &&
+    self.notation == other_move.notation
+  end
+
   def turn
     self.move_count % 2 == 1 ? "white" : "black"
   end

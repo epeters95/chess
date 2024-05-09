@@ -18,10 +18,9 @@ class Game < ApplicationRecord
   end
 
   def play_move_and_evaluate(move)
-    # TODO: write move comparison method for the following:
-    # unless self.board.legal_moves.include?(move)
-    #   raise IllegalMoveError
-    # end
+    unless self.board.legal_moves[self.board.turn].include?(move)
+      raise IllegalMoveError
+    end
     result = self.board.play_move_and_save(move)
 
     status_str = "#{display_name_for(switch(self.board.turn))} made move #{move.get_notation}"
