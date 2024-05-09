@@ -16,7 +16,7 @@ class Api::BoardsController < ApplicationController
 
   def get_moves_pieces_history
     initial_board = Board.new(game_id: 0, turn: "white")
-    initial_board.init_vars
+    initial_board.init_variables
 
     pieces_history = [initial_board.positions_array]
     moves = [nil]

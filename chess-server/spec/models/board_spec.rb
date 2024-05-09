@@ -19,8 +19,8 @@ RSpec.describe Board, type: :model do
 
     it 'init_vars called after creation' do
       b = Board.new(params)
-      
-      expect(b).to receive(:init_vars).once
+
+      expect(b).to receive(:init_variables).once
       b.save
 
       expect(b.move_count).to eq(1)

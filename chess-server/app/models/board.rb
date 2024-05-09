@@ -3,7 +3,7 @@ class Board < ApplicationRecord
   belongs_to :game, optional: true
   has_many   :played_moves, -> { where "completed = 1" }, class_name: "Move"
 
-  after_create :init_vars, :generate_legal_moves
+  after_create :init_vars_and_generate_legal_moves
 
   include Util
 
@@ -285,7 +285,7 @@ class Board < ApplicationRecord
     return "queen"
   end
 
-  def init_vars(pieces=nil)
+  def init_variables(pieces=nil)
     @pieces = pieces || place_pieces
     @legal_moves = {"black" => [], "white" => []}
     self.move_count = 1
@@ -314,6 +314,11 @@ class Board < ApplicationRecord
   end
 
   private
+
+  def init_vars_and_generate_legal_moves
+    init_variables
+    generate_legal_moves
+  end
 
   def place_pieces
     gameboard = {"black" => [], "white" => []}
@@ -349,7 +354,7 @@ class Board < ApplicationRecord
   def deep_dup
     # TODO: replace with non-ActiveRecord skeleton object
     doop = Board.new(game_id: 0, turn: self.turn)
-    doop.init_vars(deep_dup_pieces)
+    doop.init_variables(deep_dup_pieces)
     doop.move_count = self.move_count
     doop
   end
