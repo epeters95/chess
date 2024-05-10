@@ -12,10 +12,24 @@ class Board < ApplicationRecord
   end
 
   def get_pieces_from_positions_array
-    json_pieces = JSON.parse(self.positions_array)
+    if positions_arr
+    json_pieces = JSON.parse(positions_arr)
     ["white", "black"].to_h do |color|
       [color, json_pieces[color].map{ |pc| Piece.from_json(pc) }]
     end
+  end
+
+  def positions_arr
+
+    if @positions_array.nil?
+      @positions_array = save_pieces_to_positions_array
+      if @pieces.nil?
+        debugger
+        return nil
+      end
+    end
+    @positions_array
+
   end
 
   def save_pieces_to_positions_array
@@ -25,6 +39,10 @@ class Board < ApplicationRecord
       })
     # Currently, non-persisting board objects are used to calculate legal moves,
     # therefore the save method must be called externally to persist pieces in db
+    if self.positions_array.nil?
+      debugger
+    end
+    self.positions_array
   end
 
   def played_moves_in_order
@@ -32,6 +50,10 @@ class Board < ApplicationRecord
   end
 
   def generate_legal_moves(ignore_check=false,color=self.turn)
+    if positions_arr.nil?
+      debugger
+    end
+
     legal_moves[color] = []
     @pieces[color].each do |piece|
       piece.clear_moves
@@ -286,10 +308,24 @@ class Board < ApplicationRecord
   end
 
   def init_variables(pieces=nil)
-    @pieces = pieces || place_pieces
-    @legal_moves = {"black" => [], "white" => []}
-    self.move_count = 1
-    save_pieces_to_positions_array
+    begin
+      @pieces = pieces || place_pieces
+      @legal_moves = {"black" => [], "white" => []}
+      self.move_count = 1
+      save_pieces_to_positions_array
+      if self.positions_array == "" || self.positions_array.eql?(nil)
+        debugger
+        return nil
+      else
+        return self.positions_array
+
+      end
+    rescue Exception => e
+      debugger
+      return nil
+    end
+
+
   end
 
 
@@ -316,7 +352,10 @@ class Board < ApplicationRecord
   private
 
   def init_vars_and_generate_legal_moves
-    init_variables
+    result = init_variables
+    if result.nil?
+      debugger
+    end
     generate_legal_moves
   end
 
