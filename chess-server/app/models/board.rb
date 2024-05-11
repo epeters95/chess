@@ -12,24 +12,21 @@ class Board < ApplicationRecord
   end
 
   def get_pieces_from_positions_array
-    if positions_arr
-    json_pieces = JSON.parse(positions_arr)
-    ["white", "black"].to_h do |color|
-      [color, json_pieces[color].map{ |pc| Piece.from_json(pc) }]
+    unless positions_arr.blank?
+      json_pieces = JSON.parse(positions_arr)
+      ["white", "black"].to_h do |color|
+        [color, json_pieces[color].map{ |pc| Piece.from_json(pc) }]
+      end
+    else
+      return nil
     end
   end
 
   def positions_arr
-
     if @positions_array.nil?
       @positions_array = save_pieces_to_positions_array
-      if @pieces.nil?
-        debugger
-        return nil
-      end
     end
     @positions_array
-
   end
 
   def save_pieces_to_positions_array
@@ -50,10 +47,6 @@ class Board < ApplicationRecord
   end
 
   def generate_legal_moves(ignore_check=false,color=self.turn)
-    if positions_arr.nil?
-      debugger
-    end
-
     legal_moves[color] = []
     @pieces[color].each do |piece|
       piece.clear_moves
@@ -312,7 +305,7 @@ class Board < ApplicationRecord
       @pieces = pieces || place_pieces
       @legal_moves = {"black" => [], "white" => []}
       self.move_count = 1
-      save_pieces_to_positions_array
+      @positions_array = save_pieces_to_positions_array
       if self.positions_array == "" || self.positions_array.eql?(nil)
         debugger
         return nil
@@ -352,10 +345,7 @@ class Board < ApplicationRecord
   private
 
   def init_vars_and_generate_legal_moves
-    result = init_variables
-    if result.nil?
-      debugger
-    end
+    init_variables
     generate_legal_moves
   end
 
