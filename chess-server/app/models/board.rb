@@ -12,21 +12,14 @@ class Board < ApplicationRecord
   end
 
   def get_pieces_from_positions_array
-    unless positions_arr.blank?
-      json_pieces = JSON.parse(positions_arr)
+    unless self.positions_array.blank?
+      json_pieces = JSON.parse(self.positions_array)
       ["white", "black"].to_h do |color|
         [color, json_pieces[color].map{ |pc| Piece.from_json(pc) }]
       end
     else
       return nil
     end
-  end
-
-  def positions_arr
-    if @positions_array.nil?
-      @positions_array = save_pieces_to_positions_array
-    end
-    @positions_array
   end
 
   def save_pieces_to_positions_array
@@ -36,9 +29,6 @@ class Board < ApplicationRecord
       })
     # Currently, non-persisting board objects are used to calculate legal moves,
     # therefore the save method must be called externally to persist pieces in db
-    if self.positions_array.nil?
-      debugger
-    end
     self.positions_array
   end
 
@@ -301,24 +291,10 @@ class Board < ApplicationRecord
   end
 
   def init_variables(pieces=nil)
-    begin
-      @pieces = pieces || place_pieces
-      @legal_moves = {"black" => [], "white" => []}
-      self.move_count = 1
-      @positions_array = save_pieces_to_positions_array
-      if self.positions_array == "" || self.positions_array.eql?(nil)
-        debugger
-        return nil
-      else
-        return self.positions_array
-
-      end
-    rescue Exception => e
-      debugger
-      return nil
-    end
-
-
+    @pieces = pieces || place_pieces
+    @legal_moves = {"black" => [], "white" => []}
+    self.move_count = 1
+    save_pieces_to_positions_array
   end
 
 
