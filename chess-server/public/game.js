@@ -50,6 +50,7 @@ var turn;
 var turnName;
 var status = "";
 var pieces = {};
+var isLive = false;
 
 var selectedPiece= "";
 var selectedMoves = [];
@@ -77,6 +78,23 @@ fetchFromApi("/api/quote", "GET", null, function(json) {
 })
 
 
+function refreshGame() {
+  let accessCookie = getAccessCookie()
+  let tokenCookie = getTokenCookie()
+  if (!!tokenCookie) {
+    tokenCookie = tokenCookie.split("gametoken=")[1]
+  }
+  if (!!accessCookie) {
+    accessCookie = accessCookie.split("accesscode=")[1]
+  }
+  let params = "?access_code=" + accessCookie + "&token=" + tokenCookie
+
+  fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
+    setVars(json["game"])
+    drawGame(true)
+    drawMovePlay()
+  }
+}
 
 function findGame() {
   // get game from the api
@@ -147,6 +165,7 @@ function setVars(json) {
   turnName = json["turn_name"];
   pieces =   JSON.parse(json["pieces"]);
   moves =    json["legal_moves"];
+  isLive =   json["is_live"];
   selectedMoves = [];
   selectedPiece = "";
   json = json; // TODO: Figure out what feels wrong here
@@ -282,7 +301,7 @@ function drawMoves() {
 }
 
 
-function drawGame() {
+function drawGame(live=false) {
 
   statusSpan.innerText = status;
 
@@ -297,6 +316,12 @@ function drawGame() {
 
   drawBoard();
   drawPieces(showTeam);
+
+  if (live !== undefined) {
+    setTimeout(function() {
+      refreshGame()
+    }, 5000)
+  }
   
 }
 
@@ -358,7 +383,7 @@ function drawCodeWindow(json) {
       // Close out and show live game
       modal.classList.add("hidden")
       setVars(json["game"])
-      drawGame()
+      drawGame(true)
       drawMovePlay()
       return null;
 
@@ -443,6 +468,10 @@ function newLiveGame() {
   })
 }
 
+function getAccessCookie() {
+  return document.cookie.split("; ").find((row) => row.startsWith("accesscode"));
+}
+
 function getTokenColor() {
 
   let cookie = document.cookie.split("; ").find((row) => row.startsWith("color"));
@@ -455,9 +484,10 @@ function getTokenCookie() {
   return document.cookie.split("; ").find((row) => row.startsWith("gametoken"))
 }
 
-function setTokenCookie(token, color=null) {
+function setTokenCookie(token, color=null, code=null) {
   document.cookie = 'gametoken=' + token + '; path=/'
   document.cookie = 'color=' + color + '; path=/'
+  document.cookie = 'accesscode=' + code + '; path=/'
   document.getElementById("cookieholder").innerText = token;
   document.getElementById("cookieholder-color").innerText = color;
 }
@@ -476,9 +506,9 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       // by the client who joined the game and who is issued a token
       modal.classList.add("hidden");
       alert("Game ready to begin")
-      setTokenCookie(json["token"], json["color"])
+      setTokenCookie(json["token"], json["color"], json["access_code"])
       setVars(json["game"])
-      drawGame()
+      drawGame(true)
       drawMovePlay()
     }
 
@@ -488,7 +518,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
 
         // No cookie set
         if (!getTokenCookie()) {
-          setTokenCookie(json["token"], json["color"])
+          setTokenCookie(json["token"], json["color"], json["access_code"])
         }
       }
       json["access_code"] = prevJson["access_code"]

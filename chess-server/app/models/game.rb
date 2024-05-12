@@ -69,7 +69,8 @@ class Game < ApplicationRecord
       pieces:         self.board.positions_array,
       legal_moves:    self.board.legal_moves[self.board.turn],
       move_count:     self.board.move_count,
-      status:         self.status
+      status:         self.status,
+      is_live:        is_live?
     }
   end
 

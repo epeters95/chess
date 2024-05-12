@@ -47,11 +47,12 @@ class Api::LiveGamesController < ApplicationController
   def update
     p_name = params[:player_name]
     p_team = params[:player_team]
+    access_code = params[:access_code]
 
     whitename = ( p_team == "white" ? p_name : "" )
     blackname = ( p_team == "black" ? p_name : "" )
 
-    @livegame = LiveGame.find_by(access_code: params[:access_code])
+    @livegame = LiveGame.find_by(access_code: access_code)
     if @livegame.nil?
       return render json: { errors: "Not found" }, status: :not_found
     end
@@ -81,11 +82,12 @@ class Api::LiveGamesController < ApplicationController
 
     if @livegame.errors.empty?
       render json: {
-        id:       @livegame.id,
-        token:    token,
-        color:    p_team,
-        game:     @livegame.game,
-        is_ready: @livegame.is_ready?
+        id:          @livegame.id,
+        token:       token,
+        access_code: access_code,
+        color:       p_team,
+        game:        @livegame.game,
+        is_ready:    @livegame.is_ready?
       }, status: :ok
     else
       render json: { errors: @livegame.errors }, status: :unprocessable_entity
