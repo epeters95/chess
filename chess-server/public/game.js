@@ -90,9 +90,8 @@ function refreshGame() {
   let params = "?access_code=" + accessCookie + "&token=" + tokenCookie
 
   fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
-    setVars(json["game"])
-    drawGame(true)
-    drawMovePlay()
+    drawGame(json, true)
+    drawMovePlay(json)
   }
 }
 
@@ -118,26 +117,23 @@ function newGame() {
   }
 
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
-    setVars(json["game"])
-    drawGame()
-    drawMovePlay()
+    drawGame(json)
+    drawMovePlay(json)
   })
 }
 
 function nextMove() {
   fetchFromApi("/api/games/" + gameId, "PATCH", null, function(json) {
-    setVars(json)
-    drawGame()
-    drawMovePlay()
+    drawGame(json)
+    drawMovePlay(json)
   })
 }
 
 function selectMove(move) {
 
   fetchFromApi("/api/games/", "PATCH", { "move": move }, function(json) {
-    setVars(json)
-    drawGame()
-    drawMovePlay()
+    drawGame(json)
+    drawMovePlay(json)
   })
 }
 
@@ -153,22 +149,24 @@ function selectPiece(piece) {
     selectedPiece = "";
     selectedMoves = [];
   }
-  drawGame()
-  drawMovePlay()
+  drawGame(json)
+  drawMovePlay(json)
 }
 
 
-function setVars(json) {
-  gameId =   json["id"];
-  status =   json["status_str"];
-  turn =     json["turn"];
-  turnName = json["turn_name"];
-  pieces =   JSON.parse(json["pieces"]);
-  moves =    json["legal_moves"];
-  isLive =   json["is_live"];
+function setGameVars(game) {
+  if (game["game"] !== undefined) {
+    game = game["game"]
+  }
+  gameId =   game["id"];
+  status =   game["status_str"];
+  turn =     game["turn"];
+  turnName = game["turn_name"];
+  pieces =   JSON.parse(game["pieces"]);
+  moves =    game["legal_moves"];
+  isLive =   game["is_live"];
   selectedMoves = [];
   selectedPiece = "";
-  json = json; // TODO: Figure out what feels wrong here
 }
 
 function addFunctionOnClick(x, y, func) {
@@ -301,7 +299,12 @@ function drawMoves() {
 }
 
 
-function drawGame(live=false) {
+function drawGame(json, live=false) {
+  if (json["game"] !== undefined) {
+    setGameVars(json["game"])
+  } else {
+    setGameVars(json)
+  }
 
   statusSpan.innerText = status;
 
@@ -325,10 +328,10 @@ function drawGame(live=false) {
   
 }
 
-function drawMovePlay() {
+function drawMovePlay(json) {
   // TODO: allow this method to work with live games
   let isNotComputer = (turnName !== "");
-  if (json !== undefined && isNotComputer && json["turn"] === getTokenColor()) {
+  if (json !== undefined && isNotComputer && json["game"]["turn"] === getTokenColor()) {
     drawMoves();
     nextMoveSubmit.setAttribute("disabled", true)
   } else {
@@ -382,9 +385,8 @@ function drawCodeWindow(json) {
     if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
       modal.classList.add("hidden")
-      setVars(json["game"])
-      drawGame(true)
-      drawMovePlay()
+      drawGame(json, true)
+      drawMovePlay(json)
       return null;
 
     } else  {
@@ -507,9 +509,8 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       modal.classList.add("hidden");
       alert("Game ready to begin")
       setTokenCookie(json["token"], json["color"], json["access_code"])
-      setVars(json["game"])
-      drawGame(true)
-      drawMovePlay()
+      drawGame(json, true)
+      drawMovePlay(json)
     }
 
     else {

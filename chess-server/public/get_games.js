@@ -72,8 +72,7 @@ function populateGameAndMoves(json) {
 }
 
 function showBoardRefresh(json, moveToPiecesMap, selectedId) {
-  setVars(json["game"])
-  drawGame()
+  drawGame(json)
   // Populate moves sidebar
   drawMoveList(json, moveToPiecesMap, selectedId)
 }
