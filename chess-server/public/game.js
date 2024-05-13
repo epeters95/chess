@@ -73,7 +73,7 @@ let wrapper = document.getElementById("canvas-window-wrapper");
 let quoteSpan = document.createElement("span")
 quoteSpan.classList.add("quote-span");
 fetchFromApi("/api/quote", "GET", null, function(json) {
-  quoteSpan.innerText = json;
+  quoteSpan.innerText = json["quote"];
   wrapper.appendChild(quoteSpan);
 })
 
@@ -92,7 +92,7 @@ function refreshGame() {
   fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
     drawGame(json, true)
     drawMovePlay(json)
-  }
+  })
 }
 
 function findGame() {

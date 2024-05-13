@@ -37,7 +37,7 @@ module Util
   end
 
   def get_quote_html
-    get_quote.sub('\n', '<br>')
+    get_quote.gsub("\n", '')
   end
 
   def get_quote
