@@ -102,7 +102,6 @@ function findGame() {
     tokenCookie = tokenCookie.split("gametoken=")[1]
   }
   let params = "?access_code=" + accessCodeInput.value + "&token=" + tokenCookie
-
   fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
     drawCodeWindow(json)
   })
@@ -199,7 +198,7 @@ function drawBoard(){
     for (let y = 0; y <= length; y += squareSize) {
         let div = document.createElement("div");
         let leftAmt = x;
-        let topAmt =  y - (473 / 2)
+        let topAmt =  y - 473;
         div.setAttribute("class", "square-selected")
         div.setAttribute("style", "left: " + leftAmt + "px; top: " + topAmt + "px; width: " + squareSize + "px; height: " + squareSize + "px;");
         div.addEventListener("mouseenter", function(event) {
@@ -321,12 +320,6 @@ function drawGame(json, live=false) {
 
   drawBoard();
   drawPieces(showTeam);
-
-  if (live !== undefined) {
-    setTimeout(function() {
-      refreshGame()
-    }, 5000)
-  }
   
 }
 
