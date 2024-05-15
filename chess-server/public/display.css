@@ -315,3 +315,7 @@ table.inputs-table {
 .highlighted {
   border: 2px solid gold;
 }
+
+.square-selected {
+  position: relative;
+}

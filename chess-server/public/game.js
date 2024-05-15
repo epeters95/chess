@@ -198,8 +198,10 @@ function drawBoard(){
   for (let x = 0; x <= length; x += squareSize) {
     for (let y = 0; y <= length; y += squareSize) {
         let div = document.createElement("div");
-        let leftAmt = x + 473 + 9;
-        div.setAttribute("style", "position: absolute; left: " + leftAmt + "px; top: " + (y - 2)+ "px; width: " + squareSize + "px; height: " + squareSize + "px;");
+        let leftAmt = x;
+        let topAmt =  y - (473 / 2)
+        div.setAttribute("class", "square-selected")
+        div.setAttribute("style", "left: " + leftAmt + "px; top: " + topAmt + "px; width: " + squareSize + "px; height: " + squareSize + "px;");
         div.addEventListener("mouseenter", function(event) {
           this.classList.add("highlighted");
         })
