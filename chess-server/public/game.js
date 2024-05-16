@@ -316,11 +316,28 @@ function drawGame(json, live=false) {
 
   switchSquareColor()
 
-  let showTeam = getTokenColor();
+  let showTeam = turn;
+  if (live) {
+    showTeam = getTokenColor();
+  }
 
   drawBoard();
   drawPieces(showTeam);
+
+  if (live) {
+    checkForMoveLoop()
+  }
   
+}
+
+function checkForMoveLoop() {
+  setTimeout(function() {
+
+    if (getTokenColor() !== turn) {
+      refreshGame()
+    }
+
+  }, 5000)
 }
 
 function drawMovePlay(json) {
