@@ -317,5 +317,5 @@ table.inputs-table {
 }
 
 .square-selected {
-  position: relative;
+  position: absolute;
 }

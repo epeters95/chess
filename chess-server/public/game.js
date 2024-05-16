@@ -197,10 +197,10 @@ function drawBoard(){
   for (let x = 0; x <= length; x += squareSize) {
     for (let y = 0; y <= length; y += squareSize) {
         let div = document.createElement("div");
-        let leftAmt = x;
+        let leftAmt = x + 473 + 9;
         let topAmt =  y - 473;
         div.setAttribute("class", "square-selected")
-        div.setAttribute("style", "left: " + leftAmt + "px; top: " + topAmt + "px; width: " + squareSize + "px; height: " + squareSize + "px;");
+        div.setAttribute("style", "position: absolute; left: " + leftAmt + "px; top: " + (y - 2)+ "px; width: " + squareSize + "px; height: " + squareSize + "px;");
         div.addEventListener("mouseenter", function(event) {
           this.classList.add("highlighted");
         })
@@ -343,7 +343,7 @@ function checkForMoveLoop() {
 function drawMovePlay(json) {
   // TODO: allow this method to work with live games
   let isNotComputer = (turnName !== "");
-  if (json !== undefined && isNotComputer && json["game"]["turn"] === getTokenColor()) {
+  if (json !== undefined && isNotComputer && json["game"]["turn"] === (thisTeam || getTokenColor())) {
     drawMoves();
     nextMoveSubmit.setAttribute("disabled", true)
   } else {
