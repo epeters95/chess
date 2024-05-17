@@ -12,7 +12,7 @@ class Api::LiveGamesController < ApplicationController
   end
 
   def show
-    if params[:access_code] !== "undefined"
+    if params[:access_code] != "undefined"
       @livegame = LiveGame.find_by(access_code: params[:access_code])
     end
     if @livegame.nil? && params[:id]

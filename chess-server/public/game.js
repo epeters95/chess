@@ -91,7 +91,6 @@ function refreshGame() {
 
   fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
     drawGame(json, true)
-    drawMovePlay(json)
   })
 }
 
@@ -117,14 +116,12 @@ function newGame() {
 
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
     drawGame(json)
-    drawMovePlay(json)
   })
 }
 
 function nextMove() {
   fetchFromApi("/api/games/" + gameId, "PATCH", null, function(json) {
     drawGame(json)
-    drawMovePlay(json)
   })
 }
 
@@ -132,7 +129,6 @@ function selectMove(move) {
 
   fetchFromApi("/api/games/", "PATCH", { "move": move }, function(json) {
     drawGame(json)
-    drawMovePlay(json)
   })
 }
 
@@ -149,7 +145,6 @@ function selectPiece(piece) {
     selectedMoves = [];
   }
   drawGame(json)
-  drawMovePlay(json)
 }
 
 
@@ -323,6 +318,7 @@ function drawGame(json, live=false) {
 
   drawBoard();
   drawPieces(showTeam);
+  drawMovePlay(json, live);
 
   if (live) {
     checkForMoveLoop()
@@ -340,10 +336,12 @@ function checkForMoveLoop() {
   }, 5000)
 }
 
-function drawMovePlay(json) {
-  // TODO: allow this method to work with live games
-  let isNotComputer = (turnName !== "");
-  if (json !== undefined && isNotComputer && json["game"]["turn"] === (thisTeam || getTokenColor())) {
+function drawMovePlay(json, live) {
+  let isThisTurn = (turnName !== "");
+  if (live) {
+    isThisTurn = (json["game"]["turn"] === getTokenColor());
+  }
+  if (json !== undefined && isThisTurn) {
     drawMoves();
     nextMoveSubmit.setAttribute("disabled", true)
   } else {
@@ -398,7 +396,6 @@ function drawCodeWindow(json) {
       // Close out and show live game
       modal.classList.add("hidden")
       drawGame(json, true)
-      drawMovePlay(json)
       return null;
 
     } else  {
@@ -522,7 +519,6 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       alert("Game ready to begin")
       setTokenCookie(json["token"], json["color"], json["access_code"])
       drawGame(json, true)
-      drawMovePlay(json)
     }
 
     else {
