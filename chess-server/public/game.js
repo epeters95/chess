@@ -202,6 +202,9 @@ function drawBoard(){
         div.addEventListener("mouseleave", function(event) {
           this.classList.remove("highlighted");
         })
+        div.addEventListener("click", function(event) {
+          canvas.click();
+        })
         document.getElementById("canvas-window-wrapper").append(div)
         context.fillStyle = switchSquareColor();
         context.fillRect(x, y, squareSize, squareSize);
