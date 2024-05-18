@@ -45,33 +45,12 @@ if (getAccessCode !== null) {
   })
 }
 
-var gameId = 0;
-var turn;
-var turnName;
-var status = "";
-var pieces = {};
-var isLive = false;
+var gameView = null;
 
-var selectedPiece= "";
-var selectedMoves = [];
-
-var length = canvas.width;
-var squareSize = canvas.width / 8.0;
-var smallSize = squareSize * 0.9;
-var tinySize = squareSize * 0.1;
-
-var colorW = "#97aaac";
-var colorB = "#556567";
-var squareColor = colorB;
-var switchSquareColor = function() {
-  squareColor = (squareColor === colorW ? colorB : colorW);
-  return squareColor
-}
-var eventListeners = [];
-var json;
 let wrapper = document.getElementById("canvas-window-wrapper");
-let quoteSpan = document.createElement("span")
+var quoteSpan = document.createElement("span")
 quoteSpan.classList.add("quote-span");
+
 fetchFromApi("/api/quote", "GET", null, function(json) {
   quoteSpan.innerText = json["quote"];
   wrapper.appendChild(quoteSpan);
@@ -79,19 +58,20 @@ fetchFromApi("/api/quote", "GET", null, function(json) {
 
 
 function refreshGame() {
-  let accessCookie = getAccessCookie()
-  let tokenCookie = getTokenCookie()
-  if (!!tokenCookie) {
-    tokenCookie = tokenCookie.split("gametoken=")[1]
-  }
-  if (!!accessCookie) {
-    accessCookie = accessCookie.split("accesscode=")[1]
-  }
-  let params = "?access_code=" + accessCookie + "&token=" + tokenCookie
+  // let accessCookie = getAccessCookie()
+  // let tokenCookie = getTokenCookie()
+  // if (!!tokenCookie) {
+  //   tokenCookie = tokenCookie.split("gametoken=")[1]
+  // }
+  // if (!!accessCookie) {
+  //   accessCookie = accessCookie.split("accesscode=")[1]
+  // }
+  // let params = "?access_code=" + accessCookie + "&token=" + tokenCookie
 
-  fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
-    drawGame(json, true)
-  })
+  // fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
+  //   drawGame(json, true)
+  // })
+  gameView.refresh()
 }
 
 function findGame() {
@@ -115,66 +95,20 @@ function newGame() {
   }
 
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
-    drawGame(json)
+
+    let quoteSpan = document.getElementsByClassName("quote-span")[0]
+    if (quoteSpan !== undefined) {
+      quoteSpan.remove()
+    }
+
+    gameView = new GameView(canvas, json, statusSpan, false, nextMoveSubmit)
+    gameView.draw()
   })
 }
 
 function nextMove() {
-  fetchFromApi("/api/games/" + gameId, "PATCH", null, function(json) {
-    drawGame(json)
-  })
-}
-
-function selectMove(move) {
-
-  fetchFromApi("/api/games/", "PATCH", { "move": move }, function(json) {
-    drawGame(json)
-  })
-}
-
-function selectPiece(piece) {
-  if (selectedPiece === "") {
-    selectedPiece = piece
-    selectedMoves = moves.filter(function(move) {
-      let pc = JSON.parse(move.piece_str)
-      return pc.position === selectedPiece.position
-    })
-  }
-  else {
-    selectedPiece = "";
-    selectedMoves = [];
-  }
-  drawGame(json)
-}
-
-
-function setGameVars(game) {
-  if (game["game"] !== undefined) {
-    game = game["game"]
-  }
-  gameId =   game["id"];
-  status =   game["status_str"];
-  turn =     game["turn"];
-  turnName = game["turn_name"];
-  pieces =   JSON.parse(game["pieces"]);
-  moves =    game["legal_moves"];
-  isLive =   game["is_live"];
-  selectedMoves = [];
-  selectedPiece = "";
-}
-
-function addFunctionOnClick(x, y, func) {
-  let myFunc = function(event) {
-    let eventX = event.offsetX;
-    let eventY = event.offsetY;
-
-    if (eventY > y && eventY < y + squareSize 
-        && eventX > x && eventX < x + squareSize) {
-        func();
-    }
-  }
-  canvas.addEventListener('click', myFunc);
-  eventListeners.push(myFunc);
+  
+  gameView.nextComputerMove()
 }
 
 function fileIndexOf(letter) {
@@ -182,174 +116,6 @@ function fileIndexOf(letter) {
 }
 function rankIndexOf(num) {
   return "12345678".indexOf(num);
-}
-
-function drawBoard(){
-  let quoteSpan = document.getElementsByClassName("quote-span")[0]
-  if (quoteSpan !== undefined) {
-    quoteSpan.remove()
-  }
-  for (let x = 0; x <= length; x += squareSize) {
-    for (let y = 0; y <= length; y += squareSize) {
-        let div = document.createElement("div");
-        let leftAmt = x + 473 + 9;
-        let topAmt =  y - 473;
-        div.setAttribute("class", "square-selected")
-        div.setAttribute("style", "position: absolute; left: " + leftAmt + "px; top: " + (y - 2)+ "px; width: " + squareSize + "px; height: " + squareSize + "px;");
-        div.addEventListener("mouseenter", function(event) {
-          this.classList.add("highlighted");
-        })
-        div.addEventListener("mouseleave", function(event) {
-          this.classList.remove("highlighted");
-        })
-        div.addEventListener("click", function(event) {
-          canvas.click();
-        })
-        document.getElementById("canvas-window-wrapper").append(div)
-        context.fillStyle = switchSquareColor();
-        context.fillRect(x, y, squareSize, squareSize);
-    }
-  }
-}
-function fillPieces(thisCol, team=null) {
-  pieces[thisCol].forEach(function(el) {
-    context.fillStyle = thisCol;
-    let x, y;
-    if (team !== null) {
-
-      if (team === "white") {
-        x = fileIndexOf(el.position[0]) * squareSize;
-        y = (7 - rankIndexOf(el.position[1])) * squareSize;
-      } else {
-        x = (7 - fileIndexOf(el.position[0])) * squareSize;
-        y = rankIndexOf(el.position[1]) * squareSize;
-      }
-      context.fillText(el.char, x + tinySize, y + smallSize);
-      // Add click handler
-      if (thisCol === team) {
-        addFunctionOnClick(x, y, function() {
-          selectPiece(el)
-        });
-      }
-
-    } else {
-      if (turn === "white" || turnName === "") {
-        x = fileIndexOf(el.position[0]) * squareSize;
-        y = (7 - rankIndexOf(el.position[1])) * squareSize;
-      } else {
-        x = (7 - fileIndexOf(el.position[0])) * squareSize;
-        y = rankIndexOf(el.position[1]) * squareSize;
-      }
-      context.fillText(el.char, x + tinySize, y + smallSize);
-      // Add click handler
-      if (thisCol === turn) {
-        addFunctionOnClick(x, y, function() {
-          selectPiece(el)
-        });
-      }
-
-    }
-  })
-}
-
-function drawPieces(team=null){
-  context.font = `50px Verdana`;
-  fillPieces("white", team);
-  fillPieces("black", team);
-}
-
-function drawMoves() {
-  selectedMoves.forEach(function(move) {
-    let x, y;
-    if (turn === "white") {
-      x = fileIndexOf(move.new_position[0]) * squareSize;
-      y = (7 - rankIndexOf(move.new_position[1])) * squareSize;
-    } else {
-      x = (7 - fileIndexOf(move.new_position[0])) * squareSize;
-      y = rankIndexOf(move.new_position[1]) * squareSize;
-    }
-    let halfSquare = squareSize / 2.0;
-    let bgColor = ( (fileIndexOf(move.new_position[0]) + rankIndexOf(move.new_position[1])) % 2 === 1) ? colorB : colorW;
-    const grd = context.createRadialGradient(
-      x + halfSquare,
-      y + halfSquare,
-      0,
-      x + halfSquare,
-      y + halfSquare,
-      tinySize
-      );
-
-    grd.addColorStop(0, turn);
-    grd.addColorStop(1, bgColor);
-    // Draw a filled Rectangle
-    context.fillStyle = grd;
-    context.fillRect(
-      x,
-      y,
-      squareSize,
-      squareSize
-      );
-
-    // Add click handler
-    addFunctionOnClick(x, y, function() {
-      selectMove(move);
-    });
-  })
-}
-
-
-function drawGame(json, live=false) {
-  if (json["game"] !== undefined) {
-    setGameVars(json["game"])
-  } else {
-    setGameVars(json)
-  }
-
-  statusSpan.innerText = status;
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  eventListeners.forEach(function(el) {
-    canvas.removeEventListener('click', el);
-  })
-
-  switchSquareColor()
-
-  let showTeam = turn;
-  if (live) {
-    showTeam = getTokenColor();
-  }
-
-  drawBoard();
-  drawPieces(showTeam);
-  drawMovePlay(json, live);
-
-  if (live) {
-    checkForMoveLoop()
-  }
-  
-}
-
-function checkForMoveLoop() {
-  setTimeout(function() {
-
-    if (getTokenColor() !== turn) {
-      refreshGame()
-    }
-
-  }, 5000)
-}
-
-function drawMovePlay(json, live) {
-  let isThisTurn = (turnName !== "");
-  if (live) {
-    isThisTurn = (json["game"]["turn"] === getTokenColor());
-  }
-  if (json !== undefined && isThisTurn) {
-    drawMoves();
-    nextMoveSubmit.setAttribute("disabled", true)
-  } else {
-    nextMoveSubmit.removeAttribute("disabled")
-  }
 }
 
 // This background modal displays the status of a "live game"
@@ -398,7 +164,14 @@ function drawCodeWindow(json) {
     if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
       modal.classList.add("hidden")
-      drawGame(json, true)
+      if (quoteSpan !== undefined) {
+        quoteSpan.remove()
+      }
+
+      if (gameView === null) {
+        gameView = new GameView(canvas, json, statusSpan, true)
+      }
+      gameView.draw()
       return null;
 
     } else  {
@@ -521,7 +294,11 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       modal.classList.add("hidden");
       alert("Game ready to begin")
       setTokenCookie(json["token"], json["color"], json["access_code"])
-      drawGame(json, true)
+
+      if (gameView === null) {
+        gameView = new GameView(canvas, json, statusSpan, true)
+      }
+      gameView.draw()
     }
 
     else {
