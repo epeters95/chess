@@ -98,39 +98,28 @@ class GameView {
     this.pieces[color].forEach(function(el) {
       that.context.fillStyle = color;
       let x, y;
+      let thisTurn, showWhite;
       if (showTurn !== null) {
-
-        if (showTurn === "white") {
-          x = fileIndexOf(el.position[0]) * squareSize;
-          y = (7 - rankIndexOf(el.position[1])) * squareSize;
-        } else {
-          x = (7 - fileIndexOf(el.position[0])) * squareSize;
-          y = rankIndexOf(el.position[1]) * squareSize;
-        }
-        that.context.fillText(el.char, x + tinySize, y + smallSize);
-        // Add click handler
-        if (color === showTurn) {
-          that.addFunctionOnClick(x, y, function() {
-            that.selectPiece(el)
-          });
-        }
-
+        showWhite = (showTurn === "white");
+        thisTurn = showTurn;
       } else {
-        if (this.turn === "white" || this.turnName === "") {
-          x = fileIndexOf(el.position[0]) * squareSize;
-          y = (7 - rankIndexOf(el.position[1])) * squareSize;
-        } else {
-          x = (7 - fileIndexOf(el.position[0])) * squareSize;
-          y = rankIndexOf(el.position[1]) * squareSize;
-        }
-        that.context.fillText(el.char, x + tinySize, y + smallSize);
-        // Add click handler
-        if (color === that.turn) {
-          that.addFunctionOnClick(x, y, function() {
-            that.selectPiece(el)
-          });
-        }
+        showWhite = (that.turn === "white" || that.turnName === "");
+        thisTurn = that.turn
+      }
 
+      if (showWhite) {
+        x = fileIndexOf(el.position[0]) * squareSize;
+        y = (7 - rankIndexOf(el.position[1])) * squareSize;
+      } else {
+        x = (7 - fileIndexOf(el.position[0])) * squareSize;
+        y = rankIndexOf(el.position[1]) * squareSize;
+      }
+      that.context.fillText(el.char, x + tinySize, y + smallSize);
+      // Add click handler
+      if (color === thisTurn) {
+        that.addFunctionOnClick(x, y, function() {
+          that.selectPiece(el)
+        });
       }
     })
   }
@@ -235,9 +224,6 @@ class GameView {
         })
         div.addEventListener("mouseleave", function(event) {
           this.classList.remove("highlighted");
-        })
-        div.addEventListener("click", function(event) {
-          canvas.click();
         })
         document.getElementById("canvas-window-wrapper").append(div)
         context.fillStyle = this.switchSquareColor();
