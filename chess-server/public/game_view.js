@@ -54,10 +54,11 @@ class GameView {
   }
 
   checkForMoveLoop() {
+    let that = this;
     setTimeout(function() {
 
-      if (getTokenColor() !== this.turn) {
-        this.refresh()
+      if (getTokenColor() !== that.turn) {
+        that.refresh()
       }
 
     }, 5000)
@@ -225,7 +226,7 @@ class GameView {
         div.addEventListener("mouseleave", function(event) {
           this.classList.remove("highlighted");
         })
-        document.getElementById("canvas-window-wrapper").append(div)
+        document.getElementById("quote-wrapper").append(div)
         context.fillStyle = this.switchSquareColor();
         context.fillRect(x, y, this.squareSize, this.squareSize);
       }

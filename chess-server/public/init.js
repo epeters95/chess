@@ -1,18 +1,9 @@
-let canvas = document.getElementById("game-view");
-let context = canvas.getContext("2d");
-let canvasLeft = canvas.offsetLeft + canvas.clientLeft;
-let canvasTop = canvas.offsetTop + canvas.clientTop;
-
-canvas.width = (screen.height * .4) - 100;
-canvas.height = canvas.width;
-
-
 const newGameSubmit = document.getElementById("new-game");
 const newLiveGameSubmit = document.getElementById("new-live-game");
 const accessCodeInput = document.getElementById("access-code-input");
 const getAccessCode = document.getElementById("get-access-code");
 const nextMoveSubmit = document.getElementById("next-move");
-const statusSpan = document.getElementById("status");
+
 const modal = document.getElementsByClassName("modal")[0];
 const modalCloseBtn = document.getElementById("modal-close-button");
 modalCloseBtn.addEventListener("click", function(event) {

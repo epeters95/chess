@@ -1,3 +1,15 @@
+// Common variables
+
+const canvas = document.getElementById("game-view");
+const context = canvas.getContext("2d");
+const canvasLeft = canvas.offsetLeft + canvas.clientLeft;
+const canvasTop = canvas.offsetTop + canvas.clientTop;
+
+canvas.width = (screen.height * .4) - 100;
+canvas.height = canvas.width;
+
+const statusSpan = document.getElementById("status");
+
 
 // Common functions
 

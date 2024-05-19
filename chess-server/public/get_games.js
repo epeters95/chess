@@ -6,8 +6,8 @@ modalCloseBtnGames.addEventListener("click", function(event) {
   modalGames.classList.add("hidden");
 })
 
-let movesList = document.getElementById("movesList");
-
+let movesList = document.getElementById("moves-list");
+var gameView = null;
 
 function getGames() {
 
@@ -42,7 +42,7 @@ function populateTable(json) {
   table.innerHTML = htmlString;
   Array.from(document.getElementsByClassName("get-board")).forEach(function(el) {
     let id = el.getAttribute("data-id");
-    let boardUrl = "http://localhost:3000/api/games/" + id + "/board"
+    let boardUrl = "/api/games/" + id + "/board"
     boardUrl += "#with_history=true"
     el.addEventListener("click", function(event) {
 
@@ -72,7 +72,9 @@ function populateGameAndMoves(json) {
 }
 
 function showBoardRefresh(json, moveToPiecesMap, selectedId) {
-  drawGame(json)
+  modalGames.classList.remove("hidden");
+  gameView = new GameView(canvas, json, statusSpan, false)
+  gameView.draw()
   // Populate moves sidebar
   drawMoveList(json, moveToPiecesMap, selectedId)
 }
