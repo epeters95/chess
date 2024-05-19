@@ -19,6 +19,8 @@ modalCloseBtn.addEventListener("click", function(event) {
   modal.classList.add("hidden");
 })
 
+
+
 if (newGameSubmit !== null) {
   newGameSubmit.addEventListener('click', newGame);
 }
@@ -47,31 +49,16 @@ if (getAccessCode !== null) {
 
 var gameView = null;
 
-let quoteWrapper = document.getElementById("quote-wrapper");
-var quoteSpan = document.createElement("span")
+const quoteWrapper = document.getElementById("quote-wrapper");
+const quoteSpan = document.createElement("span")
 quoteSpan.classList.add("quote-span");
 
 fetchFromApi("/api/quote", "GET", null, function(json) {
   quoteSpan.innerText = json["quote"];
-  debugger
   quoteWrapper.appendChild(quoteSpan);
 })
 
-
 function refreshGame() {
-  // let accessCookie = getAccessCookie()
-  // let tokenCookie = getTokenCookie()
-  // if (!!tokenCookie) {
-  //   tokenCookie = tokenCookie.split("gametoken=")[1]
-  // }
-  // if (!!accessCookie) {
-  //   accessCookie = accessCookie.split("accesscode=")[1]
-  // }
-  // let params = "?access_code=" + accessCookie + "&token=" + tokenCookie
-
-  // fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
-  //   drawGame(json, true)
-  // })
   gameView.refresh()
 }
 
@@ -108,20 +95,8 @@ function newGame() {
 }
 
 function nextMove() {
-  
   gameView.nextComputerMove()
 }
-
-function fileIndexOf(letter) {
-  return "abcdefgh".indexOf(letter);
-}
-function rankIndexOf(num) {
-  return "12345678".indexOf(num);
-}
-
-// This background modal displays the status of a "live game"
-// which includes which players have joined. This method depends on a
-// successful response (json) from either #show or #update on /api/live_games
 
 function drawCodeWindow(json) {
   modal.classList.remove("hidden");
@@ -256,30 +231,6 @@ function newLiveGame() {
   })
 }
 
-function getAccessCookie() {
-  return document.cookie.split("; ").find((row) => row.startsWith("accesscode"));
-}
-
-function getTokenColor() {
-
-  let cookie = document.cookie.split("; ").find((row) => row.startsWith("color"));
-  return (cookie || document.getElementById("cookieholder-color").innerText);
-}
-
-function getTokenCookie() {
-  // let tokenIdFilled = document.getElementById("cookieholder").innerText !== ""
-  // return (tokenIdFilled || cookieSaved)
-  return document.cookie.split("; ").find((row) => row.startsWith("gametoken"))
-}
-
-function setTokenCookie(token, color=null, code=null) {
-  document.cookie = 'gametoken=' + token + '; path=/'
-  document.cookie = 'color=' + color + '; path=/'
-  document.cookie = 'accesscode=' + code + '; path=/'
-  document.getElementById("cookieholder").innerText = token;
-  document.getElementById("cookieholder-color").innerText = color;
-}
-
 function updateLiveGame(playerName, playerTeam, prevJson) {
   let code = prevJson["access_code"];
   let id = prevJson["id"];
@@ -315,51 +266,4 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       drawCodeWindow(json)
     }
   })
-}
-
-function fetchFromApi(endpoint, method, params=null, successCallback=null) {
-  let spinner = showSpinner("spinner-div");
-  let apiUrl = "http://localhost:3000" + endpoint;
-  let requestObj = {
-    method: method,
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
-  }
-  if (params !== null) {
-    requestObj.body = JSON.stringify(params);
-  }
-
-  fetch(apiUrl, requestObj)
-  .then(response => response.json())
-  .then(function(json) {
-    if (json.errors === undefined && json.error === undefined){
-
-      if (successCallback !== null) {
-        successCallback(json);
-      }
-
-    } else {
-      alert("Error:" + json.error + " " + json.errors)
-    }
-    spinner.hide()
-  })
-  .catch(function(error) {
-    alert("Error: " + error)
-  })
-}
-
-function showSpinner(canvasParentId) {
-  let spinner = document.createElement('div');
-  spinner.id = "loading";
-  spinner.innerHTML = '<div id="loading-spinner"><img src="spinner2.gif"></div>';
-  document.getElementById(canvasParentId).appendChild(spinner);
-
-  // Add hide function for spinner
-  spinner.hide = function() {
-    this.classList.add("hidden");
-  }
-
-  return spinner
 }
