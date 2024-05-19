@@ -1,9 +1,9 @@
 let table = document.getElementById("game-table");
 
-let modal = document.getElementsByClassName("modal")[0];
-let modalCloseBtn = document.getElementById("modal-close-button");
-modalCloseBtn.addEventListener("click", function(event) {
-  modal.classList.add("hidden");
+let modalGames = document.getElementsByClassName("modal")[0];
+let modalCloseBtnGames = document.getElementById("modal-close-button");
+modalCloseBtnGames.addEventListener("click", function(event) {
+  modalGames.classList.add("hidden");
 })
 
 let movesList = document.getElementById("movesList");

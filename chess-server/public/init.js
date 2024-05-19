@@ -47,13 +47,14 @@ if (getAccessCode !== null) {
 
 var gameView = null;
 
-let wrapper = document.getElementById("canvas-window-wrapper");
+let quoteWrapper = document.getElementById("quote-wrapper");
 var quoteSpan = document.createElement("span")
 quoteSpan.classList.add("quote-span");
 
 fetchFromApi("/api/quote", "GET", null, function(json) {
   quoteSpan.innerText = json["quote"];
-  wrapper.appendChild(quoteSpan);
+  debugger
+  quoteWrapper.appendChild(quoteSpan);
 })
 
 
@@ -317,7 +318,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
 }
 
 function fetchFromApi(endpoint, method, params=null, successCallback=null) {
-  let spinner = showSpinner("canvas-code-window");
+  let spinner = showSpinner("spinner-div");
   let apiUrl = "http://localhost:3000" + endpoint;
   let requestObj = {
     method: method,
