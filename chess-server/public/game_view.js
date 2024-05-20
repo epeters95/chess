@@ -70,8 +70,9 @@ class GameView {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    let thisCanvas = this.canvas;
     this.eventListeners.forEach(function(el) {
-      this.canvas.removeEventListener('click', el);
+      thisCanvas.removeEventListener('click', el);
     })
 
     this.switchSquareColor()
@@ -81,7 +82,7 @@ class GameView {
     this.drawBoard();
     this.drawTeam("white", showTurn);
     this.drawTeam("black", showTurn);
-    this.showSelectionGrid();
+    this.showSelectionGrid(showTurn);
     this.drawMoves();
 
     if (this.isLive) {
@@ -145,7 +146,7 @@ class GameView {
       this.selectedPiece = piece;
       this.selectedMoves = this.moves.filter(function(move) {
         let pc = JSON.parse(move.piece_str)
-        return pc.position === this.selectedPiece.position
+        return pc.position === piece.position
       })
     }
     else {
@@ -227,7 +228,7 @@ class GameView {
     return this.squareColor;
   }
 
-  showSelectionGrid() {
+  showSelectionGrid(showTurn) {
     let grid = document.getElementById("selection-grid");
     grid.classList.remove("hidden");
 
@@ -235,12 +236,31 @@ class GameView {
     const highlight = (event) => { event.target.classList.add("highlighted") }
     const unhighlight = (event) => { event.target.classList.remove("highlighted") }
 
+    let that = this;
+
     Array.from(grid.firstElementChild.children).forEach((row) => {
       Array.from(row.children).forEach((cell) => {
         cell.removeEventListener("mouseenter", highlight)
         cell.removeEventListener("mouseleave", unhighlight)
         cell.addEventListener("mouseenter", highlight)
         cell.addEventListener("mouseleave", unhighlight)
+
+
+        cell.addEventListener("click", (event) => {
+          var fileIndex = event.target.cellIndex;
+          var rankIndex = event.target.closest("tr").rowIndex;
+
+          // Map cell indices to board orientation
+          if (showTurn === "white") {
+            rankIndex = 7 - rankIndex;
+          } else {
+            fileIndex = 7 - fileIndex;
+          }
+          let cellPiece = this.pieces[showTurn].filter((piece) => {
+            return (piece.position === fileOf(fileIndex) + rankOf(rankIndex))
+          })
+          that.selectPiece(cellPiece)
+        })
       });
     });
   }

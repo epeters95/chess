@@ -20,6 +20,14 @@ function rankIndexOf(num) {
   return "12345678".indexOf(num);
 }
 
+function fileOf(col) {
+  return ["a","b","c","d","e","f","g","h"][col]
+}
+
+function rankOf(row) {
+  return ["1","2","3","4","5","6","7","8"][row]
+}
+
 function getAccessCookie() {
   return document.cookie.split("; ").find((row) => row.startsWith("accesscode"));
 }
