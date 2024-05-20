@@ -81,6 +81,7 @@ class GameView {
     this.drawBoard();
     this.drawTeam("white", showTurn);
     this.drawTeam("black", showTurn);
+    this.showSelectionGrid();
     this.drawMoves();
 
     if (this.isLive) {
@@ -215,18 +216,6 @@ class GameView {
     
     for (let x = 0; x <= this.canvas.width; x += this.squareSize) {
       for (let y = 0; y <= this.canvas.width; y += this.squareSize) {
-        let div = document.createElement("div");
-        let leftAmt = x + 473 + 9;
-        let topAmt =  y - 473;
-        div.setAttribute("class", "square-selected")
-        div.setAttribute("style", "position: absolute; left: " + leftAmt + "px; top: " + (y - 2)+ "px; width: " + this.squareSize + "px; height: " + this.squareSize + "px;");
-        div.addEventListener("mouseenter", function(event) {
-          this.classList.add("highlighted");
-        })
-        div.addEventListener("mouseleave", function(event) {
-          this.classList.remove("highlighted");
-        })
-        document.getElementById("quote-wrapper").append(div)
         context.fillStyle = this.switchSquareColor();
         context.fillRect(x, y, this.squareSize, this.squareSize);
       }
@@ -236,6 +225,24 @@ class GameView {
   switchSquareColor() {
     this.squareColor = (this.squareColor === this.colorW ? this.colorB : this.colorW);
     return this.squareColor;
+  }
+
+  showSelectionGrid() {
+    let grid = document.getElementById("selection-grid");
+    grid.classList.remove("hidden");
+
+    // In case grid element is reused, save func declarations to remove event listeners
+    const highlight = (event) => { event.target.classList.add("highlighted") }
+    const unhighlight = (event) => { event.target.classList.remove("highlighted") }
+
+    Array.from(grid.firstElementChild.children).forEach((row) => {
+      Array.from(row.children).forEach((cell) => {
+        cell.removeEventListener("mouseenter", highlight)
+        cell.removeEventListener("mouseleave", unhighlight)
+        cell.addEventListener("mouseenter", highlight)
+        cell.addEventListener("mouseleave", unhighlight)
+      });
+    });
   }
 
   nextComputerMove() {

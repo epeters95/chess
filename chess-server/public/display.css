@@ -322,8 +322,14 @@ table.inputs-table {
 }
 .highlighted {
   border: 2px solid gold;
+  width: 55.5px;
+  height: 55.5px;
 }
 
-.square-selected {
+#selection-grid {
+  width: 100%;
+  border-spacing: 0px;
   position: absolute;
+  width: 476px;
+  height: 476px;
 }
