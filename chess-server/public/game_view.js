@@ -40,6 +40,7 @@ class GameView {
     this.currentJson   = json;
     this.gameId        = json["id"];
     this.status        = json["status_str"];
+    this.gameStatus    = json["game_status"];
     this.turn          = json["turn"];
     this.turnName      = json["turn_name"];
     this.pieces        = JSON.parse(json["pieces"]);
@@ -94,7 +95,10 @@ class GameView {
     this.drawBoard();
     this.drawTeam("white");
     this.drawTeam("black");
-    this.showSelectionGrid();
+    
+    if (this.gameStatus !== "completed") {
+      this.showSelectionGrid();
+    }
     this.drawMoves();
 
     if (this.isLive) {
