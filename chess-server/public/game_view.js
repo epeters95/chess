@@ -118,27 +118,7 @@ class GameView {
         y = rankIndexOf(el.position[1]) * squareSize;
       }
       that.context.fillText(el.char, x + tinySize, y + smallSize);
-      // Add click handler
-      if (color === thisTurn) {
-        that.addFunctionOnClick(x, y, function() {
-          that.selectPiece(el)
-        });
-      }
     })
-  }
-
-  addFunctionOnClick(x, y, func) {
-    let myFunc = function(event) {
-      let eventX = event.offsetX;
-      let eventY = event.offsetY;
-
-      if (eventY > y && eventY < y + this.squareSize 
-          && eventX > x && eventX < x + this.squareSize) {
-        func();
-      }
-    }
-    this.canvas.addEventListener('click', myFunc);
-    this.eventListeners.push(myFunc);
   }
 
   selectPiece(piece) {
@@ -194,11 +174,6 @@ class GameView {
           squareSize,
           squareSize
           );
-
-        // Add click handler
-        that.addFunctionOnClick(x, y, function() {
-          that.selectMove(move);
-        });
       })
 
       if (!!this.nextMoveSubmit) {
@@ -236,31 +211,51 @@ class GameView {
     const highlight = (event) => { event.target.classList.add("highlighted") }
     const unhighlight = (event) => { event.target.classList.remove("highlighted") }
 
+    const click = (event) => {
+      var fileIndex = event.target.cellIndex;
+      var rankIndex = event.target.closest("tr").rowIndex;
+
+      // Map cell indices to board orientation
+      if (showTurn === "white") {
+        rankIndex = 7 - rankIndex;
+      } else {
+        fileIndex = 7 - fileIndex;
+      }
+      let thisSquare = fileOf(fileIndex) + rankOf(rankIndex);
+
+      // Show moves if clicking piece
+      let cellPiece = this.pieces[showTurn].filter((piece) => {
+        return (piece.position === thisSquare)
+      })
+      if (cellPiece.length === 1) {
+        that.selectPiece(cellPiece[0])
+      }
+
+      // Play move if clicking move
+      let cellMove = this.moves.filter((mv) => {
+        return (mv.new_position === thisSquare)
+      })
+      if (cellMove.length === 1) {
+        that.selectMove(cellMove[0])
+      }
+    }
+
+    this.highlight = highlight.bind(this);
+    this.unhighlight = unhighlight.bind(this);
+    this.click = click.bind(this);
+
     let that = this;
 
     Array.from(grid.firstElementChild.children).forEach((row) => {
       Array.from(row.children).forEach((cell) => {
-        cell.removeEventListener("mouseenter", highlight)
-        cell.removeEventListener("mouseleave", unhighlight)
-        cell.addEventListener("mouseenter", highlight)
-        cell.addEventListener("mouseleave", unhighlight)
+        cell.removeEventListener("mouseenter", this.highlight)
+        cell.removeEventListener("mouseleave", this.unhighlight)
+        cell.addEventListener("mouseenter", this.highlight)
+        cell.addEventListener("mouseleave", this.unhighlight)
 
-
-        cell.addEventListener("click", (event) => {
-          var fileIndex = event.target.cellIndex;
-          var rankIndex = event.target.closest("tr").rowIndex;
-
-          // Map cell indices to board orientation
-          if (showTurn === "white") {
-            rankIndex = 7 - rankIndex;
-          } else {
-            fileIndex = 7 - fileIndex;
-          }
-          let cellPiece = this.pieces[showTurn].filter((piece) => {
-            return (piece.position === fileOf(fileIndex) + rankOf(rankIndex))
-          })
-          that.selectPiece(cellPiece)
-        })
+        if (cell.cellIndex === 0 && cell.closest('tr').rowIndex === 5) debugger
+        cell.removeEventListener("click", this.click);
+        cell.addEventListener("click", this.click);
       });
     });
   }
@@ -276,7 +271,7 @@ class GameView {
 
   selectMove(move) {
 
-    fetchFromApi("/api/games/", "PATCH", { "move": move }, function(json) {
+    fetchFromApi("/api/games/" + this.gameId, "PATCH", { "move": move }, function(json) {
       this.setJsonVars(json);
       this.draw();
     })

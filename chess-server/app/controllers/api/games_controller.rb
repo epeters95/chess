@@ -74,7 +74,7 @@ class Api::GamesController < ApplicationController
   end
 
   def quote
-      render json: {quote: get_quote_html}, status: :ok
+    render json: {quote: get_quote_html}, status: :ok
   end
 
   private
