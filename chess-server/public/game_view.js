@@ -15,7 +15,11 @@ class GameView {
     this.accessCode    = "";
     this.token         = "";
 
-    this.eventListeners = [];
+    this.eventListeners = {
+      "mouseenter": [],
+      "mouseleave": [],
+      "click": []
+    }; // E.g. { type: [[domElement, listener], ...], ... }
 
     this.colorW = "#97aaac";
     this.colorB = "#556567";
@@ -26,6 +30,7 @@ class GameView {
     this.nextMoveSubmit = nextMoveSubmitEl;
 
     this.gridShown = false;
+    this.showTurn = null;
   }
 
   setJsonVars(json) {
@@ -73,19 +78,23 @@ class GameView {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    let thisCanvas = this.canvas;
-    this.eventListeners.forEach(function(el) {
-      thisCanvas.removeEventListener('click', el);
-    })
+    // let thisCanvas = this.canvas;
+    // this.eventListeners.forEach(function(el) {
+    //   thisCanvas.removeEventListener('click', el);
+    // })
 
     this.switchSquareColor()
 
-    let showTurn = (this.isLive ? getTokenColor() : this.turn);
+    if (this.isLive) {
+      this.showTurn  = getTokenColor()
+    } else if (this.showTurn === null || this.turnName !== "") {
+      this.showTurn = this.turn;
+    }
 
     this.drawBoard();
-    this.drawTeam("white", showTurn);
-    this.drawTeam("black", showTurn);
-    this.showSelectionGrid(showTurn);
+    this.drawTeam("white");
+    this.drawTeam("black");
+    this.showSelectionGrid();
     this.drawMoves();
 
     if (this.isLive) {
@@ -94,7 +103,7 @@ class GameView {
 
   }
 
-  drawTeam(color, showTurn=null) {
+  drawTeam(color) {
     context.font = `50px Verdana`;
     let smallSize = this.squareSize * 0.9;
     let tinySize = this.squareSize * 0.1;
@@ -105,9 +114,10 @@ class GameView {
       that.context.fillStyle = color;
       let x, y;
       let thisTurn, showWhite;
-      if (showTurn !== null) {
-        showWhite = (showTurn === "white");
-        thisTurn = showTurn;
+
+      if (that.showTurn !== null) {
+        showWhite = (that.showTurn === "white");
+        thisTurn = that.showTurn;
       } else {
         showWhite = (that.turn === "white" || that.turnName === "");
         thisTurn = that.turn
@@ -206,7 +216,7 @@ class GameView {
     return this.squareColor;
   }
 
-  showSelectionGrid(showTurn) {
+  showSelectionGrid() {
     let grid = document.getElementById("selection-grid");
     grid.classList.remove("hidden");
 
@@ -221,7 +231,7 @@ class GameView {
       var rankIndex = event.target.closest("tr").rowIndex;
 
       // Map cell indices to board orientation
-      if (showTurn === "white") {
+      if (that.showTurn === "white") {
         rankIndex = 7 - rankIndex;
       } else {
         fileIndex = 7 - fileIndex;
@@ -229,7 +239,7 @@ class GameView {
       let thisSquare = fileOf(fileIndex) + rankOf(rankIndex);
 
       // Show moves if clicking piece
-      let cellPiece = this.pieces[showTurn].filter((piece) => {
+      let cellPiece = that.pieces[that.showTurn].filter((piece) => {
         return (piece.position === thisSquare)
       })
       if (cellPiece.length === 1) {
@@ -237,13 +247,27 @@ class GameView {
       }
 
       // Play move if clicking move
-      let cellMove = this.moves.filter((mv) => {
+      let cellMove = that.selectedMoves.filter((mv) => {
         return (mv.new_position === thisSquare)
       })
       if (cellMove.length === 1) {
-        that.selectMove(cellMove[0])
+        removeEventListenersAndCall(grid, that, () => {
+          that.selectMove(cellMove[0])
+        })
       }
     }
+
+    const removeEventListenersAndCall = (grid, that, callFunc) => {
+      Object.keys(that.eventListeners).forEach((key) => {
+        that.eventListeners[key].forEach((elArr) => {
+          elArr[0].removeEventListener(key, elArr[1])
+        })
+      })
+      that.gridShown = false; // trigger re-draw
+      callFunc() // Should be selectMove, which fetches then calls draw()
+    }
+
+    // Triggered re-draw of board + events
 
     if (!this.gridShown) {
       this.gridShown = true;
@@ -252,6 +276,10 @@ class GameView {
           cell.addEventListener("mouseenter", highlight)
           cell.addEventListener("mouseleave", unhighlight)
           cell.addEventListener("click", click);
+
+          that.eventListeners["mouseenter"].push([cell, highlight])
+          that.eventListeners["mouseleave"].push([cell, unhighlight])
+          that.eventListeners["click"].push([cell, click])
         });
       });
     }
