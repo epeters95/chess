@@ -24,6 +24,8 @@ class GameView {
     // DOM elements
     this.statusSpan     = statusSpan;
     this.nextMoveSubmit = nextMoveSubmitEl;
+
+    this.gridShown = false;
   }
 
   setJsonVars(json) {
@@ -45,10 +47,11 @@ class GameView {
   refresh() {
 
     let params = "?access_code=" + this.accessCode + "&token=" + this.token
+    let that = this;
 
     fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
-      this.currentJson = json;
-      this.draw()
+      that.currentJson = json;
+      that.draw()
     })
 
   }
@@ -211,6 +214,8 @@ class GameView {
     const highlight = (event) => { event.target.classList.add("highlighted") }
     const unhighlight = (event) => { event.target.classList.remove("highlighted") }
 
+    let that = this;
+
     const click = (event) => {
       var fileIndex = event.target.cellIndex;
       var rankIndex = event.target.closest("tr").rowIndex;
@@ -240,40 +245,37 @@ class GameView {
       }
     }
 
-    this.highlight = highlight.bind(this);
-    this.unhighlight = unhighlight.bind(this);
-    this.click = click.bind(this);
-
-    let that = this;
-
-    Array.from(grid.firstElementChild.children).forEach((row) => {
-      Array.from(row.children).forEach((cell) => {
-        cell.removeEventListener("mouseenter", this.highlight)
-        cell.removeEventListener("mouseleave", this.unhighlight)
-        cell.addEventListener("mouseenter", this.highlight)
-        cell.addEventListener("mouseleave", this.unhighlight)
-
-        if (cell.cellIndex === 0 && cell.closest('tr').rowIndex === 5) debugger
-        cell.removeEventListener("click", this.click);
-        cell.addEventListener("click", this.click);
+    if (!this.gridShown) {
+      this.gridShown = true;
+      Array.from(grid.firstElementChild.children).forEach((row) => {
+        Array.from(row.children).forEach((cell) => {
+          cell.addEventListener("mouseenter", highlight)
+          cell.addEventListener("mouseleave", unhighlight)
+          cell.addEventListener("click", click);
+        });
       });
-    });
+    }
   }
 
   nextComputerMove() {
 
+    let that = this;
+
     fetchFromApi("/api/games/" + this.gameId, "PATCH", null, function(json) {
-      this.setJsonVars(json);
-      this.draw();
+      that.setJsonVars(json);
+      that.draw();
     })
 
   }
 
   selectMove(move) {
 
+    let that = this;
+
     fetchFromApi("/api/games/" + this.gameId, "PATCH", { "move": move }, function(json) {
-      this.setJsonVars(json);
-      this.draw();
+      that.selectedMoves = [];
+      that.setJsonVars(json);
+      that.draw();
     })
 
   }
