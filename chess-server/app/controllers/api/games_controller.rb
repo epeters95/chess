@@ -41,6 +41,7 @@ class Api::GamesController < ApplicationController
             @game.update(status: "completed")
             return render json: @game, status: :ok
           end
+          chosen_move = Move.new(move_params)
           if @game.is_live?
             validate_move_access(@game, params)
           else
@@ -48,10 +49,6 @@ class Api::GamesController < ApplicationController
             if @game.is_computers_turn?
               # PATCH/PUT to a game on the computer's turn will initiate a computer move
               chosen_move = Computer.new(@game.board).get_move
-            else
-              # Else, initiate a player move specified in params
-              chosen_move = Move.new(move_params)
-
             end
           end
           success = @game.play_move_and_evaluate(chosen_move)

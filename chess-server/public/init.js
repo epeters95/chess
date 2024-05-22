@@ -26,7 +26,9 @@ if (nextMoveSubmit !== null) {
 if (getAccessCode !== null) {
   
   getAccessCode.addEventListener('click', findGame);
-  getAccessCode.setAttribute('disabled', true);
+  if (accessCodeInput.value.length !== 4) {
+    getAccessCode.setAttribute('disabled', true);
+  }
 
   // Only trigger findGame on click when a full code is entered
   accessCodeInput.addEventListener('keyup', function(event) {
@@ -56,9 +58,6 @@ function refreshGame() {
 function findGame() {
   // get game from the api
   let tokenCookie = getTokenCookie()
-  if (!!tokenCookie) {
-    tokenCookie = tokenCookie.split("gametoken=")[1]
-  }
   let params = "?access_code=" + accessCodeInput.value + "&token=" + tokenCookie
   fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
     drawCodeWindow(json)
@@ -77,7 +76,7 @@ function newGame() {
 
     let quoteSpan = document.getElementsByClassName("quote-span")[0]
     if (quoteSpan !== undefined) {
-      quoteSpan.remove()
+      quoteSpan.classList.add("hidden")
     }
 
     gameView = new GameView(canvas, json, statusSpan, false, nextMoveSubmit)
@@ -131,8 +130,9 @@ function drawCodeWindow(json) {
     if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
       modal.classList.add("hidden")
+      let quoteSpan = document.getElementsByClassName("quote-span")[0]
       if (quoteSpan !== undefined) {
-        quoteSpan.remove()
+        quoteSpan.classList.add("hidden")
       }
 
       if (gameView === null) {

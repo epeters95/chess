@@ -29,16 +29,15 @@ function rankOf(row) {
 }
 
 function getAccessCookie() {
-  return document.cookie.split("; ").find((row) => row.startsWith("accesscode"));
+  return document.cookie.split("; ").find((row) => row.startsWith("accesscode")).split("accesscode=")[1];
 }
 
 function getTokenColor() {
-  let cookie = document.cookie.split("; ").find((row) => row.startsWith("color"));
-  return (cookie || document.getElementById("cookieholder-color").innerText);
+  return document.cookie.split("; ").find((row) => row.startsWith("color")).split("color=")[1];
 }
 
 function getTokenCookie() {
-  return document.cookie.split("; ").find((row) => row.startsWith("gametoken"))
+  return document.cookie.split("; ").find((row) => row.startsWith("gametoken")).split("gametoken=")[1];
 }
 
 function setTokenCookie(token, color=null, code=null) {

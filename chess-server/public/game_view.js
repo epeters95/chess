@@ -45,18 +45,19 @@ class GameView {
     this.turnName      = json["turn_name"];
     this.pieces        = JSON.parse(json["pieces"]);
     this.moves         = json["legal_moves"];
-
-    // TODO: check all response params - possibly unnecessary 
-    // this.isLive        = json["is_live"];
+    this.isLive        = json["is_live"];
   }
 
   refresh() {
+
+    this.accessCode = getAccessCookie()
+    this.token = getTokenCookie()
 
     let params = "?access_code=" + this.accessCode + "&token=" + this.token
     let that = this;
 
     fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
-      that.currentJson = json;
+      that.setJsonVars(json);
       that.draw()
     })
 
@@ -95,13 +96,13 @@ class GameView {
     this.drawBoard();
     this.drawTeam("white");
     this.drawTeam("black");
-    
+
     if (this.gameStatus !== "completed") {
       this.showSelectionGrid();
     }
     this.drawMoves();
 
-    if (this.isLive) {
+    if (this.isLive && this.showTurn !== this.turn) {
       this.checkForMoveLoop();
     }
 
