@@ -341,3 +341,15 @@ table.inputs-table {
   width: 476px;
   height: 476px;
 }
+
+#players-table {
+  width: 50%;
+  min-width: 600px;
+  border: 2px solid wheat;
+  padding: 5px;
+  color: white;
+  margin: auto;
+  th {
+    border-bottom: 2px dotted gold;
+  }
+}

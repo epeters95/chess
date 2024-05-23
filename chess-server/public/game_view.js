@@ -143,8 +143,8 @@ class GameView {
     if (this.selectedPiece === "") {
       this.selectedPiece = piece;
       this.selectedMoves = this.moves.filter(function(move) {
-        let pc = JSON.parse(move.piece_str)
-        return pc.position === piece.position
+        // let pc = JSON.parse(move.piece_str)
+        return move.position === piece.position
       })
     }
     else {

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <title>Chess</title>
+  <link rel="stylesheet" href="display.css">
+</head>
+<body>
+  <div class="header">
+    <span><a href='/'>Home</a></span>
+    <span><a href='/games'>Game History</a></span>
+    <span><a href='/players'>Players</a></span>
+  </div>
+  
+  <div class="main">
+    
+    <div class="title">
+      <div id="chess-img">
+        <img class="chess-gif" src="loading.gif">
+      </div>
+      <h1 id="chess-title">Chess</h1>
+    </div>
+    <div id="content">
+      <span><h3><b>All Players</b></h3></span>
+      <br>
+      <br>
+
+      <div id="players-table-view">
+        <table id="players-table">
+        </table>
+      </div>
+
+    </div>
+    <br>
+  </div>
+  
+  <div class="footer">
+  </div>
+
+  <div id="spinner-div"></div>
+
+</body>
+<script type="text/javascript" src="common.js"></script>
+<script type="text/javascript" src="get_players.js"></script>
+
+</html>

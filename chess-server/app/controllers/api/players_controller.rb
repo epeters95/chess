@@ -14,8 +14,8 @@ class Api::PlayersController < ApplicationController
   #end
 
   def index
-    render :json, { players: Player.all.map do |player| 
-      { name: player.name,
+    render json: { players: Player.all.map do |player| 
+      { name: display_name(player.name),
         games: player.games.length, #player.games.map{|g| {g.opponent, g.status ...}}
         completed_games: player.games.where(status: "completed").length
       }
@@ -25,5 +25,10 @@ class Api::PlayersController < ApplicationController
   private
   def set_player
     @player = Player.find(params[:player_id])
+  end
+
+  def display_name(name)
+    return 'Computer' if name == ''
+    name
   end
 end

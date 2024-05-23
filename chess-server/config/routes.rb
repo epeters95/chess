@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       #                PATCH  /api/games/:game_id/board(.:format) api/boards#update
       #                PUT    /api/games/:game_id/board(.:format) api/boards#update
     end
-    resources :players, only: [:show, :update, :destroy]
+    resources :players, only: [:show, :update, :index, :destroy]
 
     resources :live_games, only: [:create, :update, :show]
     # api_live_games  PATCH    /api/      games(.:format)           api/live_games#update
@@ -33,5 +33,6 @@ Rails.application.routes.draw do
   # Test endpoints rendering html
   get '/testgame', to: 'test#index'
   get '/games', to: 'test#games_index'
+  get '/players', to: 'test#players_index'
 
 end
