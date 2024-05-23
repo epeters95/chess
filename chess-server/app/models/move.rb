@@ -44,6 +44,7 @@ class Move < ApplicationRecord
 
   def deep_dup(duped_piece, duped_other_piece)
     doop = self.class.new(
+      position:        self.position,
       piece_str:       duped_piece.to_json,
       other_piece_str: duped_other_piece.to_json,
       move_type:       self.move_type,
@@ -59,6 +60,7 @@ class Move < ApplicationRecord
   end
 
   def ==(other_move)
+    self.position == other_move.position &&
     self.new_position == other_move.new_position &&
     self.rook_position == other_move.rook_position &&
     self.move_type == other_move.move_type &&

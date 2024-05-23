@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_08_065216) do
+ActiveRecord::Schema[7.0].define(version: 2024_05_22_220012) do
   create_table "boards", force: :cascade do |t|
     t.string "turn"
     t.string "status_str", default: ""
@@ -57,6 +57,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_08_065216) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "notation"
+    t.string "position", default: ""
     t.index ["board_id"], name: "index_moves_on_board_id"
   end
 
