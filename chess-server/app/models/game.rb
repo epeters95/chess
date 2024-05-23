@@ -83,6 +83,12 @@ class Game < ApplicationRecord
     !self.live_game.nil?
   end
 
+  def self.unique_player_names
+    self.distinct(:white_name).pluck(:white_name).concat(
+      self.distinct(:black_name).pluck(:black_name)
+      ).uniq.sort
+  end
+
   private
 
   def init_board
