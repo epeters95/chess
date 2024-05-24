@@ -143,8 +143,8 @@ class GameView {
     if (this.selectedPiece === "") {
       this.selectedPiece = piece;
       this.selectedMoves = this.moves.filter(function(move) {
-        // let pc = JSON.parse(move.piece_str)
-        return move.position === piece.position
+        let pc = JSON.parse(move.piece_str)
+        return pc.position === piece.position
       })
     }
     else {
@@ -223,8 +223,9 @@ class GameView {
 
   showSelectionGrid() {
     let grid = document.getElementById("selection-grid");
-    grid.classList.remove("hidden");
-
+    if (grid) {
+      grid.classList.remove("hidden");
+    }
     // In case grid element is reused, save func declarations to remove event listeners
     const highlight = (event) => { event.target.classList.add("highlighted") }
     const unhighlight = (event) => { event.target.classList.remove("highlighted") }
@@ -274,7 +275,7 @@ class GameView {
 
     // Triggered re-draw of board + events
 
-    if (!this.gridShown) {
+    if (!this.gridShown && !!grid) {
       this.gridShown = true;
       Array.from(grid.firstElementChild.children).forEach((row) => {
         Array.from(row.children).forEach((cell) => {

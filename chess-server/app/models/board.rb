@@ -138,7 +138,7 @@ class Board < ApplicationRecord
               board_id:         self.id,
               move_count:       self.move_count.to_i,
               piece_str:        piece.to_json,
-              other_piece_str:  rook.to_json,
+              other_piece_str:  rook.to_json(false),
               move_type:        "castle_queenside",
               new_position:     file(file_idx(piece.file) - 2) + piece.rank,
               rook_position:    file(file_idx(rook.file) + 3) + rook.rank
@@ -149,7 +149,7 @@ class Board < ApplicationRecord
               board_id:         self.id,
               move_count:       self.move_count.to_i,
               piece_str:        piece.to_json,
-              other_piece_str:  rook.to_json,
+              other_piece_str:  rook.to_json(false),
               move_type:        "castle_kingside",
               new_position:     file(file_idx(piece.file) + 2) + piece.rank,
               rook_position:    file(file_idx(rook.file) - 2) + rook.rank
