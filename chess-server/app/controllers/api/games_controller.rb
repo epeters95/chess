@@ -11,15 +11,17 @@ class Api::GamesController < ApplicationController
     given_params.delete(:name)
 
     query_obj = {}
-    given_params.each do |s_param|
-      if params[s_param]
-        query_obj[s_param] = params[s_param]
+    given_params.each do |key, val|
+      if params[key]
+        query_obj[key] = params[key]
       end
     end
     games = Game.all
     # Join searches of name across both color categories (initial db design)
-    if params[:name]
-      games = games.where(black_name: params[:name]).or(games.where(white_name: params[:name]))
+    p_name = params[:name]
+    if p_name
+      p_name = "" if p_name == "Computer"
+      games = games.where(black_name: p_name).or(games.where(white_name: p_name))
       unless query_obj.empty?
         games = games.where(query_obj)
       end
