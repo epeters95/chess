@@ -352,4 +352,7 @@ table.inputs-table {
   th {
     border-bottom: 2px dotted gold;
   }
+  td a {
+    color: wheat;
+  }
 }

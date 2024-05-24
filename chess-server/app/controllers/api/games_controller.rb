@@ -9,9 +9,9 @@ class Api::GamesController < ApplicationController
     # Includes [:status, :white_id, :black_id, :name]
     # However, handle :name separately to cover => :white_name, :black_name
     given_params.delete(:name)
-    
+
     query_obj = {}
-    given_params..each do |s_param|
+    given_params.each do |s_param|
       if params[s_param]
         query_obj[s_param] = params[s_param]
       end

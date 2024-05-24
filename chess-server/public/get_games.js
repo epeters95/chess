@@ -11,7 +11,7 @@ var gameView = null;
 
 function getGames() {
 
-  fetchFromApi("/api/games", "GET", null, function(json) {
+  fetchFromApi("/api/games" + window.location.search, "GET", null, function(json) {
     populateTable(json)
   })
 
@@ -140,6 +140,11 @@ function gameViewHtml(game) {
   let name1 = game["white_name"];
   let name2 = game["black_name"];
 
+  let moveStr = "" + (game.move_count - 1) + " moves";
+  if (game.move_count === 2) {
+    moveStr = "1 move";
+  }
+
    + id + "/board";
   let htmlString = "<div class='game-thumbnail' style='width:100%; height:100%'>";
 
@@ -149,7 +154,7 @@ function gameViewHtml(game) {
                 getName(name2) +
                 "</b></span>";
   htmlString += "<br><br>"
-  htmlString += "<span style='color: white;'>" + game.move_count + " moves</span>";
+  htmlString += "<span style='color: white;'>" + moveStr + "</span>";
   htmlString += "<br>";
   htmlString += "<a href='#' class='get-board' id='get-board' data-id='" + id + "'>";
   htmlString += "<span>View Game</span>";
