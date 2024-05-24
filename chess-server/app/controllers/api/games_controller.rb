@@ -5,7 +5,32 @@ class Api::GamesController < ApplicationController
   before_action :set_game, only: [:show, :update, :destroy]
 
   def index
-    games = Game.where(status: "completed").map do |game|
+    given_params = search_params
+    # Includes [:status, :white_id, :black_id, :name]
+    # However, handle :name separately to cover => :white_name, :black_name
+    given_params.delete(:name)
+    
+    query_obj = {}
+    given_params..each do |s_param|
+      if params[s_param]
+        query_obj[s_param] = params[s_param]
+      end
+    end
+    games = Game.all
+    # Join searches of name across both color categories (initial db design)
+    if params[:name]
+      games = games.where(black_name: params[:name]).or(games.where(white_name: params[:name]))
+      unless query_obj.empty?
+        games = games.where(query_obj)
+      end
+    else
+      if query_obj.empty?
+        query_obj = {status: "completed"}
+      end
+      games = games.where(query_obj)
+    end
+    
+    games = games.map do |game|
       { id: game.id,
         white_name: game.white_name,
         black_name: game.black_name,
@@ -94,5 +119,10 @@ class Api::GamesController < ApplicationController
     def move_params
       # TODO: identify specific move params needed
       params.require(:move).permit(Move.column_names - ["created_at", "updated_at"])
+    end
+
+    def search_params
+      params.permit(:status, :white_id, :black_id, :name)
+      # TODO: allow separate white and black player search
     end
 end
