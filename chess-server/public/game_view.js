@@ -80,11 +80,6 @@ class GameView {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    // let thisCanvas = this.canvas;
-    // this.eventListeners.forEach(function(el) {
-    //   thisCanvas.removeEventListener('click', el);
-    // })
-
     this.switchSquareColor()
 
     if (this.isLive) {
@@ -105,6 +100,8 @@ class GameView {
     if (this.isLive && this.showTurn !== this.turn) {
       this.checkForMoveLoop();
     }
+
+    canvas.click()
 
   }
 

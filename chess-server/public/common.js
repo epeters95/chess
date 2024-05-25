@@ -103,6 +103,11 @@ function showSpinner(canvasParentId) {
     spinner.classList.remove("hidden");
     return spinner;
   }
+}
 
-
+function hideQuote() {
+  let quoteSpan = document.getElementsByClassName("quote-span")[0]
+  if (quoteSpan !== undefined) {
+    quoteSpan.classList.add("hidden")
+  }
 }

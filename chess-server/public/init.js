@@ -73,12 +73,7 @@ function newGame() {
   }
 
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
-
-    let quoteSpan = document.getElementsByClassName("quote-span")[0]
-    if (quoteSpan !== undefined) {
-      quoteSpan.classList.add("hidden")
-    }
-
+    hideQuote();
     gameView = new GameView(canvas, json, statusSpan, false, nextMoveSubmit)
     gameView.draw()
   })
@@ -130,10 +125,7 @@ function drawCodeWindow(json) {
     if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
       modal.classList.add("hidden")
-      let quoteSpan = document.getElementsByClassName("quote-span")[0]
-      if (quoteSpan !== undefined) {
-        quoteSpan.classList.add("hidden")
-      }
+      hideQuote();
 
       if (gameView === null) {
         gameView = new GameView(canvas, json, statusSpan, true)
