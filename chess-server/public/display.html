@@ -87,35 +87,36 @@
   </div>
   
   <div class="modal code-modal hidden">
-  <div class="modal-content code-modal">
-    <div class="content-container">
-      <div class="mainbar small">
+    <div class="modal-content code-modal">
+      <div class="content-container">
+        <div class="mainbar small">
 
-        <div class="code-background">
-          <p>Share this access code with  another player:</p>
-          <div id="canvas-code-window">
-            <canvas id="code-view"></canvas>
+          <div class="code-background">
+            <p>Share this access code with  another player:</p>
+            <div id="canvas-code-window">
+              <canvas id="code-view"></canvas>
+            </div>
+
           </div>
-
+        </div>
+        <div class="sidebar large">
+          <p>Play as:</p>
+          <input type="radio" id="white-radio" name="color-choice"><span> White</span> 
+            <input id="white-player-input" type="text" placeholder="Player name"></input>
+          </input>
+          <br>
+          <input type="radio" id="black-radio" name="color-choice"><span> Black</span> 
+            <input id="black-player-input" type="text" placeholder="Player name"></input>
+          </input>
+          <br>
+          <br>
+          <button id="request-code-button">Submit Choice</button>
         </div>
       </div>
-      <div class="sidebar large">
-        <p>Play as:</p>
-        <input type="radio" id="white-radio" name="color-choice"><span> White</span> 
-          <input id="white-player-input" type="text" placeholder="Player name"></input>
-        </input>
-        <br>
-        <input type="radio" id="black-radio" name="color-choice"><span> Black</span> 
-          <input id="black-player-input" type="text" placeholder="Player name"></input>
-        </input>
-        <br>
-        <br>
-        <button id="request-code-button">Submit Choice</button>
-      </div>
     </div>
-  </div>
-  <div id="modal-close-button">
-    <button>X</button>
+    <div id="modal-close-button">
+      <button>X</button>
+    </div>
   </div>
   <div id="cookieholder"></div>
   <div id="cookieholder-color"></div>

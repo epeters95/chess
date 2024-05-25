@@ -7,7 +7,7 @@ if (!!canvas) {
   context = canvas.getContext("2d");
   canvasLeft = canvas.offsetLeft + canvas.clientLeft;
   canvasTop = canvas.offsetTop + canvas.clientTop;
-  
+
   canvas.width = (screen.height * .4) - 100;
   canvas.height = canvas.width;
 }
@@ -87,15 +87,22 @@ function fetchFromApi(endpoint, method, params=null, successCallback=null) {
 }
 
 function showSpinner(canvasParentId) {
-  let spinner = document.createElement('div');
-  spinner.id = "loading";
-  spinner.innerHTML = '<div id="loading-spinner"><img src="spinner2.gif"></div>';
-  document.getElementById(canvasParentId).appendChild(spinner);
-
-  // Add hide function for spinner
-  spinner.hide = function() {
-    this.classList.add("hidden");
+  let loader = document.getElementById("loading-spinner");
+  if (!loader) {
+    let spinner = document.createElement('div');
+    spinner.id = "loading";
+    spinner.innerHTML = '<div id="loading-spinner"><img src="spinner2.gif"></div>';
+    document.getElementById(canvasParentId).appendChild(spinner);
+    // Add hide function for spinner
+    spinner.hide = function() {
+      spinner.classList.add("hidden");
+    }
+    return spinner
+  } else {
+    let spinner = document.getElementById("loading");
+    spinner.classList.remove("hidden");
+    return spinner;
   }
 
-  return spinner
+
 }
