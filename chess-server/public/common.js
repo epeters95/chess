@@ -34,15 +34,31 @@ function rankOf(row) {
 }
 
 function getAccessCookie() {
-  return document.cookie.split("; ").find((row) => row.startsWith("accesscode")).split("accesscode=")[1];
+  let found = document.cookie.split("; ").find((row) => row.startsWith("accesscode"));
+  if (found !== undefined) {
+    return found.split("accesscode=")[1];
+  } else {
+    return '';
+  }
 }
 
 function getTokenColor() {
-  return document.cookie.split("; ").find((row) => row.startsWith("color")).split("color=")[1];
+  let found = document.cookie.split("; ").find((row) => row.startsWith("color"));
+  if (found !== undefined) {
+    return found.split("color=")[1];
+
+  } else {
+    return '';
+  }
 }
 
 function getTokenCookie() {
-  return document.cookie.split("; ").find((row) => row.startsWith("gametoken")).split("gametoken=")[1];
+  let found = document.cookie.split("; ").find((row) => row.startsWith("gametoken"));
+  if (found !== undefined) {
+    return found.split("gametoken=")[1];
+  } else {
+    return '';
+  }
 }
 
 function setTokenCookie(token, color=null, code=null) {
