@@ -189,6 +189,10 @@ table#game-table {
   display: inline-block;
   min-height: 280px;
 }
+.content-container > div {
+  background-color: rgba(0,0,0,0.36);
+  margin-bottom: 30px;
+}
 
 .content-container .mainbar.small {
   width: 50%;
@@ -201,7 +205,6 @@ table#game-table {
 .content-container .sidebar {
   width: 40%;
   display: inline-block;
-  margin-bottom: 30px;
 
   p, span {
     color: wheat;
@@ -278,7 +281,6 @@ table#game-table {
 .code-background {
   width: 100%;
   height: 90%;
-  background-color: rgba(0,0,0,0.3);
   margin-left: 10px;
   p {
     color: wheat;
@@ -345,7 +347,7 @@ table.inputs-table {
 #players-table {
   width: 50%;
   min-width: 600px;
-  border: 2px solid wheat;
+  border: 2px dotted gold;
   padding: 5px;
   color: white;
   margin: auto;

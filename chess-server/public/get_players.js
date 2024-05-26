@@ -1,6 +1,6 @@
 const playersTable = document.getElementById("players-table");
 
-let spinner = showSpinner("players-table");
+let spinner = showSpinner("spinner-div");
 
 const players = fetchFromApi('/api/players', 'GET', null, function(json) {
   let tableHeader = document.createElement('tr')
