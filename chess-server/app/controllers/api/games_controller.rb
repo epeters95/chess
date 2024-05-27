@@ -46,8 +46,13 @@ class Api::GamesController < ApplicationController
   end
 
   def create
+    # Get existing players
+    black_player = Player.find_or_create_by_name(game_params[:black_name])
+    white_player = Player.find_by_name(game_params[:white_name])
     begin
       @game = Game.new(game_params)
+      @game.black_id = black_player.id if black_player
+      @game.white_id = white_player.id if white_player
       if @game.save
         # Game is ready for first move from white
         render json: {game: @game}, status: :created

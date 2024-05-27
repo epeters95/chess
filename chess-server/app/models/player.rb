@@ -17,4 +17,12 @@ class Player < ApplicationRecord
     Game.where(black_id: self.id).or(Game.where(white_id: self.id))
   end
 
+  def self.find_or_create_by_name(name)
+    found = self.find_by_name(name)
+    unless found
+      found = self.create(name: name)
+    end
+    found
+  end
+
 end
