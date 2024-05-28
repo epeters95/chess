@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Games", type: :request do
+RSpec.describe "Api::Games", type: :request do
   player_params = {
     game: {
       white_name: "Jimmy",

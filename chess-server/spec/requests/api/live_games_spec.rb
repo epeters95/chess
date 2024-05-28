@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "LiveGames", type: :request do
+RSpec.describe "Api::LiveGames", type: :request do
   test_params = {
     access_code: "JOOP"
   }
