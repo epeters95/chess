@@ -1,22 +1,10 @@
 class Api::PlayersController < ApplicationController
   before_action :set_player, only: [:show, :update, :destroy]
 
-  #def show
-  #
-  #end
-
-  #def update
-  #
-  #end
-
-  #def destroy
-  #
-  #end
-
   def index
     render json: { players: Player.all.map do |player| 
       { name: display_name(player.name),
-        games: player.games.length, #player.games.map{|g| {g.opponent, g.status ...}}
+        games: player.games.length,
         completed_games: player.games.where(status: "completed").length
       }
     end }

@@ -60,7 +60,6 @@ class Api::GamesController < ApplicationController
         render json: {errors: @game.errors}, status: :unprocessable_entity
       end
     rescue Exception => e  
-      #NameError, NoMethodError, ArgumentError, SyntaxError
       render json: {errors: e.message }, status: :unprocessable_entity
     end
   end
@@ -98,7 +97,6 @@ class Api::GamesController < ApplicationController
         render json: {error: "Game not found"}, status: :unprocessable_entity
       end
     rescue Exception => e
-      #NameError, NoMethodError, ArgumentError, SyntaxError
       debugger
       render json: {errors: e.message }, status: :unprocessable_entity
     end
@@ -126,7 +124,6 @@ class Api::GamesController < ApplicationController
     end
 
     def move_params
-      # TODO: identify specific move params needed
       params.require(:move).permit(Move.column_names - ["created_at", "updated_at"])
     end
 

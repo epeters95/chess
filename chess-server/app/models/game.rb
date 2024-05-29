@@ -51,7 +51,6 @@ class Game < ApplicationRecord
 
       self.board.update(status_str: status_str)
 
-      # set_waiting_status
       return
     end
     # Game Over
