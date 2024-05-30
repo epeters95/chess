@@ -56,7 +56,6 @@ class Piece
   end
 
   def deep_dup
-    # TODO: determine if necessary to rewrite the mv.deep_dup action considering played_moves is generated from JSON
     return self.class.new(@color, @position)
   end
 

@@ -21,7 +21,6 @@ class Move < ApplicationRecord
   end
 
   def get_notation(disamb=false)
-    # TODO: prevent creation of moves with piece == nil
     if piece.nil?
       "nil"
       return

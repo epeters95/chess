@@ -1,8 +1,6 @@
 class Api::LiveGamesController < ApplicationController
 
   def create
-    # TODO: allow for multi-stage creation
-
     @livegame = LiveGame.create
     if @livegame.errors.empty?
       render json: { id: @livegame.id, access_code: @livegame.access_code }, status: :created

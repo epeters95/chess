@@ -179,10 +179,6 @@ class Board < ApplicationRecord
   def is_king_checked?(color)
     if legal_moves[switch color].empty?
       # Checking for checkmate, need moves generated
-      # all_pieces = @pieces["white"] + @pieces["black"]
-      # if !all_pieces.select{|pc| pc.nil? }.empty?
-      #   debugger
-      # end
       generate_legal_moves(true, switch(color))
     end
     !legal_moves[switch color].select { |mv| mv.other_piece.is_a?(King) }.empty?
@@ -264,10 +260,7 @@ class Board < ApplicationRecord
   # This method ensures the board @legal_moves variable is populated
   def refresh_legal_moves(ignore_check=false)
     @pieces ||= get_pieces_from_positions_array
-    # all_pieces = @pieces["white"] + @pieces["black"]
-    # if !all_pieces.select{|pc| pc.nil? }.empty?
-    #   debugger
-    # end
+
     # Generate real moves for the next turn
     generate_legal_moves(ignore_check)
 
@@ -304,12 +297,8 @@ class Board < ApplicationRecord
     get(file_idx(pos), rank_idx(pos))
   end
 
-  # TODO: consider better ways of organizing pieces for position lookup
   def get(col, row)
     all_pieces = @pieces["white"] + @pieces["black"]
-    # if !all_pieces.select{|pc| pc.nil? }.empty?
-    #   debugger
-    # end
     found = all_pieces.select{|pc| pc.position == (file(col) + rank(row)) }
     if found.empty?
       return nil
@@ -357,7 +346,6 @@ class Board < ApplicationRecord
   end
 
   def deep_dup
-    # TODO: replace with non-ActiveRecord skeleton object
     doop = Board.new(game_id: 0, turn: self.turn)
     doop.init_variables(deep_dup_pieces)
     doop.move_count = self.move_count
@@ -375,10 +363,6 @@ class Board < ApplicationRecord
     duped_piece = dummy_board.get_n(move.piece.position)
     duped_other_piece = (move.other_piece.nil? ? nil : dummy_board.get_n(move.other_piece.position))
     dummy_board.play_move(move.deep_dup(duped_piece,duped_other_piece), true)
-    # all_pieces = @pieces["white"] + @pieces["black"]
-    # if !all_pieces.select{|pc| pc.nil? }.empty?
-    #   debugger
-    # end
     return !dummy_board.is_king_checked?(self.turn)
   end
 
