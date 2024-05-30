@@ -6,7 +6,7 @@ class Move < ApplicationRecord
 
   belongs_to :board, inverse_of: "played_moves"
 
-  after_initialize :set_notation, :set_piece_relatives
+  after_save :set_notation
 
   include Util
 
@@ -122,13 +122,13 @@ class Move < ApplicationRecord
   # (Called from get_notation) quickly grabs all same-team pieces of matching type
   # Reference to these pieces is needed when adding position to disambiguate 
   def get_piece_relatives
-    piece_relatives = self.board.pieces[piece.color].filter {|pc| pc.class == piece.class }
+    piece_relatives = self.board.get_pieces_from_positions_array[piece.color].select {|pc| pc.class == piece.class }
     # variable number of pieces - E.g. White has Qe4, Qh4, Qh1, all x e1
     # notation = Qe4xe1
 
     # However, only needed with the same target. Filter by target:
-    piece_relatives = piece_relatives.filter do |pc|
-      return true unless pc.get_moves.filter{|mv| mv.new_position == self.new_position }.empty?
+    piece_relatives = piece_relatives.select do |pc|
+      return true unless pc.get_moves.select{|mv| mv.new_position == self.new_position }.empty?
     end
 
     piece_relatives
