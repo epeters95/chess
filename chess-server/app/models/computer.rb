@@ -56,6 +56,9 @@ class Computer
     if thing.nil?
       thing = @board.legal_moves[@color].first
     end
+    if thing.move_type == "promotion" || thing.move_type == "attack_promotion"
+      thing["promotion_choice"] = "queen"
+    end
     return thing
   end
 

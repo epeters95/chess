@@ -303,6 +303,12 @@ class GameView {
 
     let that = this;
 
+    // TODO: add interface for promotion choice
+    if (move["move_type"] === "attack" || move["move_type"] === "attack_promotion") {
+      // move["promotion_choice"] = ?
+      move["promotion_choice"] = "queen";
+    }
+
     fetchFromApi("/api/games/" + this.gameId, "PATCH", { "move": move }, function(json) {
       that.selectedMoves = [];
       that.setJsonVars(json);

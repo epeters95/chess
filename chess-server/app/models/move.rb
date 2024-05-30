@@ -3,12 +3,10 @@ require './app/models/piece'
 class Move < ApplicationRecord
 
   # The entirety of the board's history will be represented by rows of moves belonging to that board
-  # Displaying them will be a simple matter of "replaying" them in forward/backward order
-  # It may even be possible to code "views" for checking rather than using deep dup
 
   belongs_to :board, inverse_of: "played_moves"
 
-  after_initialize :set_notation
+  after_initialize :set_notation, :set_piece_relatives
 
   include Util
 
@@ -20,36 +18,57 @@ class Move < ApplicationRecord
     @other_piece ||= Piece.from_json_str(self.other_piece_str)
   end
 
-  def get_notation(disamb=false)
+  def get_notation
     if piece.nil?
-      "nil"
-      return
+      return "nil"
     end
     if self.move_type == "castle_kingside"
       "O-O"
     elsif self.move_type == "castle_queenside"
       "O-O-O"
-    elsif self.move_type == "promotion" || self.move_type == "attack_promotion"
-      "#{piece.position}"\
-      "#{"x#{other_piece.letter}" if self.move_type == "attack_promotion"}"\
-      "=?"#{@other_piece.letter}"
     else
-      # A move or attack
-      "#{piece.letter}#{piece.position if disamb}"\
-      "#{"x#{other_piece.letter}" if self.move_type == "attack"}"\
-      "#{self.new_position}"
+      # move_type is "move", "attack", "promotion", "attack_promotion"
+      notation = ""
+      unless piece.is_a? Pawn
+        notation = piece.letter
+      end
+      notation += disambiguated_position
+      if self.move_type == "attack" || self.move_type == "attack_promotion"
+        notation += "x"
+      end
+      notation += "#{self.new_position}"
+      if self.move_type == "promotion" || self.move_type == "attack_promotion"
+        notation += "=#{self.promotion_choice}"
+      end
+      notation
     end
+  end
+
+  def disambiguated_position
+    show_file = false
+    show_rank = false
+    get_piece_relatives.each do |pc|
+      if self.piece.file == pc.file
+        show_file = true
+      end
+      if self.piece.rank == pc.rank
+        show_rank = true
+      end
+    end
+    "#{show_file ? self.piece.file : '' }#{show_rank ? self.piece.rank : '' }"
+
   end
 
   def deep_dup(duped_piece, duped_other_piece)
     doop = self.class.new(
-      position:        self.position,
-      piece_str:       duped_piece.to_json,
-      other_piece_str: duped_other_piece.to_json,
-      move_type:       self.move_type,
-      new_position:    self.new_position,
-      rook_position:   self.rook_position,
-      move_count:      self.move_count
+      position:         self.position,
+      piece_str:        duped_piece.to_json,
+      other_piece_str:  duped_other_piece.to_json,
+      move_type:        self.move_type,
+      new_position:     self.new_position,
+      rook_position:    self.rook_position,
+      move_count:       self.move_count,
+      promotion_choice: self.promotion_choice
       )
     doop
   end
@@ -81,7 +100,8 @@ class Move < ApplicationRecord
       new_position:     self.new_position,
       rook_position:    self.rook_position,
       move_count:       self.move_count,
-      notation:         get_notation(true)
+      notation:         get_notation,
+      promotion_choice: self.promotion_choice
     }
     JSON.generate(hsh, options)
   end
@@ -97,6 +117,21 @@ class Move < ApplicationRecord
 
   def set_notation
     self.notation = get_notation
+  end
+
+  # (Called from get_notation) quickly grabs all same-team pieces of matching type
+  # Reference to these pieces is needed when adding position to disambiguate 
+  def get_piece_relatives
+    piece_relatives = self.board.pieces[piece.color].filter {|pc| pc.class == piece.class }
+    # variable number of pieces - E.g. White has Qe4, Qh4, Qh1, all x e1
+    # notation = Qe4xe1
+
+    # However, only needed with the same target. Filter by target:
+    piece_relatives = piece_relatives.filter do |pc|
+      return true unless pc.get_moves.filter{|mv| mv.new_position == self.new_position }.empty?
+    end
+
+    piece_relatives
   end
 
 end
