@@ -2,7 +2,7 @@ class Knight < Piece
   attr_reader :letter, :char, :val
   def initialize(color, position)
     super
-    @letter = "N "
+    @letter = "N"
     @char = "\u265e"
     @val = 3
   end

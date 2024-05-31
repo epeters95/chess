@@ -81,6 +81,7 @@ class Board < ApplicationRecord
               piece_str:        piece.to_json,
               other_piece_str:  other_piece_json,
               move_type:        move_type,
+              position:         piece.position,
               new_position:     new_place_n
               )
             break unless keep_going
@@ -110,6 +111,7 @@ class Board < ApplicationRecord
               piece_str:        piece.to_json,
               other_piece_str:  target.to_json,
               move_type:        move_type,
+              position:         piece.position,
               new_position:     atk_n
               )
 
@@ -124,6 +126,7 @@ class Board < ApplicationRecord
               piece_str:        piece.to_json,
               other_piece_str:  target_passant.to_json,
               move_type:        move_type,
+              position:         piece.position,
               new_position:     atk_n
               )
           end
@@ -140,6 +143,7 @@ class Board < ApplicationRecord
               piece_str:        piece.to_json,
               other_piece_str:  rook.to_json(false),
               move_type:        "castle_queenside",
+              position:         piece.position,
               new_position:     file(file_idx(piece.file) - 2) + piece.rank,
               rook_position:    file(file_idx(rook.file) + 3) + rook.rank
               )
@@ -151,6 +155,7 @@ class Board < ApplicationRecord
               piece_str:        piece.to_json,
               other_piece_str:  rook.to_json(false),
               move_type:        "castle_kingside",
+              position:         piece.position,
               new_position:     file(file_idx(piece.file) + 2) + piece.rank,
               rook_position:    file(file_idx(rook.file) - 2) + rook.rank
               )

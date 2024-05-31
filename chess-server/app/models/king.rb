@@ -3,7 +3,7 @@ class King < Piece
   attr_reader :letter, :char, :val
   def initialize(color, position, castleable=true)
     super(color, position)
-    @letter = "K "
+    @letter = "K"
     @char = "\u265a"
     @val = 77
     @castleable = castleable

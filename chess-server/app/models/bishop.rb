@@ -2,7 +2,7 @@ class Bishop < Piece
   attr_reader :letter, :char, :val
   def initialize(color, position)
     super
-    @letter = "B "
+    @letter = "B"
     @char = "\u265d"
     @val = 3
   end

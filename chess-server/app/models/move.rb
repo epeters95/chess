@@ -31,9 +31,12 @@ class Move < ApplicationRecord
       notation = ""
       unless piece.is_a? Pawn
         notation = piece.letter
+        notation += disambiguated_position
       end
-      notation += disambiguated_position
       if self.move_type == "attack" || self.move_type == "attack_promotion"
+        if piece.is_a? Pawn
+          notation += self.piece.file
+        end
         notation += "x"
       end
       notation += "#{self.new_position}"
@@ -81,8 +84,7 @@ class Move < ApplicationRecord
     self.position == other_move.position &&
     self.new_position == other_move.new_position &&
     self.rook_position == other_move.rook_position &&
-    self.move_type == other_move.move_type &&
-    self.notation == other_move.notation
+    self.move_type == other_move.move_type
   end
 
   def turn
@@ -97,6 +99,7 @@ class Move < ApplicationRecord
       piece_str:        @piece.to_json(exclude_piece_moves),
       other_piece_str:  other_piece_json,
       move_type:        self.move_type,
+      position:         self.position,
       new_position:     self.new_position,
       rook_position:    self.rook_position,
       move_count:       self.move_count,

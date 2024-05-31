@@ -2,7 +2,7 @@ class Pawn < Piece
   attr_reader :letter, :char, :val
   def initialize(color, position)
     super
-    @letter = "p "
+    @letter = "p"
     @char = "\u265f"
     @val = 1
     @move_count = 0
