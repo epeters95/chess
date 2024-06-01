@@ -3,6 +3,8 @@ const newLiveGameSubmit = document.getElementById("new-live-game");
 const accessCodeInput = document.getElementById("access-code-input");
 const getAccessCode = document.getElementById("get-access-code");
 const nextMoveSubmit = document.getElementById("next-move");
+const requestCodeSubmit = document.getElementById("request-code-button");
+var submitEventListeners = [];
 
 const modal = document.getElementsByClassName("modal")[0];
 const modalCloseBtn = document.getElementById("modal-close-button");
@@ -108,7 +110,7 @@ function drawCodeWindow(json) {
   cx.fillStyle = "#" + r + g + b;
   cx.fillText(json["access_code"], 5, 80);
 
-  let submit = document.getElementById("request-code-button")
+  
   let whiteRadio = document.getElementById("white-radio");
   let whitePlayerInput = document.getElementById('white-player-input')
   let blackRadio = document.getElementById("black-radio");
@@ -138,23 +140,23 @@ function drawCodeWindow(json) {
       whiteRadio.setAttribute("disabled", true)
       blackPlayerInput.setAttribute("disabled", true)
       blackRadio.setAttribute("disabled", true)
-      submit.setAttribute("disabled", true)
+      requestCodeSubmit.setAttribute("disabled", true)
     }
   }
 
   whitePlayerInput.addEventListener("keyup", function(event) {
     if (this.value.length === 0) {
-      submit.setAttribute("disabled", true)
+      requestCodeSubmit.setAttribute("disabled", true)
     } else {
-      submit.removeAttribute("disabled")
+      requestCodeSubmit.removeAttribute("disabled")
     }
   })
 
   blackPlayerInput.addEventListener("keyup", function(event) {
     if (this.value.length === 0) {
-      submit.setAttribute("disabled", true)
+      requestCodeSubmit.setAttribute("disabled", true)
     } else {
-      submit.removeAttribute("disabled")
+      requestCodeSubmit.removeAttribute("disabled")
     }
   })
 
@@ -183,11 +185,10 @@ function drawCodeWindow(json) {
     })
   }
   if (blackName !== "" && whiteName !== "") {
-    submit.setAttribute("disabled", true)
+    requestCodeSubmit.setAttribute("disabled", true)
   }
   
-
-  submit.addEventListener("click", function(event) {
+  const submitEvent = function(event) {
     let playerName = null;
     let playerTeam = "";
     if (!whiteRadio.checked && !blackRadio.checked) {
@@ -204,7 +205,13 @@ function drawCodeWindow(json) {
         updateLiveGame(playerName, playerTeam, json)
       }
     }
+  }
+  submitEventListeners.forEach((el) {
+    requestCodeSubmit.removeEventListener("click", el)
   })
+  submitEventListeners = [];
+  submitEventListeners.push(submitEvent);
+  requestCodeSubmit.addEventListener("click", submitEvent);
 
 }
 
