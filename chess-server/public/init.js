@@ -206,7 +206,7 @@ function drawCodeWindow(json) {
       }
     }
   }
-  submitEventListeners.forEach((el) {
+  submitEventListeners.forEach((el) => {
     requestCodeSubmit.removeEventListener("click", el)
   })
   submitEventListeners = [];
