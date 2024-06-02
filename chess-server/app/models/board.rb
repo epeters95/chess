@@ -284,6 +284,13 @@ class Board < ApplicationRecord
     end
   end
 
+  def get_move_by_notation(notation, move_count=nil)
+    moves = @legal_moves[self.turn].filter do |move|
+      move_count_cond = move_count.nil? ? true : move_count == move.move_count
+      move_count_cond && (notation == move.notation)
+    end
+  end
+
   def prompt_piece_choice
     return "queen"
   end
