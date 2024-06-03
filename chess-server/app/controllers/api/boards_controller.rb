@@ -13,7 +13,7 @@ class Api::BoardsController < ApplicationController
 
   def create
     # Potentially use this endpoint to load an existing game by PGN
-    pgn_text = create_board_params[:pgn_text]
+    pgn_text = create_board_params[:pgn_text].tempfile.read
     move_list = get_move_list_from_pgn(pgn_text)
 
     initial_board = new_board

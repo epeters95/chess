@@ -73,14 +73,17 @@ function fetchFromApi(endpoint, method, params=null, successCallback=null) {
   let spinner = showSpinner("spinner-div");
   let apiUrl = "http://localhost:3000" + endpoint;
   let requestObj = {
-    method: method,
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
+    method: method
   }
+  
   if (params !== null) {
-    requestObj.body = JSON.stringify(params);
+    if (params["pgn_text"] !== null) {
+      const formData = new FormData();
+      formData.append('pgn_text', params["pgn_text"]);
+      requestObj.body = formData;
+    } else {
+      requestObj.body = JSON.stringify(params);
+    }
   }
 
   fetch(apiUrl, requestObj)

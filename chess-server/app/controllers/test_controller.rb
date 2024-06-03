@@ -18,4 +18,10 @@ class TestController < ApplicationController
       format.html { render body: Rails.root.join("public/players_index.html").read }
     end
   end
+
+  def upload
+    respond_to do |format|
+      format.html { render body: Rails.root.join("public/upload.html").read }
+    end
+  end
 end

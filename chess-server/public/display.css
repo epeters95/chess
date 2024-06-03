@@ -51,6 +51,10 @@ canvas {
   border-radius: 3px;
 }
 
+#content form label, input {
+  color: white;
+}
+
 
 body {
   background-color: rgb(64, 106, 95); 

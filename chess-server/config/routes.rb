@@ -24,6 +24,8 @@ Rails.application.routes.draw do
     resources :live_games, only: [:create, :update, :show]
     # api_live_games  PATCH    /api/      games(.:format)           api/live_games#update
 
+    resources :boards, only: [:create]
+
     # Viewing game via access code
     get '/live_games/', to: 'live_games#show'
     get '/quote', to: 'games#quote'
@@ -34,5 +36,6 @@ Rails.application.routes.draw do
   get '/testgame', to: 'test#index'
   get '/games', to: 'test#games_index'
   get '/players', to: 'test#players_index'
+  get '/upload', to: 'test#upload'
 
 end
