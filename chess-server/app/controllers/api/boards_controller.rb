@@ -21,9 +21,11 @@ class Api::BoardsController < ApplicationController
     move_list.each do |move_str|
       moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.get_notation == move_str}
       unless moves.empty?
-        result = initial_board.play_move(moves[0])
-        if !result
-          return render json: { errors: "Couldn't play move", status: :unprocessable_entity }
+        begin
+          initial_board.play_move(moves[0])
+
+        rescue IllegalMoveError => e
+          render json: { errors: e.message, status: :unprocessable_entity }
         end
       end
     end

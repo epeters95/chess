@@ -228,8 +228,10 @@ class Board < ApplicationRecord
   # duped board will use this method then ask if checked
   def play_move(move, ignore_check=false)
     refresh_pieces
-    if !move.is_a?(Move) || move.piece.color != self.turn
-      puts "Error: invalid move"
+    if !move.is_a?(Move) ||
+       move.piece.color != self.turn ||
+       legal_moves[self.turn].include?(move)
+      raise IllegalMoveError
       return nil
     end
 
@@ -414,6 +416,12 @@ class Board < ApplicationRecord
       end
     end
     legal_rooks
+  end
+
+  class IllegalMoveError < StandardError
+    def message
+      "Illegal move attempted on the board"
+    end
   end
   
 end

@@ -18,9 +18,6 @@ class Game < ApplicationRecord
   end
 
   def play_move_and_evaluate(move)
-    unless self.board.legal_moves[self.board.turn].include?(move)
-      raise IllegalMoveError
-    end
     result = self.board.play_move_and_save(move)
 
     status_str = "#{display_name_for(switch(self.board.turn))} made move #{move.get_notation}"
@@ -110,12 +107,6 @@ class Game < ApplicationRecord
       self.update(status: "waiting_computer")
     else
       self.update(status: "waiting_player")
-    end
-  end
-
-  class IllegalMoveError < StandardError
-    def message
-      "Illegal move attempted on the board"
     end
   end
 end
