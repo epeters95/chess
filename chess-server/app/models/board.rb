@@ -260,6 +260,7 @@ class Board < ApplicationRecord
     piece.set_played
     
     self.turn = switch(self.turn)
+    return true
   end
 
   # This method ensures the board @legal_moves variable is populated
@@ -274,8 +275,8 @@ class Board < ApplicationRecord
   end
 
   def play_move_and_save(move, ignore_check=false)
-    play_move(move, ignore_check)
-    unless move.save
+    move_result = play_move(move, ignore_check)
+    if !move_result && !move.save
       return false
     else
       refresh_legal_moves(ignore_check)

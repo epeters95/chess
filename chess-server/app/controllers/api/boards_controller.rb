@@ -17,15 +17,14 @@ class Api::BoardsController < ApplicationController
     move_list = get_move_list_from_pgn(pgn_text)
 
     initial_board = new_board
-    pieces_history = [initial_board.positions_array]
-    moves = [nil]
 
     move_list.each do |move_str|
       moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.get_notation == move_str}
       unless moves.empty?
-        initial_board.play_move(moves[0])
-        pieces_history << initial_board.positions_array
-        moves << move
+        result = initial_board.play_move(moves[0])
+        if !result
+          return render json: { errors: "Couldn't play move", status: :unprocessable_entity }
+        end
       end
     end
     render json: { board: initial_board }
