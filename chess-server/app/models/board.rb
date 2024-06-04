@@ -229,9 +229,7 @@ class Board < ApplicationRecord
   def play_move(move, ignore_check=false)
     refresh_pieces
     if !move.is_a?(Move) ||
-       move.piece.color != self.turn ||
-       legal_moves[self.turn].include?(move)
-      raise IllegalMoveError
+       move.piece.color != self.turn
       return nil
     end
 
@@ -277,6 +275,9 @@ class Board < ApplicationRecord
   end
 
   def play_move_and_save(move, ignore_check=false)
+    if !legal_moves[self.turn].include?(move)
+      raise IllegalMoveError
+    end
     move_result = play_move(move, ignore_check)
     if !move_result && !move.save
       return false
