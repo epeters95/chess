@@ -25,9 +25,14 @@ class Api::BoardsController < ApplicationController
           initial_board.play_move(moves[0])
 
         rescue IllegalMoveError => e
-          render json: { errors: e.message, status: :unprocessable_entity }
+          return render json: { errors: e.message, status: :unprocessable_entity }
         end
       end
+    end
+    # TODO: parse names from pgn file
+    game = Game.new(white_name: "PGN white", black_name: "PGN black")
+    if game.save
+      game.board = initial_board
     end
     render json: { board: initial_board }
   end
