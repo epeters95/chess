@@ -6,7 +6,7 @@ class Move < ApplicationRecord
 
   belongs_to :board, inverse_of: "played_moves"
 
-  after_save :set_notation
+  before_save :set_notation
 
   include Util
 

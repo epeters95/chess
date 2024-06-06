@@ -16,23 +16,22 @@ class Api::BoardsController < ApplicationController
     pgn_text = create_board_params[:pgn_text].tempfile.read
     move_list = get_move_list_from_pgn(pgn_text)
 
-    initial_board = new_board
+    game = Game.create(white_name: "PGN white", black_name: "PGN black", status: "completed")
+    initial_board = game.board
 
     move_list.each do |move_str|
+      # initial_board.generate_legal_moves
       moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.get_notation == move_str}
       unless moves.empty?
         begin
-          initial_board.play_move(moves[0])
+          mv = moves[0]
+          mv.board_id = initial_board.id
+          initial_board.play_move_and_save(moves[0])
 
         rescue IllegalMoveError => e
           return render json: { errors: e.message, status: :unprocessable_entity }
         end
       end
-    end
-    # TODO: parse names from pgn file
-    game = Game.new(white_name: "PGN white", black_name: "PGN black")
-    if game.save
-      game.board = initial_board
     end
     render json: { board: initial_board }
   end

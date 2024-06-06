@@ -5,11 +5,14 @@ module Api::BoardsHelper
   def get_move_list_from_pgn(pgn_text)
     text_split = pgn_text.gsub("\r", "").split("\n\n")
     header = text_split[0]
-    moves = text_split[1]
-    moves.split(/\d\. /).map do |move_str|
+    moves = text_split[1].gsub("\n", " ")
+    result = moves.split(/\d+\./).map do |move_str|
+      move_str = move_str.gsub("+", "").strip
       next if move_str.empty?
-      move_str.split(" ")
-    end.flatten
+      mvs = move_str.split(" ")
+      mvs.length == 1 ? mvs[0] : mvs.take(2)
+    end.flatten.compact
+    result
     # Flattens [ [<black_move>, <white_move>], ...] to 1d array
   end
 end

@@ -91,7 +91,11 @@ class Game < ApplicationRecord
     self.create_board(turn: "white")
     self.board.status_str = "White to move - #{display_name_for("white")}"
     self.board.save!  # Manually saving board persists pieces in db
-    set_waiting_status
+
+    # Game has already been played, created from PGN upload
+    if self.status != "completed"
+      set_waiting_status
+    end
   end
 
   def is_computer?(color)
