@@ -167,6 +167,11 @@ class Board < ApplicationRecord
       if !ignore_check
         moves = moves.select { |move| is_not_check_after?(move) }
       end
+
+      # Warning: increases play_move complexity!
+      # TODO: Rework entire "relative pieces" concept for disambiguating position using cache
+      moves.each { |move| move.set_notation }
+
       piece.add_moves moves
       legal_moves[color].concat moves
     end

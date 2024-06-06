@@ -21,12 +21,12 @@ class Api::BoardsController < ApplicationController
 
     move_list.each do |move_str|
       # initial_board.generate_legal_moves
-      moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.get_notation == move_str}
+      moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.notation == move_str}
       unless moves.empty?
         begin
           mv = moves[0]
           mv.board_id = initial_board.id
-          initial_board.play_move_and_save(moves[0])
+          initial_board.play_move_and_save(mv)
 
         rescue IllegalMoveError => e
           return render json: { errors: e.message, status: :unprocessable_entity }

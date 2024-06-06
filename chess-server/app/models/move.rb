@@ -116,11 +116,11 @@ class Move < ApplicationRecord
     move_obj
   end
 
-  private
-
   def set_notation
     self.notation = get_notation
   end
+
+  private
 
   # (Called from get_notation) quickly grabs all same-team pieces of matching type
   # Reference to these pieces is needed when adding position to disambiguate 
