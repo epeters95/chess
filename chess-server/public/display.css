@@ -362,3 +362,7 @@ table.inputs-table {
     color: wheat;
   }
 }
+
+#upload-status-span {
+  color: lightcyan;
+}
