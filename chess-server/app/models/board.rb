@@ -283,8 +283,8 @@ class Board < ApplicationRecord
     if !legal_moves[self.turn].include?(move)
       raise IllegalMoveError
     end
-    move_result = play_move(move, ignore_check)
-    if !move_result && !move.save
+    move_result = play_move(move, ignore_check) && move.save
+    if !move_result
       return false
     else
       refresh_legal_moves(ignore_check)
