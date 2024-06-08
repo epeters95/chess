@@ -123,19 +123,21 @@ class Move < ApplicationRecord
   private
 
   # (Called from get_notation) quickly grabs all same-team pieces of matching type
-  # Reference to these pieces is needed when adding position to disambiguate 
+  # Reference to these pieces is needed when adding position to disambiguate by rank, file, or both
+  # and pieces can attack or move to the same square
+  # E.g. White has Qe4, Qh4, Qh1, all x e1
+  # both rank and file needed for Qh4 notation = Qh4xe1
   def get_piece_relatives
-    if self.board_id
-      self_board = Board.find(self.board_id)
-      self_pieces = self_board.get_pieces_from_positions_array
-      if self_board && self_pieces
-        piece_relatives = self_pieces[piece.color].select {|pc| pc.class == piece.class }
-        # variable number of pieces - E.g. White has Qe4, Qh4, Qh1, all x e1
-        # notation = Qe4xe1
-
-        # However, only needed with the same target. Filter by target:
-        piece_relatives = piece_relatives.select do |pc|
-          true unless pc.get_moves.select{|mv| mv.new_position == self.new_position }.empty?
+    if self.board
+      self_pieces = self.board.get_pieces_from_positions_array
+      
+      if self_pieces
+        piece_relatives = self_pieces[piece.color].select do |relative|
+          relative.class == piece.class &&
+          relative.position != piece.position &&
+          relative.get_moves.select do |relative_move|
+            relative_move.new_position == self.new_position
+          end.any?
         end
 
         return piece_relatives
