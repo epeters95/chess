@@ -83,6 +83,12 @@ function drawMoveList(json, moveToPiecesMap, selectedId) {
   movesList.innerHTML = "";
   let list = document.createElement("table");
   let row;
+  if (json["moves"].length === 0) {
+    let span = document.createElement("span");
+    span.innerHTML = "No moves played";
+    movesList.appendChild(span);
+    return;
+  }
   json["moves"].forEach(function(move, index) {
     if (!move)
       return;
@@ -123,7 +129,6 @@ function drawMoveList(json, moveToPiecesMap, selectedId) {
 }
 
 function getMoveNotation(move) {
-  // TODO: ensure correct move notation is done serverside and stored
   let piece = JSON.parse(move.piece_str)
   if (move.move_type === "attack") {
     return piece.char + piece.position + " x " + move.new_position

@@ -77,7 +77,7 @@ class Move < ApplicationRecord
   end
 
   def to_s
-    @notation ||= self.get_notation
+    @notation ||= self.notation
   end
 
   def ==(other_move)
