@@ -4,7 +4,6 @@ module Api::BoardsHelper
   # add extra function to split multiple games
   def get_move_list_from_pgn(pgn_text)
     text_split = pgn_text.gsub("\r", "").split("\n\n")
-    header = text_split[0]
     moves = text_split[1].gsub("\n", " ")
     result = moves.split(/\d+\./).map do |move_str|
       move_str = move_str.gsub("+", "").strip
@@ -15,4 +14,11 @@ module Api::BoardsHelper
     result
     # Flattens [ [<black_move>, <white_move>], ...] to 1d array
   end
+
+  def get_name_from_pgn(pgn_text, color)
+    text_split = pgn_text.gsub("\r", "").split("\n\n")
+    header = text_split[0]
+  end
+
+
 end

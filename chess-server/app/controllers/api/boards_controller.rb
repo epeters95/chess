@@ -12,15 +12,15 @@ class Api::BoardsController < ApplicationController
   end
 
   def create
-    # Potentially use this endpoint to load an existing game by PGN
     pgn_text = create_board_params[:pgn_text].tempfile.read
     move_list = get_move_list_from_pgn(pgn_text)
+    white_name = get_name_from_pgn(pgn_text, "white")
+    black_name = get_name_from_pgn(pgn_text, "black")
 
     game = Game.create(white_name: "PGN white", black_name: "PGN black", status: "completed")
     initial_board = game.board
 
     move_list.each do |move_str|
-      # initial_board.generate_legal_moves
       moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.notation == move_str}
       unless moves.empty?
         begin
