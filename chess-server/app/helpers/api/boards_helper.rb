@@ -18,6 +18,14 @@ module Api::BoardsHelper
   def get_name_from_pgn(pgn_text, color)
     text_split = pgn_text.gsub("\r", "").split("\n\n")
     header = text_split[0]
+    if color == "white"
+      mat = header.scan(/\[White "([\w, .]+)"\]/)
+    else
+      mat = header.scan(/\[Black "([\w, .]+)"\]/)
+    end
+    unless mat.empty?
+      return mat.flatten[0]
+    end
   end
 
 
