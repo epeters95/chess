@@ -77,7 +77,7 @@ class Move < ApplicationRecord
   end
 
   def to_s
-    @notation ||= self.notation
+    notation_cached
   end
 
   def ==(other_move)
@@ -103,7 +103,7 @@ class Move < ApplicationRecord
       new_position:     self.new_position,
       rook_position:    self.rook_position,
       move_count:       self.move_count,
-      notation:         get_notation,
+      notation:         notation_cached,
       promotion_choice: self.promotion_choice
     }
     JSON.generate(hsh, options)
@@ -116,8 +116,14 @@ class Move < ApplicationRecord
     move_obj
   end
 
+  def notation_cached
+    Rails.cache.fetch("#{cache_key_with_version}/notation", expires_in: 12.hours) do
+      set_notation
+    end
+  end
+
   def set_notation
-    self.notation = get_notation
+    self.notation ||= get_notation
   end
 
   private

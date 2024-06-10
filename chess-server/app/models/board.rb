@@ -1,7 +1,7 @@
 class Board < ApplicationRecord
 
   belongs_to :game, optional: true
-  has_many   :played_moves, -> { where "completed = 1" }, class_name: "Move"
+  has_many   :played_moves, -> { where "completed = 1" }, class_name: "Move", dependent: :destroy
 
   after_create :init_vars_and_generate_legal_moves
 
@@ -296,7 +296,7 @@ class Board < ApplicationRecord
   def get_move_by_notation(notation, move_count=nil)
     moves = @legal_moves[self.turn].filter do |move|
       move_count_cond = move_count.nil? ? true : move_count == move.move_count
-      move_count_cond && (notation == move.notation)
+      move_count_cond && (notation == move.notation_cached)
     end
   end
 

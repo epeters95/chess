@@ -20,7 +20,7 @@ class Game < ApplicationRecord
   def play_move_and_evaluate(move)
     result = self.board.play_move_and_save(move)
 
-    status_str = "#{display_name_for(switch(self.board.turn))} made move #{move.notation}"
+    status_str = "#{display_name_for(switch(self.board.turn))} made move #{move.notation_cached}"
     status_str += ", check" if self.board.is_king_checked?(self.board.turn)
     status_str += ". #{uppercase(self.board.turn)} to move."
     
