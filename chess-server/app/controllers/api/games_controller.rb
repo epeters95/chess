@@ -75,6 +75,7 @@ class Api::GamesController < ApplicationController
           chosen_move = nil
           if @game.is_live?
             validate_move_access(@game, params)
+            chosen_move = @game.board.get_move_by_notation(params[:move][:notation])
           else
 
             if @game.is_computers_turn?

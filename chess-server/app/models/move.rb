@@ -103,7 +103,7 @@ class Move < ApplicationRecord
       new_position:     self.new_position,
       rook_position:    self.rook_position,
       move_count:       self.move_count,
-      notation:         notation_cached,
+      notation:         self.notation,
       promotion_choice: self.promotion_choice
     }
     JSON.generate(hsh, options)

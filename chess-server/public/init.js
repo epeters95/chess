@@ -234,6 +234,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       // No validation needed because response function is executed
       // by the client who joined the game and who is issued a token
       modal.classList.add("hidden");
+      quoteSpan.classList.add("hidden");
       alert("Game ready to begin")
       setTokenCookie(json["token"], json["color"], json["access_code"])
 

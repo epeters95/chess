@@ -75,14 +75,18 @@ function fetchFromApi(endpoint, method, params=null, successCallback=null) {
   let requestObj = {
     method: method
   }
-  
+
   if (params !== null) {
-    if (params["pgn_text"] !== null) {
+    if (params["pgn_text"] !== undefined) {
       const formData = new FormData();
       formData.append('pgn_text', params["pgn_text"]);
       requestObj.body = formData;
     } else {
       requestObj.body = JSON.stringify(params);
+      requestObj.headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
     }
   }
 
