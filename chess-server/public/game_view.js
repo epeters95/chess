@@ -74,7 +74,7 @@ class GameView {
     }, 5000)
   }
 
-  draw() {
+  draw(skipLoop=false) {
 
     this.statusSpan.innerText = this.status;
 
@@ -96,8 +96,7 @@ class GameView {
       this.showSelectionGrid();
     }
     this.drawMoves();
-
-    if (this.isLive && this.showTurn !== this.turn) {
+    if (this.isLive && this.showTurn !== this.turn && !skipLoop) {
       this.checkForMoveLoop();
     }
 
@@ -137,18 +136,20 @@ class GameView {
   }
 
   selectPiece(piece) {
-    if (this.selectedPiece === "") {
-      this.selectedPiece = piece;
-      this.selectedMoves = this.moves.filter(function(move) {
-        let pc = JSON.parse(move.piece_str)
-        return pc.position === piece.position
-      })
+    if (this.isThisTurn()) {
+      if (this.selectedPiece === "") {
+        this.selectedPiece = piece;
+        this.selectedMoves = this.moves.filter(function(move) {
+          let pc = JSON.parse(move.piece_str)
+          return pc.position === piece.position
+        })
+      }
+      else {
+        this.selectedPiece = "";
+        this.selectedMoves = [];
+      }
+      this.draw(true);
     }
-    else {
-      this.selectedPiece = "";
-      this.selectedMoves = [];
-    }
-    this.draw();
   }
 
   drawMoves() {
