@@ -7,8 +7,8 @@ var context, canvasLeft, canvasTop;
 
 if (!!canvas) {
   context = canvas.getContext("2d");
-  canvas.width = 496;
-  canvas.height = 496;
+  canvas.width = 476;
+  canvas.height = 476;
 }
 
 
@@ -64,8 +64,6 @@ function setTokenCookie(token, color=null, code=null) {
   document.cookie = 'gametoken=' + token + '; path=/'
   document.cookie = 'color=' + color + '; path=/'
   document.cookie = 'accesscode=' + code + '; path=/'
-  document.getElementById("cookieholder").innerText = token;
-  document.getElementById("cookieholder-color").innerText = color;
 }
 
 function fetchFromApi(endpoint, method, params=null, successCallback=null) {

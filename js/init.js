@@ -88,8 +88,8 @@ function nextMove() {
 function drawCodeWindow(json) {
   modal.classList.remove("hidden");
   let canv = document.getElementById("code-view");
-  canv.width = (screen.height * .2) - 50;
-  canv.height = canv.width / 2.0;
+  canv.width = 238;
+  canv.height = 119;
   
   let whiteName = "";
   let blackName = "";

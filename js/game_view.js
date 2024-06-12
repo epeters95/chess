@@ -31,6 +31,7 @@ class GameView {
 
     this.gridShown = false;
     this.showTurn = null;
+    this.refreshRateMs = 10000;
   }
 
   setJsonVars(json) {
@@ -71,7 +72,7 @@ class GameView {
         that.refresh()
       }
 
-    }, 5000)
+    }, refreshRateMs)
   }
 
   draw(skipLoop=false) {
@@ -96,7 +97,7 @@ class GameView {
       this.showSelectionGrid();
     }
     this.drawMoves();
-    if (this.isLive && this.showTurn !== this.turn && !skipLoop) {
+    if (this.isLive && this.showTurn !== this.turn && !skipLoop && this.gameStatus !== "completed") {
       this.checkForMoveLoop();
     }
 
