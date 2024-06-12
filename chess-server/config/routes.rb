@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root "test#index"
+  root "test#status"
 
   get '/404', to: 'errors#not_found'
   get '/500', to: 'errors#server_error'
@@ -32,10 +32,7 @@ Rails.application.routes.draw do
   end
 
 
-  # Test endpoints rendering html
-  get '/testgame', to: 'test#index'
-  get '/games', to: 'test#games_index'
-  get '/players', to: 'test#players_index'
-  get '/upload', to: 'test#upload'
+  # Test status endpoint
+  get '/status', to: 'test#status'
 
 end

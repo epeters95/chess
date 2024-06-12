@@ -1,5 +1,7 @@
 // Common variables
 
+const baseUrl = "https://chess-wpj4.onrender.com";
+
 const canvas = document.getElementById("game-view");
 var context, canvasLeft, canvasTop;
 
@@ -71,7 +73,7 @@ function setTokenCookie(token, color=null, code=null) {
 
 function fetchFromApi(endpoint, method, params=null, successCallback=null) {
   let spinner = showSpinner("spinner-div");
-  let apiUrl = "http://localhost:3000" + endpoint;
+  let apiUrl = baseUrl + endpoint;
   let requestObj = {
     method: method
   }
@@ -114,7 +116,7 @@ function showSpinner(canvasParentId) {
   if (!loader) {
     let spinner = document.createElement('div');
     spinner.id = "loading";
-    spinner.innerHTML = '<div id="loading-spinner"><img src="spinner2.gif"></div>';
+    spinner.innerHTML = '<div id="loading-spinner"><img src="img/spinner2.gif"></div>';
     document.getElementById(canvasParentId).appendChild(spinner);
     // Add hide function for spinner
     spinner.hide = function() {

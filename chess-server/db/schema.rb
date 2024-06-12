@@ -11,12 +11,15 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2024_05_22_220012) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "boards", force: :cascade do |t|
     t.string "turn"
     t.string "status_str", default: ""
     t.integer "move_count", default: 0
     t.text "positions_array"
-    t.integer "game_id"
+    t.bigint "game_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_boards_on_game_id"
@@ -28,7 +31,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_22_220012) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "status"
-    t.integer "black_id"
+    t.bigint "black_id"
     t.integer "white_id", default: 0, null: false
     t.index ["black_id"], name: "index_games_on_black_id"
     t.index ["white_id"], name: "index_games_on_white_id"
@@ -38,7 +41,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_22_220012) do
     t.string "white_token", default: ""
     t.string "black_token", default: ""
     t.string "access_code", default: ""
-    t.integer "game_id"
+    t.bigint "game_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["game_id"], name: "index_live_games_on_game_id"
@@ -53,7 +56,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_22_220012) do
     t.boolean "completed", default: false
     t.string "promotion_choice"
     t.integer "move_count"
-    t.integer "board_id"
+    t.bigint "board_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "notation"

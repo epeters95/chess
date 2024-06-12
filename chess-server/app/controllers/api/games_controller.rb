@@ -98,7 +98,6 @@ class Api::GamesController < ApplicationController
         render json: {error: "Game not found"}, status: :unprocessable_entity
       end
     rescue Exception => e
-      debugger
       render json: {errors: e.message }, status: :unprocessable_entity
     end
   end
