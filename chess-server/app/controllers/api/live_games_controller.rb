@@ -47,8 +47,8 @@ class Api::LiveGamesController < ApplicationController
     p_team = params[:player_team]
     access_code = params[:access_code]
 
-    whitename = ( p_team == "white" ? p_name : "No name" )
-    blackname = ( p_team == "black" ? p_name : "No name" )
+    whitename = ( p_team == "white" ? p_name : "" )
+    blackname = ( p_team == "black" ? p_name : "" )
 
     @livegame = LiveGame.find_by(access_code: access_code)
     if @livegame.nil?
