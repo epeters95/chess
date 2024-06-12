@@ -1,7 +1,7 @@
 class Board < ApplicationRecord
 
   belongs_to :game, optional: true
-  has_many   :played_moves, -> { where "completed = 1" }, class_name: "Move", dependent: :destroy
+  has_many   :played_moves, -> { where "completed = true" }, class_name: "Move", dependent: :destroy
 
   after_create :init_vars_and_generate_legal_moves
 
