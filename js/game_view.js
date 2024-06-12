@@ -72,7 +72,7 @@ class GameView {
         that.refresh()
       }
 
-    }, refreshRateMs)
+    }, this.refreshRateMs)
   }
 
   draw(skipLoop=false) {
