@@ -7,11 +7,8 @@ var context, canvasLeft, canvasTop;
 
 if (!!canvas) {
   context = canvas.getContext("2d");
-  canvasLeft = canvas.offsetLeft + canvas.clientLeft;
-  canvasTop = canvas.offsetTop + canvas.clientTop;
-
-  canvas.width = (screen.height * .4) - 100;
-  canvas.height = canvas.width;
+  canvas.width = 496;
+  canvas.height = 496;
 }
 
 
