@@ -58,7 +58,7 @@ canvas {
 
 body {
   background-color: rgb(64, 106, 95); 
-  background-image: url(grid.png);
+  background-image: url(img/grid.png);
   background-size: 10;
   text-align: center;
 }
