@@ -58,7 +58,7 @@ canvas {
 
 body {
   background-color: rgb(64, 106, 95); 
-  background-image: url(img/grid.png);
+  background-image: url('../img/grid.png');
   background-size: 10;
   text-align: center;
 }
@@ -114,6 +114,11 @@ checker{
   top: 100px;
   width: 100px;
   margin: auto;
+}
+
+#next-move {
+  z-index: 100;
+  position: relative;
 }
 
 .status {

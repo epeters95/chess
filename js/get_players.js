@@ -14,7 +14,7 @@ const players = fetchFromApi('/api/players', 'GET', null, function(json) {
   // in addition to "status" and quick ability to add more in the future
   json["players"].forEach(function(player) {
     let tableRow = document.createElement('tr');
-    let link = '/games?name=' + player.name;
+    let link = 'games_index.html?name=' + player.name;
 
     let tableCells = "<td>" + player.name + "</td><td>";
     if (player.games > 0) {
