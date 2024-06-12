@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <title>Chess</title>
+  <link rel="stylesheet" href="css/display.css">
+</head>
+<body>
+  <div class="header">
+    <span><a href='index.html'>Home</a></span>
+    <span><a href='games_index.html'>Game History</a></span>
+    <span><a href='players_index.html'>Players</a></span>
+    <span><a href='upload.html'>Upload</a></span>
+  </div>
+  
+  <div class="main">
+    <div class="title">
+      <div id="chess-img">
+        <img class="chess-gif" src="img/loading.gif">
+      </div>
+      <h1 id="chess-title">Chess</h1>
+    </div>
+    <div id="content">
+
+
+      <div id="canvas-window">
+        <div id="quote-wrapper">
+          <table id="selection-grid" class="hidden">
+            <tr><td/><td/><td/><td/><td/><td/><td/><td/></tr>
+            <tr><td/><td/><td/><td/><td/><td/><td/><td/></tr>
+            <tr><td/><td/><td/><td/><td/><td/><td/><td/></tr>
+            <tr><td/><td/><td/><td/><td/><td/><td/><td/></tr>
+            <tr><td/><td/><td/><td/><td/><td/><td/><td/></tr>
+            <tr><td/><td/><td/><td/><td/><td/><td/><td/></tr>
+            <tr><td/><td/><td/><td/><td/><td/><td/><td/></tr>
+            <tr><td/><td/><td/><td/><td/><td/><td/><td/></tr>
+          </table>
+          <canvas id="game-view"></canvas>
+        </div>
+      </div>
+      <span class="status" id="status"></span>
+      <br>
+      <br>
+      <div class="next-move">
+        <button disabled id="next-move">Get Computer Move</button>
+      </div>
+      <br>
+      <br>
+      <div class="player-names">
+        <table class="inputs-table">
+
+          <tr>
+            <td class="double-width">
+              <label>White:</label>
+              <input type="text" id="player1-name" placeholder="Leave blank for Computer"/>
+              <br>
+              <label>Black:</label>
+              <input type="text" id="player2-name" placeholder="Leave blank for Computer"/>
+              <div class="new-game">
+                <button id="new-game">New Local Game</button>
+              </div>
+            </td>
+            <td>
+              <table>
+                <tr><td class="border-right"></td><td></td></tr>
+                <tr><td></td><td><span class="border-separator">or</span></td></tr>
+                <tr><td class="border-right"></td><td></td></tr>
+              </table>
+
+            </td>
+            <td class="double-width">
+              <div class="new-game">
+                <button id="new-live-game">New Live Game</button>
+              </div>
+              <input id="access-code-input" placeholder="Enter Code" type="text">
+              <button id="get-access-code">Find Game</button>
+            </td>
+          </tr>
+
+        </table>
+      </div>
+
+    </div>
+    <br>
+  </div>
+  
+  <div class="footer">
+  </div>
+  
+  <div class="modal code-modal hidden">
+    <div class="modal-content code-modal">
+      <div class="content-container">
+        <div class="mainbar small">
+
+          <div class="code-background">
+            <p>Share this access code with  another player:</p>
+            <div id="canvas-code-window">
+              <canvas id="code-view"></canvas>
+            </div>
+
+          </div>
+        </div>
+        <div class="sidebar large">
+          <p>Play as:</p>
+          <input type="radio" id="white-radio" name="color-choice"><span> White</span> 
+            <input id="white-player-input" type="text" placeholder="Player name"></input>
+          </input>
+          <br>
+          <input type="radio" id="black-radio" name="color-choice"><span> Black</span> 
+            <input id="black-player-input" type="text" placeholder="Player name"></input>
+          </input>
+          <br>
+          <br>
+          <button id="request-code-button">Submit Choice</button>
+        </div>
+      </div>
+    </div>
+    <div id="modal-close-button">
+      <button>X</button>
+    </div>
+  </div>
+  <div id="cookieholder"></div>
+  <div id="cookieholder-color"></div>
+
+  <div id="spinner-div"></div>
+
+</body>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="js/game_view.js"></script>
+<script type="text/javascript" src="js/init.js"></script>
+
+</html>
