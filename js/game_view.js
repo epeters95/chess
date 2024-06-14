@@ -1,6 +1,6 @@
 class GameView {
 
-  constructor(canvas, json, statusSpan, isLive=false, nextMoveSubmitEl=null) {
+  constructor(canvas, json, statusSpan, isLive=false) {
 
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
@@ -27,7 +27,6 @@ class GameView {
 
     // DOM elements
     this.statusSpan     = statusSpan;
-    this.nextMoveSubmit = nextMoveSubmitEl;
 
     this.gridShown = false;
     this.showTurn = null;
@@ -192,16 +191,6 @@ class GameView {
           squareSize
           );
       })
-
-      if (!!this.nextMoveSubmit) {
-        this.nextMoveSubmit.setAttribute("disabled", true)
-      }
-
-    } else {
-
-      if (!!this.nextMoveSubmit) {
-        this.nextMoveSubmit.removeAttribute("disabled")
-      }
     }
   }
 
@@ -315,6 +304,7 @@ class GameView {
       that.selectedMoves = [];
       that.setJsonVars(json);
       that.draw();
+      that.nextComputerMove();
     })
 
   }

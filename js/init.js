@@ -2,7 +2,6 @@ const newGameSubmit = document.getElementById("new-game");
 const newLiveGameSubmit = document.getElementById("new-live-game");
 const accessCodeInput = document.getElementById("access-code-input");
 const getAccessCode = document.getElementById("get-access-code");
-const nextMoveSubmit = document.getElementById("next-move");
 const requestCodeSubmit = document.getElementById("request-code-button");
 var submitEventListeners = [];
 
@@ -19,9 +18,6 @@ if (newGameSubmit !== null) {
 }
 if (newLiveGameSubmit !== null) {
   newLiveGameSubmit.addEventListener('click', newLiveGame);
-}
-if (nextMoveSubmit !== null) {
-  nextMoveSubmit.addEventListener('click', nextMove);
 }
 
 
@@ -76,13 +72,9 @@ function newGame() {
 
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
     hideQuote();
-    gameView = new GameView(canvas, json, statusSpan, false, nextMoveSubmit)
+    gameView = new GameView(canvas, json, statusSpan, false)
     gameView.draw()
   })
-}
-
-function nextMove() {
-  gameView.nextComputerMove()
 }
 
 function drawCodeWindow(json) {
@@ -218,6 +210,7 @@ function drawCodeWindow(json) {
 function newLiveGame() {
   fetchFromApi("/api/live_games", "POST", null, function(json) {
     drawCodeWindow(json)
+    setTokenCookie('')
   })
 }
 
