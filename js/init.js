@@ -248,6 +248,29 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       }
       json["access_code"] = prevJson["access_code"]
       drawCodeWindow(json)
+
+      // Refresh until opponent joins the game
+      checkGameReadyLoop(id, json["access_code"])
     }
   })
 }
+
+function checkGameReadyLoop(id, accessCode) {
+    setTimeout(function() {
+
+      fetchFromApi("/api/live_games" + id, "GET", {"access_code": accessCode}, function(json) {
+        if (!json["is_ready"]) {
+          checkGameReadyLoop(id, accessCode)
+        } else {
+          modal.classList.add("hidden");
+          quoteSpan.classList.add("hidden");
+          alert("Game ready to begin")
+          if (gameView === null) {
+            gameView = new GameView(canvas, json, statusSpan, true)
+          }
+          gameView.draw()
+        }
+      })
+
+    }, 10000)
+  }
