@@ -5,7 +5,7 @@ const baseUrl = "https://chess-wpj4.onrender.com";
 const canvas = document.getElementById("game-view");
 var context, canvasLeft, canvasTop;
 
-if (!!canvas) {
+if (canvas) {
   context = canvas.getContext("2d");
   canvas.width = 476;
   canvas.height = 476;

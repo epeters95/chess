@@ -2,7 +2,7 @@ const pgnForm = document.getElementById("upload-pgn-form");
 const pgnSubmit = document.getElementById("upload-pgn-submit");
 const uploadStatusSpan = document.getElementById("upload-status-span");
 
-pgnSubmit.addEventListener("click", function(event) {
+pgnSubmit.addEventListener("click", function() {
 
   let files = pgnForm.children[1].files;
   if (files.length > 0) {

@@ -2,7 +2,7 @@ const playersTable = document.getElementById("players-table");
 
 let spinner = showSpinner("spinner-div");
 
-const players = fetchFromApi('/api/players', 'GET', null, function(json) {
+fetchFromApi('/api/players', 'GET', null, function(json) {
   let tableHeader = document.createElement('tr')
   tableHeader.innerHTML = "<th>Name</th><th># Games</th><th>Completed</th>";
   playersTable.appendChild(tableHeader);

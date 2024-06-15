@@ -2,7 +2,7 @@ let table = document.getElementById("game-table");
 
 let modalGames = document.getElementsByClassName("modal")[0];
 let modalCloseBtnGames = document.getElementById("modal-close-button");
-modalCloseBtnGames.addEventListener("click", function(event) {
+modalCloseBtnGames.addEventListener("click", function() {
   modalGames.classList.add("hidden");
 })
 
@@ -44,7 +44,7 @@ function populateTable(json) {
     let id = el.getAttribute("data-id");
     let boardUrl = "/api/games/" + id + "/board"
     boardUrl += "#with_history=true"
-    el.addEventListener("click", function(event) {
+    el.addEventListener("click", function() {
 
       fetchFromApi(boardUrl, "GET", null, function(json) {
         populateGameAndMoves(json);

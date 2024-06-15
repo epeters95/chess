@@ -118,10 +118,8 @@ class GameView {
 
       if (that.showTurn !== null) {
         showWhite = (that.showTurn === "white");
-        thisTurn = that.showTurn;
       } else {
         showWhite = (that.turn === "white" || that.turnName === "");
-        thisTurn = that.turn
       }
 
       if (showWhite) {

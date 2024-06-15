@@ -115,7 +115,7 @@ function drawCodeWindow(json) {
 
   let tokenCookie = getTokenCookie()
 
-  if (!!tokenCookie) {
+  if (tokenCookie) {
     if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
       modal.classList.add("hidden")
@@ -136,7 +136,7 @@ function drawCodeWindow(json) {
     }
   }
 
-  whitePlayerInput.addEventListener("keyup", function(event) {
+  whitePlayerInput.addEventListener("keyup", function() {
     if (this.value.length === 0) {
       requestCodeSubmit.setAttribute("disabled", true)
     } else {
@@ -144,7 +144,7 @@ function drawCodeWindow(json) {
     }
   })
 
-  blackPlayerInput.addEventListener("keyup", function(event) {
+  blackPlayerInput.addEventListener("keyup", function() {
     if (this.value.length === 0) {
       requestCodeSubmit.setAttribute("disabled", true)
     } else {
@@ -180,7 +180,7 @@ function drawCodeWindow(json) {
     requestCodeSubmit.setAttribute("disabled", true)
   }
   
-  const submitEvent = function(event) {
+  const submitEvent = function() {
     let playerName = null;
     let playerTeam = "";
     if (!whiteRadio.checked && !blackRadio.checked) {
