@@ -48,7 +48,7 @@ class Api::GamesController < ApplicationController
   def create
     # Get existing players
     black_player = Player.find_or_create_by_name(game_params[:black_name])
-    white_player = Player.find_by_name(game_params[:white_name])
+    white_player = Player.find_or_create_by_name(game_params[:white_name])
     begin
       @game = Game.new(game_params)
       @game.black_id = black_player.id if black_player
