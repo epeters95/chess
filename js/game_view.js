@@ -88,19 +88,35 @@ class GameView {
       this.showTurn = this.turn;
     }
 
-    this.drawBoard();
-    this.drawTeam("white");
-    this.drawTeam("black");
+    let that = this;
 
-    if (this.gameStatus !== "completed") {
-      this.showSelectionGrid();
-    }
-    this.drawMoves();
-    if (this.isLive && this.showTurn !== this.turn && !skipLoop && this.gameStatus !== "completed") {
-      this.checkForMoveLoop();
-    }
+    new Promise(() => {
 
-    canvas.click()
+      that.drawBoard()
+
+    }).then(() => {
+
+      that.drawTeam("white")
+
+    }).then(() => {
+
+      that.drawTeam("black")
+
+    }).then(() => {
+
+      that.showSelectionGrid()
+
+    }).then(() => {
+
+      that.drawMoves()
+
+    }).then(() => {
+
+      if (that.isLive && that.showTurn !== that.turn && !skipLoop && that.gameStatus !== "completed") {
+        that.checkForMoveLoop();
+      }
+      canvas.click()
+    })
 
   }
 
@@ -114,7 +130,7 @@ class GameView {
     this.pieces[color].forEach(function(el) {
       that.context.fillStyle = color;
       let x, y;
-      let thisTurn, showWhite;
+      let showWhite;
 
       if (that.showTurn !== null) {
         showWhite = (that.showTurn === "white");
@@ -193,7 +209,7 @@ class GameView {
   }
 
   drawBoard() {
-    
+
     for (let x = 0; x <= this.canvas.width; x += this.squareSize) {
       for (let y = 0; y <= this.canvas.width; y += this.squareSize) {
         context.fillStyle = this.switchSquareColor();
@@ -208,6 +224,10 @@ class GameView {
   }
 
   showSelectionGrid() {
+    if (this.gameStatus !== "completed") {
+      return null;
+    }
+
     let grid = document.getElementById("selection-grid");
     if (grid) {
       grid.classList.remove("hidden");
@@ -250,13 +270,16 @@ class GameView {
     }
 
     const removeEventListenersAndCall = (grid, that, callFunc) => {
-      Object.keys(that.eventListeners).forEach((key) => {
-        that.eventListeners[key].forEach((elArr) => {
-          elArr[0].removeEventListener(key, elArr[1])
+      new Promise(() => {
+        Object.keys(that.eventListeners).forEach((key) => {
+          that.eventListeners[key].forEach((elArr) => {
+            elArr[0].removeEventListener(key, elArr[1])
+          })
         })
+        that.gridShown = false; // trigger re-draw
+      }).then(() => {
+        callFunc()  // Should be selectMove, which fetches then calls draw()
       })
-      that.gridShown = false; // trigger re-draw
-      callFunc() // Should be selectMove, which fetches then calls draw()
     }
 
     // Triggered re-draw of board + events
