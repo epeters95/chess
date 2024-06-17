@@ -90,9 +90,10 @@ class GameView {
 
     let that = this;
 
-    new Promise(() => {
+    new Promise((resolve) => {
 
       that.drawBoard()
+      resolve()
 
     }).then(() => {
 
