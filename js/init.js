@@ -87,6 +87,10 @@ function newGame() {
     hideQuote();
     gameView = new GameView(canvas, json, statusSpan, false)
     gameView.draw()
+    // Initiate first move if computer is white
+    if (requestBody["game"]["white_name"] === "") {
+      gameView.nextComputerMove()
+    }
   })
 }
 
