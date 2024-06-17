@@ -1,7 +1,9 @@
-const newGameSubmit = document.getElementById("new-game");
+const newGameSubmit     = document.getElementById("new-game");
+const player1Name       = document.getElementById("player1-name");
+const player2Name       = document.getElementById("player2-name");
 const newLiveGameSubmit = document.getElementById("new-live-game");
-const accessCodeInput = document.getElementById("access-code-input");
-const getAccessCode = document.getElementById("get-access-code");
+const accessCodeInput   = document.getElementById("access-code-input");
+const getAccessCode     = document.getElementById("get-access-code");
 const requestCodeSubmit = document.getElementById("request-code-button");
 var submitEventListeners = [];
 
@@ -14,6 +16,17 @@ modalCloseBtn.addEventListener("click", function(event) {
 
 
 if (newGameSubmit !== null) {
+
+  const checkNamesNotBlank = function() {
+    if (player1Name.value.length === 0 && player2Name.value.length === 0) {
+      newGameSubmit.setAttribute('disabled', true);
+    } else {
+      newGameSubmit.removeAttribute('disabled');
+    }
+  }
+  checkNamesNotBlank();
+  player1Name.addEventListener('keyup', checkNamesNotBlank);
+  player2Name.addEventListener('keyup', checkNamesNotBlank);
   newGameSubmit.addEventListener('click', newGame);
 }
 if (newLiveGameSubmit !== null) {
@@ -29,7 +42,7 @@ if (getAccessCode !== null) {
   }
 
   // Only trigger findGame on click when a full code is entered
-  accessCodeInput.addEventListener('keyup', function(event) {
+  accessCodeInput.addEventListener('keyup', function() {
     if (this.value.length === 4) {
       getAccessCode.removeAttribute('disabled');
     } else {
