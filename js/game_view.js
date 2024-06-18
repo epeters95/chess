@@ -277,13 +277,14 @@ class GameView {
     }
 
     const removeEventListenersAndCall = (grid, that, callFunc) => {
-      new Promise(() => {
+      new Promise((resolve) => {
         Object.keys(that.eventListeners).forEach((key) => {
           that.eventListeners[key].forEach((elArr) => {
             elArr[0].removeEventListener(key, elArr[1])
           })
         })
         that.gridShown = false; // trigger re-draw
+        resolve()
       }).then(() => {
         callFunc()  // Should be selectMove, which fetches then calls draw()
       })
