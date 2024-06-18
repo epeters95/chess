@@ -97,7 +97,7 @@ function fetchFromApi(endpoint, method, params=null, successCallback=null) {
       }
 
     } else {
-      alert("Error:" + json.error + " " + json.errors)
+      console.log("Error:" + json.error + " " + json.errors)
     }
     spinner.hide()
   })
