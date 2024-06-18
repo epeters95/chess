@@ -275,7 +275,8 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
 function checkGameReadyLoop(id, accessCode) {
     setTimeout(function() {
 
-      fetchFromApi("/api/live_games" + id, "GET", {"access_code": accessCode}, function(json) {
+      let params = "?access_code=" + accessCode
+      fetchFromApi("/api/live_games/" + id + params, "GET", null, function(json) {
         if (!json["is_ready"]) {
           checkGameReadyLoop(id, accessCode)
         } else {

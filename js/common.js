@@ -102,7 +102,8 @@ function fetchFromApi(endpoint, method, params=null, successCallback=null) {
     spinner.hide()
   })
   .catch(function(error) {
-    alert("Error: " + error)
+    console.log("Error: " + error)
+    spinner.hide()
   })
 }
 
