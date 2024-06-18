@@ -82,10 +82,16 @@ class GameView {
 
     this.switchSquareColor()
 
+    let thisTurn = this.turn
+
     if (this.isLive) {
       this.showTurn  = getTokenColor()
-    } else if (this.showTurn === null || this.turnName !== "") {
-      this.showTurn = this.turn;
+    } else if (this.showTurn === null) {
+      if (this.turnName !== "") {
+        this.showTurn = thisTurn;
+      } else {
+        this.showTurn = ["white", "black"].filter((el) => {return el !== thisTurn })[0]
+      }
     }
 
     let that = this;
@@ -225,7 +231,7 @@ class GameView {
   }
 
   showSelectionGrid() {
-    if (this.gameStatus !== "completed") {
+    if (this.gameStatus === "completed") {
       return null;
     }
 
