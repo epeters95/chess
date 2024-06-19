@@ -50,7 +50,9 @@ class GameView {
             that.selectedMoves = [];
             that.setJsonVars(json);
             that.draw();
-            that.nextComputerMove();
+            if (!that.isLive) {
+              that.nextComputerMove();
+            }
           })
         }
       })
@@ -355,7 +357,9 @@ class GameView {
         that.selectedMoves = [];
         that.setJsonVars(json);
         that.draw();
-        that.nextComputerMove();
+        if (!that.isLive) {
+          that.nextComputerMove();
+        }
       })
     }
 
