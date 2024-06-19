@@ -9,10 +9,15 @@ var submitEventListeners = [];
 
 const modal = document.getElementsByClassName("modal")[0];
 const modalCloseBtn = document.getElementById("modal-close-button");
-modalCloseBtn.addEventListener("click", function(event) {
+modalCloseBtn.addEventListener("click", function() {
   modal.classList.add("hidden");
 })
 
+const promotionPopup = document.getElementById("promotion-popup");
+const promotionSubmit = document.getElementById("promotion-submit");
+promotionSubmit.addEventListener("click", function() {
+  promotionPopup.classList.add("hidden")
+})
 
 
 if (newGameSubmit !== null) {
@@ -53,6 +58,12 @@ if (getAccessCode !== null) {
 
 var gameView = null;
 
+const domElements = {
+  "statusSpan": statusSpan,
+  "promotionPopup": promotionPopup,
+  "promotionSubmit": promotionSubmit
+}
+
 const quoteWrapper = document.getElementById("quote-wrapper");
 const quoteSpan = document.createElement("span")
 quoteSpan.classList.add("quote-span");
@@ -85,7 +96,7 @@ function newGame() {
 
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
     hideQuote();
-    gameView = new GameView(canvas, json, statusSpan, false)
+    gameView = new GameView(canvas, json, domElements, false)
     gameView.draw()
     // Initiate first move if computer is white
     if (requestBody["game"]["white_name"] === "") {
@@ -139,7 +150,7 @@ function drawCodeWindow(json) {
       hideQuote();
 
       if (gameView === null) {
-        gameView = new GameView(canvas, json, statusSpan, true)
+        gameView = new GameView(canvas, json, domElements, true)
       }
       gameView.draw()
       return null;
@@ -249,7 +260,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       setTokenCookie(json["token"], json["color"], json["access_code"])
 
       if (gameView === null) {
-        gameView = new GameView(canvas, json, statusSpan, true)
+        gameView = new GameView(canvas, json, domElements, true)
       }
       gameView.draw()
     }
@@ -273,22 +284,22 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
 }
 
 function checkGameReadyLoop(id, accessCode) {
-    setTimeout(function() {
+  setTimeout(function() {
 
-      let params = "?access_code=" + accessCode
-      fetchFromApi("/api/live_games/" + id + params, "GET", null, function(json) {
-        if (!json["is_ready"]) {
-          checkGameReadyLoop(id, accessCode)
-        } else {
-          modal.classList.add("hidden");
-          quoteSpan.classList.add("hidden");
-          alert("Game ready to begin")
-          if (gameView === null) {
-            gameView = new GameView(canvas, json, statusSpan, true)
-          }
-          gameView.draw()
+    let params = "?access_code=" + accessCode
+    fetchFromApi("/api/live_games/" + id + params, "GET", null, function(json) {
+      if (!json["is_ready"]) {
+        checkGameReadyLoop(id, accessCode)
+      } else {
+        modal.classList.add("hidden");
+        quoteSpan.classList.add("hidden");
+        alert("Game ready to begin")
+        if (gameView === null) {
+          gameView = new GameView(canvas, json, domElements, true)
         }
-      })
+        gameView.draw()
+      }
+    })
 
-    }, 10000)
-  }
+  }, 10000)
+}

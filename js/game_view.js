@@ -1,6 +1,6 @@
 class GameView {
 
-  constructor(canvas, json, statusSpan, isLive=false) {
+  constructor(canvas, json, domElements, isLive=false) {
 
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
@@ -26,11 +26,35 @@ class GameView {
     this.squareColor = this.colorB;
 
     // DOM elements
-    this.statusSpan     = statusSpan;
+    this.statusSpan      = domElements["statusSpan"];
+    this.promotionPopup  = domElements["promotionPopup"];
+    this.promotionSubmit = domElements["promotionSubmit"];
 
     this.gridShown = false;
     this.showTurn = null;
     this.refreshRateMs = 10000;
+    this.promotionMove = null;
+
+    // Set up promotion event handler once
+    let that = this;
+    if (this.promotionPopup && this.promotionSubmit) {
+      this.promotionSubmit.addEventListener("click", function() {
+        // Only promote when a promotion move has been selected
+        if (that.promotionMove) {
+          debugger
+          let promotionChoices = document.getElementsByName("promotion-choice");
+          let checkedChoice = Array.from(promotionChoices).find((choice) => { return choice.checked });
+          that.promotionMove["promotion_choice"] = checkedChoice.value;
+          fetchFromApi("/api/games/" + that.gameId, "PATCH", { "move": that.promotionMove }, function(json) {
+            that.promotionMove = null;
+            that.selectedMoves = [];
+            that.setJsonVars(json);
+            that.draw();
+            that.nextComputerMove();
+          })
+        }
+      })
+    }
   }
 
   setJsonVars(json) {
@@ -323,18 +347,17 @@ class GameView {
 
     let that = this;
 
-    // TODO: add interface for promotion choice
-    if (move["move_type"] === "attack" || move["move_type"] === "attack_promotion") {
-      // move["promotion_choice"] = ?
-      move["promotion_choice"] = "queen";
+    if (move["move_type"] === "promotion" || move["move_type"] === "attack_promotion") {
+      this.promotionMove = move;
+      this.promotionPopup.classList.remove("hidden");
+    } else {
+      fetchFromApi("/api/games/" + this.gameId, "PATCH", { "move": move }, function(json) {
+        that.selectedMoves = [];
+        that.setJsonVars(json);
+        that.draw();
+        that.nextComputerMove();
+      })
     }
-
-    fetchFromApi("/api/games/" + this.gameId, "PATCH", { "move": move }, function(json) {
-      that.selectedMoves = [];
-      that.setJsonVars(json);
-      that.draw();
-      that.nextComputerMove();
-    })
 
   }
 

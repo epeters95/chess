@@ -73,7 +73,7 @@ function populateGameAndMoves(json) {
 
 function showBoardRefresh(json, moveToPiecesMap, selectedId) {
   modalGames.classList.remove("hidden");
-  gameView = new GameView(canvas, json, statusSpan, false)
+  gameView = new GameView(canvas, json, {"statusSpan": statusSpan}, false)
   gameView.draw()
   // Populate moves sidebar
   drawMoveList(json, moveToPiecesMap, selectedId)

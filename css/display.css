@@ -371,3 +371,12 @@ table.inputs-table {
 #upload-status-span {
   color: lightcyan;
 }
+
+#promotion-popup {
+  width: 400px;
+  height: 600px;
+  overflow: hidden;
+  position: fixed;
+  z-index: 1000;
+  margin: auto;
+}

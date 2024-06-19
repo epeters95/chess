@@ -11,6 +11,9 @@
     <span><a href='games_index.html'>Game History</a></span>
     <span><a href='players_index.html'>Players</a></span>
     <span><a href='upload.html'>Upload</a></span>
+    <div style="width: 400px">
+      <span style="font-size: 10pt; color: red">Notice: this application is not demo ready - some features may not work as expected </span>
+    </div>
   </div>
   
   <div class="main">
@@ -114,8 +117,20 @@
       <button>X</button>
     </div>
   </div>
-  <div id="cookieholder"></div>
-  <div id="cookieholder-color"></div>
+  
+  <div id="promotion-popup" class="hidden">
+    <p>Choose a piece to promote to:</p>
+    <br>
+    <input type="radio" id="queen-radio" name="promotion-choice" value="queen" checked="checked">
+    <label for="queen-radio">Queen</label><br>
+    <input type="radio" id="rook-radio" name="promotion-choice" value="rook">
+    <label for="rook-radio">Rook</label><br>
+    <input type="radio" id="bishop-radio" name="promotion-choice" value="bishop">
+    <label for="bishop-radio">Bishop</label><br>
+    <input type="radio" id="knight-radio" name="promotion-choice" value="knight">
+    <label for="knight-radio">Knight</label><br>
+    <button id="promotion-submit">Submit Choice</button>
+  </div>
 
   <div id="spinner-div"></div>
 
