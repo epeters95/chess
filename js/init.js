@@ -89,17 +89,24 @@ function findGame() {
 function newGame() {
   let requestBody = {
     "game": {
-      "white_name": document.getElementById("player1-name").value,
-      "black_name": document.getElementById("player2-name").value
+      "white_name": player1Name.value,
+      "black_name": player2Name.value
     }
+  }
+
+  let computerTeam = null;
+  if (player1Name.value === "") {
+    computerTeam = "white"
+  } else if (player2Name.value === "") {
+    computerTeam = "black"
   }
 
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
     hideQuote();
-    gameView = new GameView(canvas, json, domElements, false)
+    gameView = new GameView(canvas, json, domElements, false, computerTeam)
     gameView.draw()
     // Initiate first move if computer is white
-    if (requestBody["game"]["white_name"] === "") {
+    if (computerTeam === "white") {
       gameView.nextComputerMove()
     }
   })

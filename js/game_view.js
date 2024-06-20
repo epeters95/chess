@@ -1,6 +1,6 @@
 class GameView {
 
-  constructor(canvas, json, domElements, isLive=false) {
+  constructor(canvas, json, domElements, isLive=false, computerTeam=null) {
 
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
@@ -10,6 +10,7 @@ class GameView {
     this.setJsonVars(json);
 
     this.isLive = isLive;
+    this.computerTeam  = computerTeam;
     this.selectedMoves = [];
     this.selectedPiece = "";
     this.accessCode    = "";
@@ -41,19 +42,10 @@ class GameView {
       this.promotionSubmit.addEventListener("click", function() {
         // Only promote when a promotion move has been selected
         if (that.promotionMove) {
-          debugger
           let promotionChoices = document.getElementsByName("promotion-choice");
           let checkedChoice = Array.from(promotionChoices).find((choice) => { return choice.checked });
           that.promotionMove["promotion_choice"] = checkedChoice.value;
-          fetchFromApi("/api/games/" + that.gameId, "PATCH", { "move": that.promotionMove }, function(json) {
-            that.promotionMove = null;
-            that.selectedMoves = [];
-            that.setJsonVars(json);
-            that.draw();
-            if (!that.isLive) {
-              that.nextComputerMove();
-            }
-          })
+          that.playMove(that.promotionMove)
         }
       })
     }
@@ -112,7 +104,7 @@ class GameView {
 
     if (this.isLive) {
       this.showTurn  = getTokenColor()
-    } else if (this.showTurn === null) {
+    } else {
       if (this.turnName !== "") {
         this.showTurn = thisTurn;
       } else {
@@ -353,16 +345,22 @@ class GameView {
       this.promotionMove = move;
       this.promotionPopup.classList.remove("hidden");
     } else {
-      fetchFromApi("/api/games/" + this.gameId, "PATCH", { "move": move }, function(json) {
-        that.selectedMoves = [];
-        that.setJsonVars(json);
-        that.draw();
-        if (!that.isLive) {
-          that.nextComputerMove();
-        }
-      })
+      this.playMove(move);
     }
 
+  }
+
+  playMove(move) {
+    let that = this;
+    fetchFromApi("/api/games/" + this.gameId, "PATCH", { "move": move }, function(json) {
+      that.promotionMove = null;
+      that.selectedMoves = [];
+      that.setJsonVars(json);
+      that.draw();
+      if (!that.isLive && that.computerTeam === that.turn) {
+        that.nextComputerMove();
+      }
+    })
   }
 
   isThisTurn() {
