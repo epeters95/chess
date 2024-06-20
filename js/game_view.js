@@ -360,7 +360,19 @@ class GameView {
       if (!that.isLive && that.computerTeam === that.turn) {
         that.nextComputerMove();
       }
+      that.clearHighlight();
     })
+  }
+
+  clearHighlight() {
+    let grid = document.getElementById("selection-grid");
+    if (grid) {
+      Array.from(grid.firstElementChild.children).forEach((row) => {
+        Array.from(row.children).forEach((cell) => {
+          cell.classList.remove("highlighted")
+        })
+      })
+    }
   }
 
   isThisTurn() {
