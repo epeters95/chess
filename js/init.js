@@ -6,11 +6,13 @@ const accessCodeInput   = document.getElementById("access-code-input");
 const getAccessCode     = document.getElementById("get-access-code");
 const requestCodeSubmit = document.getElementById("request-code-button");
 var submitEventListeners = [];
+var disableGameReadyLoop = false;
 
 const modal = document.getElementsByClassName("modal")[0];
 const modalCloseBtn = document.getElementById("modal-close-button");
 modalCloseBtn.addEventListener("click", function() {
   modal.classList.add("hidden");
+  disableGameReadyLoop = true;
 })
 
 const promotionPopup = document.getElementById("promotion-popup");
@@ -113,6 +115,7 @@ function newGame() {
 }
 
 function drawCodeWindow(json) {
+  disableGameReadyLoop = false;
   modal.classList.remove("hidden");
   let canv = document.getElementById("code-view");
   canv.width = 238;
@@ -150,7 +153,7 @@ function drawCodeWindow(json) {
 
   let tokenCookie = getTokenCookie()
 
-  if (tokenCookie) {
+  if (tokenCookie && tokenCookie !== '') {
     if (json["is_ready"] && json["token"] ) {
       // Close out and show live game
       modal.classList.add("hidden")
@@ -296,7 +299,9 @@ function checkGameReadyLoop(id, accessCode) {
     let params = "?access_code=" + accessCode
     fetchFromApi("/api/live_games/" + id + params, "GET", null, function(json) {
       if (!json["is_ready"]) {
-        checkGameReadyLoop(id, accessCode)
+        if (!disableGameReadyLoop) {
+          checkGameReadyLoop(id, accessCode)
+        }
       } else {
         modal.classList.add("hidden");
         quoteSpan.classList.add("hidden");
