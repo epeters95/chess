@@ -255,6 +255,7 @@ class Board < ApplicationRecord
       piece.set_castleable
     end
     if move.move_type == "promotion" || move.move_type == "attack_promotion"
+      move.promotion_choice ||= "queen"
       @pieces[move.piece.color].delete piece
       new_piece = Piece.generate(move.promotion_choice, move.piece.color, move.new_position)
       @pieces[move.piece.color] << new_piece
