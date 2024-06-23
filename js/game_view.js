@@ -176,7 +176,7 @@ class GameView {
 
   selectPiece(piece) {
     if (this.isThisTurn()) {
-      if (this.selectedPiece === "") {
+      if (this.selectedPiece !== piece || this.selectedPiece === "") {
         this.selectedPiece = piece;
         this.selectedMoves = this.moves.filter(function(move) {
           let pc = JSON.parse(move.piece_str)

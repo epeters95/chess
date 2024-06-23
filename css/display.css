@@ -351,6 +351,7 @@ table.inputs-table {
   position: absolute;
   width: 476px;
   height: 476px;
+  z-index: 100;
 }
 
 #players-table {
@@ -374,9 +375,14 @@ table.inputs-table {
 
 #promotion-popup {
   width: 400px;
-  height: 600px;
+  height: 300px;
   overflow: hidden;
   position: fixed;
   z-index: 1000;
-  margin: auto;
+  margin-left: 10%;
+  background-color: rgba(82,28,48,0.3);
+  border: 1px solid black;
+  border-radius: 3px;
+  box-shadow: 0px 0px 9px 1px rgba(0,0,0,0.7);
+  color: wheat;
 }
