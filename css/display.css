@@ -93,15 +93,12 @@ checker{
 .hidden {
   display: none;
 }
-#loading {
-  height: 100px;
-}
 
 #loading-spinner {
-  z-index: 300;
-  position: relative;
-  display: inline;
-  top: 300px;
+  position: absolute;
+  margin: auto;
+  top: 50%;
+  left: 50%;
   img { 
     width: 50px;
     height: 50px;
@@ -109,11 +106,12 @@ checker{
 }
 
 #spinner-div {
-  z-index: 1000;
-  position: static;
-  top: 100px;
-  width: 100px;
-  margin: auto;
+  position: absolute;
+  top: 0px;
+  width: 476px;
+  height: 476px;
+  margin-left: -25px;
+  margin-top: -25px;
 }
 
 #next-move {
@@ -374,13 +372,13 @@ table.inputs-table {
 }
 
 #promotion-popup {
-  width: 400px;
+  width: 210px;
   height: 300px;
   overflow: hidden;
   position: fixed;
   z-index: 1000;
   margin-left: 10%;
-  background-color: rgba(82,28,48,0.3);
+  background-color: rgba(35,19,28,0.6);
   border: 1px solid black;
   border-radius: 3px;
   box-shadow: 0px 0px 9px 1px rgba(0,0,0,0.7);
