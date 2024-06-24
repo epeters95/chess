@@ -14,6 +14,8 @@ class BoardObject
     @legal_moves = {"black" => [], "white" => []}
     @check = {"white": false, "black": false}
 
+    generate_legal_moves
+
   end
 
   def place_pieces
@@ -56,7 +58,6 @@ class BoardObject
 
     @pieces[color].each do |piece|
       piece.clear_moves
-      piece_json = piece.to_json
       moves = []
       skip = false
 
@@ -90,16 +91,13 @@ class BoardObject
               move_type = "promotion"
               # set to promotion instead
             end
+            
+            move = MoveObject.new(piece,
+                                  other_piece,
+                                  move_type,
+                                  @move_count,
+                                  new_place_n)
 
-            other_piece_json = other_piece.nil? ? nil : other_piece.to_json
-            move = Move.new(
-              move_count:       @move_count,
-              piece_str:        piece_json,
-              other_piece_str:  other_piece_json,
-              move_type:        move_type,
-              position:         piece.position,
-              new_position:     new_place_n
-              )
             (moves << move and yield move) if filter.call(move)
 
             break unless keep_going
@@ -123,14 +121,12 @@ class BoardObject
           end
           if !target.nil? && target.color != color
             
-            move = Move.new(
-              move_count:       @move_count,
-              piece_str:        piece_json,
-              other_piece_str:  target.to_json,
-              move_type:        move_type,
-              position:         piece.position,
-              new_position:     atk_n
-              )
+            move = MoveObject.new(piece,
+                                  target,
+                                  move_type,
+                                  @move_count,
+                                  atk_n)
+
             (moves << move and yield move) if filter.call(move)
 
           elsif !target_passant.nil? && target_passant.is_a?(Pawn) && 
@@ -138,14 +134,12 @@ class BoardObject
                 target_passant.passantable? &&
                 rank_idx(atk_n) == (color == "white" ? 5 : 2)
 
-            move = Move.new(
-              move_count:       @move_count,
-              piece_str:        piece_json,
-              other_piece_str:  target_passant.to_json,
-              move_type:        move_type,
-              position:         piece.position,
-              new_position:     atk_n
-              )
+            move = MoveObject.new(piece,
+                                  target_passant,
+                                  move_type,
+                                  @move_count,
+                                  atk_n)
+
             (moves << move and yield move) if filter.call(move)
           end
         end
@@ -154,28 +148,32 @@ class BoardObject
       if piece.is_a?(King) and piece.castleable
         get_castleable_rooks(color).each do |rook|
           if file_idx(rook.position) < file_idx(piece.position)
+            
             # Queenside
-            move = Move.new(
-              move_count:       @move_count,
-              piece_str:        piece_json,
-              other_piece_str:  rook.to_json(false),
-              move_type:        "castle_queenside",
-              position:         piece.position,
-              new_position:     file(file_idx(piece.file) - 2) + piece.rank,
-              rook_position:    file(file_idx(rook.file) + 3) + rook.rank
-              )
+            new_position = file(file_idx(piece.file) - 2) + piece.rank
+            rook_position = file(file_idx(rook.file) + 3) + rook.rank
+
+            move = MoveObject.new(piece,
+                                  rook,
+                                  "castle_queenside",
+                                  @move_count,
+                                  new_position,
+                                  rook_position)
+
             (moves << move and yield move) if filter.call(move)
           else
+
             # Kingside
-            move = Move.new(
-              move_count:       @move_count,
-              piece_str:        piece_json,
-              other_piece_str:  rook.to_json(false),
-              move_type:        "castle_kingside",
-              position:         piece.position,
-              new_position:     file(file_idx(piece.file) + 2) + piece.rank,
-              rook_position:    file(file_idx(rook.file) - 2) + rook.rank
-              )
+            new_position = file(file_idx(piece.file) + 2) + piece.rank
+            rook_position = file(file_idx(rook.file) - 2) + rook.rank
+            
+            move = MoveObject.new(piece,
+                                  rook,
+                                  "castle_kingside",
+                                  @move_count,
+                                  new_position,
+                                  rook_position)
+
             (moves << move and yield move) if filter.call(move)
           end
         end
@@ -201,7 +199,7 @@ class BoardObject
 
       # Store the state of the opposing king in check
       @check[switch(color)] = causes_check.call(move)
-      
+
       checking_moves = board_dup.all_moves_enum(board_dup.turn, causes_check)
 
       # move.set_notation
@@ -215,7 +213,7 @@ class BoardObject
 
 
   def play_move(move, ignore_check=false)
-    if !move.is_a?(Move) ||
+    if !move.is_a?(MoveObject) ||
        move.piece.color != @turn
       return nil
     end
@@ -288,6 +286,26 @@ class BoardObject
     legal_rooks
   end
 
+  def get_n(pos)
+    get(file_idx(pos), rank_idx(pos))
+  end
+
+  def get(col, row)
+    all_pieces = @pieces["white"] + @pieces["black"]
+    found = all_pieces.select{|pc| pc.position == (file(col) + rank(row)) }
+    if found.empty?
+      return nil
+    else
+      return found.first
+    end
+  end
+
+  def move_piece(piece, new_pos)
+    piece_to_delete = get_n(new_pos)
+    @pieces[switch(piece.color)].delete(piece_to_delete)
+    piece.position = new_pos
+  end
+
   def deep_dup
     self.class.new(deep_dup_pieces, @turn, @move_count)
   end
@@ -328,6 +346,12 @@ class BoardObject
 
   def is_checkmate?(color)
     @legal_moves[color].empty? && @check[color]
+  end
+
+  class IllegalMoveError < StandardError
+    def message
+      "Illegal move attempted on the board"
+    end
   end
 
 end

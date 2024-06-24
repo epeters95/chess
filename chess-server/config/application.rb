@@ -25,3 +25,5 @@ module ChessServer
     # config.api_only = true
   end
 end
+
+Rails.autoloaders.main.ignore(Rails.root.join('app/models/objects'))
