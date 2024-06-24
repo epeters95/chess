@@ -304,10 +304,6 @@ class Board < ApplicationRecord
     end
   end
 
-  def prompt_piece_choice
-    return "queen"
-  end
-
   def init_variables(pieces=nil)
     @pieces = pieces || place_pieces
     @legal_moves = {"black" => [], "white" => []}
