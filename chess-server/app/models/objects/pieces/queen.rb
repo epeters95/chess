@@ -1,4 +1,4 @@
-class Queen < Piece
+class Queen < PieceObject
   attr_reader :letter, :char, :val
   def initialize(color, position)
     super
@@ -8,7 +8,7 @@ class Queen < Piece
   end
 
   def piece_directions
-    Piece.crown_moves
+    PieceObject.crown_moves
   end
 
 end

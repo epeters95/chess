@@ -1,4 +1,4 @@
-require './app/models/piece'
+
 
 class Move < ApplicationRecord
 
@@ -11,11 +11,11 @@ class Move < ApplicationRecord
   include Util
 
   def piece
-    @piece ||= Piece.from_json_str(self.piece_str)
+    @piece ||= PieceObject.from_json_str(self.piece_str)
   end
 
   def other_piece
-    @other_piece ||= Piece.from_json_str(self.other_piece_str)
+    @other_piece ||= PieceObject.from_json_str(self.other_piece_str)
   end
 
   def get_notation

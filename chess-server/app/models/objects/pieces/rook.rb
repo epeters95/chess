@@ -1,4 +1,4 @@
-class Rook < Piece
+class Rook < PieceObject
   attr_accessor :castleable
   attr_reader :letter, :char, :val
   def initialize(color, position, castleable=true)
@@ -23,6 +23,6 @@ class Rook < Piece
   end
 
   def piece_directions
-    Piece.rook_moves
+    PieceObject.rook_moves
   end
 end  

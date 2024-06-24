@@ -1,4 +1,4 @@
-class Pawn < Piece
+class Pawn < PieceObject
   attr_reader :letter, :char, :val
   def initialize(color, position)
     super

@@ -1,4 +1,4 @@
-class King < Piece
+class King < PieceObject
   attr_accessor :castleable
   attr_reader :letter, :char, :val
   def initialize(color, position, castleable=true)
@@ -16,7 +16,7 @@ class King < Piece
     @castleable = false
   end
   def piece_directions
-    Piece.crown_moves
+    PieceObject.crown_moves
   end
   def deep_dup
     return self.class.new(@color, @position, @castleable)

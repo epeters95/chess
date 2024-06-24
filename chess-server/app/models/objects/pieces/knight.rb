@@ -1,12 +1,12 @@
-class Bishop < Piece
+class Knight < PieceObject
   attr_reader :letter, :char, :val
   def initialize(color, position)
     super
-    @letter = "B"
-    @char = "\u265d"
+    @letter = "N"
+    @char = "\u265e"
     @val = 3
   end
   def piece_directions
-    Piece.bishop_moves
+    PieceObject.knight_moves
   end
 end

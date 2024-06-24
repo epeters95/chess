@@ -15,7 +15,7 @@ class Board < ApplicationRecord
     unless self.positions_array.blank?
       json_pieces = JSON.parse(self.positions_array)
       ["white", "black"].to_h do |color|
-        [color, json_pieces[color].map{ |pc| Piece.from_json(pc) }]
+        [color, json_pieces[color].map{ |pc| PieceObject.from_json(pc) }]
       end
     else
       return nil
@@ -257,7 +257,7 @@ class Board < ApplicationRecord
     if move.move_type == "promotion" || move.move_type == "attack_promotion"
       move.promotion_choice ||= "queen"
       @pieces[move.piece.color].delete piece
-      new_piece = Piece.generate(move.promotion_choice, move.piece.color, move.new_position)
+      new_piece = PieceObject.generate(move.promotion_choice, move.piece.color, move.new_position)
       @pieces[move.piece.color] << new_piece
     end
     
@@ -346,7 +346,7 @@ class Board < ApplicationRecord
     [1, 6].each do |r|
       BOARD_SIZE.times do |f|
         # Push each piece into the return hash using its file as the index
-        piece = Piece.generate("pawn", color, file(f) + rank(r))
+        piece = PieceObject.generate("pawn", color, file(f) + rank(r))
         gameboard[color] << piece      
       end
       color = "black"
@@ -355,7 +355,7 @@ class Board < ApplicationRecord
     color = "white"
     [0, 7].each do |r|
       ["rook", "knight", "bishop", "queen", "king", "bishop", "knight", "rook"].each_with_index do |piece_type, f|
-        piece = Piece.generate(piece_type, color, file(f) + rank(r))
+        piece = PieceObject.generate(piece_type, color, file(f) + rank(r))
         gameboard[color] << piece
       end
       color = "black"

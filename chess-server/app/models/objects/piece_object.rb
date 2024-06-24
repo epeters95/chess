@@ -1,4 +1,4 @@
-class Piece
+class PieceObject
 
   # This object will not have a db table to persist itself. Too many rows.
   # How can a board be saved on the database without also saving piece objects?
