@@ -378,8 +378,6 @@ class Board < ApplicationRecord
   end
 
   def deep_dup_pieces
-    # TODO: verify previous concerns that pieces in deep_dup
-    # do not contain references to current board instance
     get_pieces_from_positions_array
   end
 
