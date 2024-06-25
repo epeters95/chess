@@ -1,5 +1,6 @@
 require_relative './objects/board_object'
 require_relative './objects/piece_object'
+require_relative './objects/move_object'
 require_relative './objects/pieces/bishop.rb'
 require_relative './objects/pieces/king.rb'
 require_relative './objects/pieces/knight.rb'

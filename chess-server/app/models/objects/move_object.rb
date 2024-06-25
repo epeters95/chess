@@ -1,6 +1,9 @@
 class MoveObject
 
-  attr_accessor :piece, :other_piece, :completed, :relatives
+  include Util
+
+  attr_reader :move_type, :move_count, :new_position, :rook_position, :notation
+  attr_accessor :piece, :other_piece, :completed, :relatives, :promotion_choice
 
   def initialize(piece,
                  other_piece,
@@ -16,7 +19,7 @@ class MoveObject
     @new_position = new_position
     @rook_position = rook_position
     @promotion_choice = promotion_choice
-    @notation = ""
+    @notation = nil
     @completed = false
     @relatives = []
   end
@@ -36,6 +39,10 @@ class MoveObject
                    @new_position,
                    @rook_position,
                    @promotion_choice)
+  end
+
+  def set_notation
+    @notation ||= get_notation
   end
 
   def get_notation

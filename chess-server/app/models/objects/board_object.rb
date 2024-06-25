@@ -2,19 +2,19 @@ require_relative './piece_object'
 
 class BoardObject
 
-  # Refactor board logic operations into here
+  include Util
 
-  attr_reader :pieces
+  attr_reader :pieces, :legal_moves, :turn
 
-  def initialize(pieces=nil, turn="white", move_count=1)
+  def initialize(pieces=nil, turn="white", move_count=1, dupe=false)
 
     @pieces = pieces || place_pieces
     @turn = turn
     @move_count = move_count
     @legal_moves = {"black" => [], "white" => []}
-    @check = {"white": false, "black": false}
+    @check = {"white" => false, "black" => false}
 
-    generate_legal_moves
+    generate_legal_moves unless dupe
 
   end
 
@@ -51,9 +51,9 @@ class BoardObject
   #  - squares the piece is attacking (containing an opposite color piece)
   #  - special moves (castling, promotion, en passant)
 
-  def all_moves_enum(color=@turn, filter_moves_lambda=nil)
+  def all_moves_enum(color=@turn,
+                     filter= ->(mv) { true })
 
-    filter = filter_moves_lambda || ->(mv) { true }
     return to_enum(:all_moves_enum, color, filter) unless block_given?
 
     @pieces[color].each do |piece|
@@ -186,9 +186,17 @@ class BoardObject
 
   def generate_legal_moves(color=@turn)
 
-    @legal_moves[color] = []
-    
-    # Filter out moves that cause check on a duplicate board
+    @legal_moves = {"black" => [], "white" => []} 
+
+    # First, generate opponent attacks
+    # (this is needed information for "legal" castling, etc.)
+
+    opponent_moves = all_moves_enum(switch(color)) do |move|
+      @legal_moves[switch(color)] << move
+    end
+
+    # Get all legal moves,
+    # then filter out moves that cause check on a duplicate board
 
     moves = all_moves_enum(color).filter do |move|
 
@@ -204,15 +212,20 @@ class BoardObject
 
       # move.set_notation
 
-      checking_moves.empty?
+      checking_moves.to_a.empty?
     end
 
     @legal_moves[color].concat moves
 
   end
 
+  def play_move_and_generate(move)
+    play_move(move)
+    generate_legal_moves
+  end
 
-  def play_move(move, ignore_check=false)
+
+  def play_move(move)
     if !move.is_a?(MoveObject) ||
        move.piece.color != @turn
       return nil
@@ -244,6 +257,7 @@ class BoardObject
     @move_count += 1
     move.completed = true
     piece.set_played
+    @check[@turn] = false
     
     @turn = switch(@turn)
     return true
@@ -307,11 +321,17 @@ class BoardObject
   end
 
   def deep_dup
-    self.class.new(deep_dup_pieces, @turn, @move_count)
+    self.class.new(deep_dup_pieces, @turn, @move_count, true)
   end
 
   def deep_dup_pieces
-    @pieces.map { |piece| piece.deep_dup }
+    dupe = {}
+    ["black", "white"].each do |color|
+      dupe[color] = @pieces[color].map do |piece|
+        piece.deep_dup
+      end
+    end
+    dupe
   end
 
   def is_insuff_material_stalemate?
