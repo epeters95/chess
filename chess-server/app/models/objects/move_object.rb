@@ -45,6 +45,10 @@ class MoveObject
     @notation ||= get_notation
   end
 
+  def target_key
+    "#{@piece.letter}#{@new_position}"
+  end
+
   def get_notation
     if @move_type == "castle_kingside"
       "O-O"

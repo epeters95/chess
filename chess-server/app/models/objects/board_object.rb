@@ -197,6 +197,10 @@ class BoardObject
 
     # Get all legal moves,
     # then filter out moves that cause check on a duplicate board
+    # while storing pieces attacking same piece
+
+    same_targets = {}
+    # e.g. { "Ne5": [<Knight1>, <Knight2>, ...] }
 
     moves = all_moves_enum(color).filter do |move|
 
@@ -210,9 +214,21 @@ class BoardObject
 
       checking_moves = board_dup.all_moves_enum(board_dup.turn, causes_check)
 
-      # move.set_notation
+      # Store move targets for later use disambiguating move notation
+      same_targets[move.target_key] ||= []
+      same_targets[move.target_key] << move.piece 
 
       checking_moves.to_a.empty?
+    end
+
+    # set @relatives on move for correct move notation
+    moves.each do |move|
+      entries = same_targets[move.target_key].dup
+      if !entries.nil? && entries.length > 1
+        entries.delete(move.piece)
+        move.relatives = entries
+      end
+      move.set_notation
     end
 
     @legal_moves[color].concat moves
