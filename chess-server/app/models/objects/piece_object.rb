@@ -1,8 +1,5 @@
 class PieceObject
 
-  # This object will not have a db table to persist itself. Too many rows.
-  # How can a board be saved on the database without also saving piece objects?
-  # The answer is that we will add a text column to Board representing the serialized 8x8 array.
   # Pieces will be represented with a notation illustrated in to_json
 
   include Util
@@ -56,7 +53,7 @@ class PieceObject
   end
 
   def deep_dup
-    return self.class.new(@color, @position)
+    self.class.new(@color, @position)
   end
 
   def take

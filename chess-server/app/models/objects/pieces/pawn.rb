@@ -1,5 +1,7 @@
 class Pawn < PieceObject
   attr_reader :letter, :char, :val
+  attr_accessor :move_count
+
   def initialize(color, position)
     super
     @letter = "p"
@@ -46,7 +48,9 @@ class Pawn < PieceObject
   end
 
   def deep_dup
-    return self.class.new(@color, @position, @move_count)
+    dupe = self.class.new(@color, @position)
+    dupe.move_count = @move_count
+    dupe
   end
 
 end
