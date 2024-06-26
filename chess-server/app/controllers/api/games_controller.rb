@@ -82,10 +82,14 @@ class Api::GamesController < ApplicationController
               # PATCH/PUT to a game on the computer's turn will initiate a computer move
               chosen_move = Computer.new(@game.board).get_move
             else
-              chosen_move = Move.new(move_params)
+              chosen_move = @game.board.get_move_by_notation(move_params[:notation])
+              if chosen_move.move_type == "promotion"
+                chosen_move.promotion_choice = move_params[:promotion_choice]
+                chosen_move.set_notation
+              end
             end
           end
-          success = @game.play_move_and_evaluate(chosen_move)
+          success = chosen_move && @game.play_move_and_evaluate(chosen_move)
           if success
             render json: @game, status: :ok
           else
@@ -117,6 +121,9 @@ class Api::GamesController < ApplicationController
 
     def set_game
       @game = Game.find(params[:id])
+      if @game.status != "completed"
+        @game.board.build_object
+      end
     end
 
     def game_params

@@ -88,20 +88,19 @@ class PieceObject
     notation
   end
 
-  def to_json(exclude_moves=true, options = {})
-    merged_hash = to_json_obj(exclude_moves)
-    JSON.generate(merged_hash, options)
+  def to_json(options = {})
+    merged_hash = to_json_obj(true)
+    JSON.generate(merged_hash)
   end
 
   def to_json_obj(exclude_moves=true)
     exclude_vars = [:@val, :@letter]
-    exclude_vars << [:@current_legal_moves, :notation] if exclude_moves
+    exclude_vars.concat([:@current_legal_moves, :notation]) if exclude_moves
     vars = instance_variables.excluding exclude_vars
     merged_hash = vars.to_h do |iv|
       [iv.to_s.delete('@'), instance_variable_get(iv)]
     end.merge(
       {
-        piece_directions: piece_directions,
         class_name: self.class.name
       }
     )
@@ -121,7 +120,13 @@ class PieceObject
     args = init_arg_names.map{|arg| json_obj[arg] }
     piece_obj = klass.new(*args)
     if json_obj["current_legal_moves"]
-      piece_obj.add_moves(json_obj["current_legal_moves"].map{|lm| Move.from_json(lm)})
+      moves = json_obj["current_legal_moves"].map do |lm|
+        MoveObject.from_json(lm)
+      end
+      piece_obj.add_moves(moves)
+    end
+    if json_obj["move_count"]
+      piece_obj.move_count = json_obj["move_count"]
     end
     piece_obj
   end

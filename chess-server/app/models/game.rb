@@ -17,15 +17,14 @@ class Game < ApplicationRecord
     is_computer?(color) ? "Computer" : name_for(color)
   end
 
-  def play_move_and_evaluate(move)
-    result = self.board.play_move_and_save(move)
+  def play_move_and_evaluate(move_object)
+    result = self.board.play_move_and_save(move_object)
 
-    status_str = "#{display_name_for(switch(self.board.turn))} made move #{move.notation_cached}"
-    status_str += ", check" if self.board.is_king_checked?(self.board.turn)
+    status_str = "#{display_name_for(switch(self.board.turn))} made move #{move_object.notation}"
     status_str += ". #{uppercase(self.board.turn)} to move."
     
     if !result
-      self.errors = self.board.errors + move.errors
+      self.errors.add self.board.errors
     else
       evaluate_outcomes(status_str)
     end
@@ -55,6 +54,8 @@ class Game < ApplicationRecord
   end
 
   def as_json(options = {})
+
+    mvs = self.board.legal_moves[self.board.turn].map{|mv| mv.to_json }
     {
       id:             self.id,
       turn:           self.board.turn,
@@ -64,10 +65,9 @@ class Game < ApplicationRecord
       status_str:     self.board.status_str,
       game_status:    self.status,
       pieces:         self.board.positions_array,
-      legal_moves:    self.board.legal_moves[self.board.turn],
+      legal_moves:    mvs,
       move_count:     self.board.move_count,
-      status:         self.status,
-      is_live:        is_live?
+      status:         self.status
     }
   end
 
@@ -88,9 +88,10 @@ class Game < ApplicationRecord
   private
 
   def init_board
-    self.create_board(turn: "white")
-    self.board.status_str = "White to move - #{display_name_for("white")}"
-    self.board.save!  # Manually saving board persists pieces in db
+    @board = self.create_board(turn: "white")
+    @board.update!(status_str: "White to move - #{display_name_for("white")}")
+
+    # Manually saving board persists pieces in db
 
     # Game has already been played, created from PGN upload
     if self.status != "completed"
@@ -107,7 +108,7 @@ class Game < ApplicationRecord
   end
 
   def set_waiting_status
-    if is_computer?(self.board.turn)
+    if is_computer?(@board.turn)
       self.update(status: "waiting_computer")
     else
       self.update(status: "waiting_player")
