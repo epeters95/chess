@@ -62,7 +62,7 @@ class GameView {
     this.turn          = json["turn"];
     this.turnName      = json["turn_name"];
     this.pieces        = JSON.parse(json["pieces"]);
-    this.moves         = json["legal_moves"];
+    this.moves         = json["legal_moves"].map((lm) => JSON.parse(lm));
     this.isLive        = json["is_live"];
   }
 

@@ -104,7 +104,7 @@ function drawMoveList(json, moveToPiecesMap, selectedId) {
 
     // Move notation
     let notationCell = document.createElement("td");
-    notationCell.innerHTML = "" + (move.notation || getMoveNotation(move))
+    notationCell.innerHTML = "" + move.notation
     notationCell.setAttribute("data-id", move.id)
     notationCell.addEventListener("click", clickFunction)
 
@@ -127,17 +127,6 @@ function drawMoveList(json, moveToPiecesMap, selectedId) {
     cell.classList.add("selected");
   }
 }
-
-function getMoveNotation(move) {
-  let piece = JSON.parse(move.piece_str)
-  if (move.move_type === "attack") {
-    return piece.char + piece.position + " x " + move.new_position
-  } else {
-    return piece.char + piece.position + " " + move.new_position
-  }
-}
-
-
 
 
 function gameViewHtml(game) {
