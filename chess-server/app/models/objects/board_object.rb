@@ -4,7 +4,7 @@ class BoardObject
 
   include Util
 
-  attr_reader :pieces, :legal_moves, :turn
+  attr_reader :pieces, :legal_moves, :turn, :check
 
   def initialize(pieces=nil, turn="white", move_count=1, dupe=false)
 
@@ -201,24 +201,29 @@ class BoardObject
 
     same_targets = {}
     # e.g. { "Ne5": [<Knight1>, <Knight2>, ...] }
+    causes_check = ->(mv) { mv.other_piece.is_a?(King) }
 
     moves = all_moves_enum(color).filter do |move|
 
-      board_dup = deep_dup
-      board_dup.play_move(move)
 
-      causes_check = ->(mv) { mv.other_piece.is_a?(King) }
+      board_dup = deep_dup
+      board_dup.play_move(move.deep_dup)
 
       # Store the state of the opposing king in check
       @check[switch(color)] = causes_check.call(move)
 
-      checking_moves = board_dup.all_moves_enum(board_dup.turn, causes_check)
+      opp_checking_moves = board_dup.all_moves_enum(board_dup.turn, causes_check)
+      checking_move = board_dup.all_moves_enum(switch(board_dup.turn), causes_check)
+
+      unless checking_move.to_a.empty?
+        move.causes_check = true
+      end
 
       # Store move targets for later use disambiguating move notation
       same_targets[move.target_key] ||= []
       same_targets[move.target_key] << move.piece 
 
-      checking_moves.to_a.empty?
+      opp_checking_moves.to_a.empty?
     end
 
     # set @relatives on move for correct move notation
@@ -236,15 +241,27 @@ class BoardObject
   end
 
   def play_move_and_generate(move)
-    play_move(move)
-    generate_legal_moves
+    if play_move(move)
+      begin
+        generate_legal_moves
+        return true
+      rescue Exception => e
+        puts "Error generating moves on BoardObject"
+      end
+    else
+      puts "Error playing move on BoardObject"
+    end
+    false
   end
 
 
   def play_move(move)
+
+    # This method does not check legality of move, since it is used by dupes.
+
     if !move.is_a?(MoveObject) ||
        move.piece.color != @turn
-      return nil
+      return false
     end
 
     piece = @pieces[move.piece.color].find {|pc| pc.position == move.piece.position}
@@ -271,9 +288,12 @@ class BoardObject
     end
     
     @move_count += 1
-    move.completed = true
     piece.set_played
     @check[@turn] = false
+
+    if (move.causes_check)
+      @check[switch(@turn)] = true
+    end
     
     @turn = switch(@turn)
     return true
