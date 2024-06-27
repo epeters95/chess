@@ -3,7 +3,7 @@ class King < PieceObject
   attr_reader :letter, :char, :val
   def initialize(color, position, castleable=true)
     super(color, position)
-    @letter = "K"
+    @letter = self.class.letter
     @char = "\u265a"
     @val = 77
     @castleable = castleable
@@ -20,5 +20,9 @@ class King < PieceObject
   end
   def deep_dup
     return self.class.new(@color, @position, @castleable)
+  end
+
+  def self.letter
+    "K"
   end
 end

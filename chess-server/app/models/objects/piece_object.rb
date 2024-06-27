@@ -130,4 +130,13 @@ class PieceObject
     end
     piece_obj
   end
+
+  def self.promotion_get_letter(choice)
+    begin
+      klass = Object.const_get("#{choice[0].upcase}#{choice[1..].downcase}")
+      klass.letter
+    rescue NameError => e
+      '?'
+    end
+  end
 end

@@ -77,7 +77,7 @@ class MoveObject
       end
       @notation += "#{@new_position}"
       if @move_type == "promotion" || @move_type == "attack_promotion"
-        @notation += "=#{@promotion_choice}"
+        @notation += "=#{PieceObject.promotion_get_letter(@promotion_choice)}"
       end
       if @causes_check
         @notation += "+"
@@ -120,7 +120,8 @@ class MoveObject
 
   def self.from_json(json_obj)
     args = json_obj.symbolize_keys
-    args.delete(:notation, :position)
+    args.delete(:notation)
+    args.delete(:position)
 
     piece = PieceObject.from_json_str(args[:piece_str], true)
     other_piece = PieceObject.from_json_str(args[:other_piece_str], true)

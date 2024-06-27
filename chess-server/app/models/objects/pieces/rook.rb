@@ -3,7 +3,7 @@ class Rook < PieceObject
   attr_reader :letter, :char, :val
   def initialize(color, position, castleable=true)
     super(color, position)
-    @letter = "R"
+    @letter = self.class.letter
     @char = "\u265c"
     @castleable = castleable
     @val = 5
@@ -24,5 +24,9 @@ class Rook < PieceObject
 
   def piece_directions
     PieceObject.rook_moves
+  end
+
+  def self.letter
+    "R"
   end
 end  

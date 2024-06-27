@@ -4,7 +4,7 @@ class Pawn < PieceObject
 
   def initialize(color, position)
     super
-    @letter = "p"
+    @letter = self.class.letter
     @char = "\u265f"
     @val = 1
     @move_count = 0
@@ -51,6 +51,10 @@ class Pawn < PieceObject
     dupe = self.class.new(@color, @position)
     dupe.move_count = @move_count
     dupe
+  end
+
+  def self.letter
+    "p"
   end
 
 end
