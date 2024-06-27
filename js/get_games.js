@@ -9,6 +9,10 @@ modalCloseBtnGames.addEventListener("click", function() {
 let movesList = document.getElementById("moves-list");
 var gameView = null;
 
+// Initialize map variable
+var moveToPiecesMap = {};
+var movesMap = {};
+
 function getGames() {
 
   fetchFromApi("/api/games" + window.location.search, "GET", null, function(json) {
@@ -45,7 +49,6 @@ function populateTable(json) {
     let boardUrl = "/api/games/" + id + "/board"
     boardUrl += "#with_history=true"
     el.addEventListener("click", function() {
-
       fetchFromApi(boardUrl, "GET", null, function(json) {
         populateGameAndMoves(json);
       })
@@ -55,34 +58,34 @@ function populateTable(json) {
 }
 
 function populateGameAndMoves(json) {
-  // Initialize map variable
-  var moveToPiecesMap = {};
-  var movesMap = {};
-  
   // Populate snapshots of the game at each move
   json["moves"].forEach(function(move, i) {
-    let id = 0;
-    if (move) {
-      id = move.id
-    }
-    moveToPiecesMap[id] = json["pieces_history"][i];
+    moveToPiecesMap[i] = json["pieces_history"][i];
   })
 
-  showBoardRefresh(json, moveToPiecesMap)
+  showBoardRefresh(json, null)
 }
 
-function showBoardRefresh(json, moveToPiecesMap, selectedId) {
+function showBoardRefresh(json, selectedId) {
   modalGames.classList.remove("hidden");
   gameView = new GameView(canvas, json, {"statusSpan": statusSpan}, false)
-  gameView.draw()
-  // Populate moves sidebar
-  drawMoveList(json, moveToPiecesMap, selectedId)
+
+  new Promise((resolve) => {
+    gameView.draw()
+    resolve()
+
+  }).then(() => {
+    // Populate moves sidebar
+    drawMoveList(json, selectedId)
+  })
+  
 }
 
-function drawMoveList(json, moveToPiecesMap, selectedId) {
+function drawMoveList(json, selectedId) {
   movesList.innerHTML = "";
   let list = document.createElement("table");
   let row;
+  let selId = selectedId;
   if (json["moves"].length === 0) {
     let span = document.createElement("span");
     span.innerHTML = "No moves played";
@@ -90,36 +93,35 @@ function drawMoveList(json, moveToPiecesMap, selectedId) {
     return;
   }
   json["moves"].forEach(function(move, index) {
-    if (!move)
-      return;
-    function clickFunction(event) {
-      event.target.classList.add("selected")
-      json["game"]["pieces"] = moveToPiecesMap[move.id];
-      showBoardRefresh(json, moveToPiecesMap, move.id)
+    if (move) {
+      function clickFunction(event) {
+        event.target.classList.add("selected")
+        json["game"]["pieces"] = moveToPiecesMap[index];
+        showBoardRefresh(json, index)
+      }
+
+      // Move number
+      let moveCell = document.createElement("td");
+      moveCell.innerHTML = "<span style='color:wheat'>" + (1 + Math.floor(move.move_count / 2)) + "</span>"
+
+      // Move notation
+      let notationCell = document.createElement("td");
+      notationCell.innerHTML = "" + move.notation
+      notationCell.setAttribute("data-id", index)
+      notationCell.addEventListener("click", clickFunction)
+
+      // For white, create a new row
+      if (index % 2 === 1) {
+        row = document.createElement("tr")
+        row.appendChild(moveCell)
+        row.appendChild(notationCell)
+        list.appendChild(row);
+
+      // Add black to previously created row
+      } else {
+        row.appendChild(notationCell)
+      }
     }
-
-    // Move number
-    let moveCell = document.createElement("td");
-    moveCell.innerHTML = "<span style='color:wheat'>" + (1 + Math.floor(move.move_count / 2)) + "</span>"
-
-    // Move notation
-    let notationCell = document.createElement("td");
-    notationCell.innerHTML = "" + move.notation
-    notationCell.setAttribute("data-id", move.id)
-    notationCell.addEventListener("click", clickFunction)
-
-    // For white, create a new row
-    if (index % 2 === 1) {
-      row = document.createElement("tr")
-      row.appendChild(moveCell)
-      row.appendChild(notationCell)
-      list.appendChild(row);
-
-    // Add black to previously created row
-    } else {
-      row.appendChild(notationCell)
-    }
-
   })
   movesList.appendChild(list);
   if (selectedId) {
