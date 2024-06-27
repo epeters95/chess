@@ -96,6 +96,7 @@ class BoardObject
                                   other_piece,
                                   move_type,
                                   @move_count,
+                                  piece.position,
                                   new_place_n)
 
             (moves << move and yield move) if filter.call(move)
@@ -125,6 +126,7 @@ class BoardObject
                                   target,
                                   move_type,
                                   @move_count,
+                                  piece.position,
                                   atk_n)
 
             (moves << move and yield move) if filter.call(move)
@@ -138,6 +140,7 @@ class BoardObject
                                   target_passant,
                                   move_type,
                                   @move_count,
+                                  piece.position,
                                   atk_n)
 
             (moves << move and yield move) if filter.call(move)
@@ -157,6 +160,7 @@ class BoardObject
                                   rook,
                                   "castle_queenside",
                                   @move_count,
+                                  piece.position,
                                   new_position,
                                   rook_position)
 
@@ -171,6 +175,7 @@ class BoardObject
                                   rook,
                                   "castle_kingside",
                                   @move_count,
+                                  piece.position,
                                   new_position,
                                   rook_position)
 
@@ -264,11 +269,10 @@ class BoardObject
       return false
     end
 
-    piece = @pieces[move.piece.color].find {|pc| pc.position == move.piece.position}
-    piece = move.piece if piece.nil?
-    
+    piece = @pieces[move.piece.color].find {|pc| pc.position == move.position}
+
     unless move.other_piece.nil?
-      other_piece = @pieces[move.other_piece.color].find {|pc| pc.position == move.other_piece.position }
+      other_piece = @pieces[move.other_piece.color].find {|pc| pc.position == move.new_position }
     end
     move_piece(piece, move.new_position)
 

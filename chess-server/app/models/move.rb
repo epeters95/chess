@@ -16,9 +16,11 @@ class Move < ApplicationRecord
                                   other_piece,
                                   self.move_type,
                                   self.move_count,
+                                  self.position,
                                   self.new_position,
                                   self.rook_position,
-                                  self.promotion_choice)
+                                  self.promotion_choice,
+                                  self.notation)
   end
 
   def move_object

@@ -45,10 +45,12 @@ class Api::BoardsController < ApplicationController
     pieces_history = [d_board.positions_array]
     moves = [nil]
     @board.played_moves_in_order.to_a.each do |move|
-      if d_board.replay_move(move.move_object)
-        pieces_history << d_board.positions_array
-        moves << move
+      mv = move.move_object.deep_dup
+      if d_board.replay_move(mv)
+        pieces_history << d_board.positions_array.dup
+        moves << mv
       else
+        puts "Move replay failed on board #{@board.id}"
         break
       end
     end

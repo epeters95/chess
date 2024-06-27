@@ -117,7 +117,6 @@ class Board < ApplicationRecord
 
       return result && self.update(move_count: self.move_count + 1)
     else
-      debugger
       return false
     end
   end

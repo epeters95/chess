@@ -2,32 +2,35 @@ class MoveObject
 
   include Util
 
-  attr_reader :move_type, :move_count, :new_position, :rook_position, :notation
+  attr_reader :move_type, :move_count, :position, :new_position, :rook_position, :notation
   attr_accessor :piece, :other_piece, :completed, :relatives, :promotion_choice, :causes_check
 
   def initialize(piece,
                  other_piece,
                  move_type,
                  move_count,
+                 position,
                  new_position,
                  rook_position=nil,
                  promotion_choice=nil,
+                 notation=nil,
                  causes_check=false)
     @piece = piece
     @other_piece = other_piece
     @move_type = move_type
     @move_count = move_count
+    @position = position
     @new_position = new_position
     @rook_position = rook_position
     @promotion_choice = promotion_choice
-    @notation = nil
+    @notation = notation
     @completed = false
     @relatives = []
     @causes_check = causes_check
   end
 
   def ==(other_move)
-    @piece.position == other_move.piece.position &&
+    @position == other_move.position &&
     @new_position == other_move.new_position &&
     @rook_position == other_move.rook_position &&
     @move_type == other_move.move_type
@@ -39,18 +42,16 @@ class MoveObject
                    duped_other_piece,
                    @move_type,
                    @move_count,
+                   @position,
                    @new_position,
                    @rook_position,
                    @promotion_choice,
+                   @notation,
                    @causes_check)
   end
 
   def set_notation
     @notation = get_notation
-  end
-
-  def position
-    @piece.position
   end
 
   def target_key
@@ -109,19 +110,18 @@ class MoveObject
       other_piece_str:  other_piece_json,
       move_type:        @move_type,
       move_count:       @move_count,
+      position:         @position,
       new_position:     @new_position,
       rook_position:    @rook_position,
       promotion_choice: @promotion_choice,
-      position:         @piece.position,
-      notation:         @notation
+      notation:         @notation,
+      causes_check:     @causes_check
     }
     JSON.generate(hsh, options)
   end
 
   def self.from_json(json_obj)
     args = json_obj.symbolize_keys
-    args.delete(:notation)
-    args.delete(:position)
 
     piece = PieceObject.from_json_str(args[:piece_str], true)
     other_piece = PieceObject.from_json_str(args[:other_piece_str], true)
@@ -129,9 +129,12 @@ class MoveObject
                         other_piece,
                         args[:move_type],
                         args[:move_count],
+                        args[:position],
                         args[:new_position],
                         args[:rook_position],
-                        args[:promotion_choice])
+                        args[:promotion_choice],
+                        args[:notation],
+                        args[:causes_check])
     move_obj
   end
 
