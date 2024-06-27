@@ -3,7 +3,7 @@ class Board < ApplicationRecord
   belongs_to :game, optional: true
   has_many   :played_moves, -> { where "completed = true" }, class_name: "Move", dependent: :destroy
 
-  after_create :init_board
+  after_create :init_board_and_save
   after_find  :build_object
 
   include Util
@@ -12,6 +12,10 @@ class Board < ApplicationRecord
     @board_object = BoardObject.new
     @pieces = @board_object.pieces
     set_pieces_to_positions_array
+  end
+
+  def init_board_and_save
+    init_board
     self.save!
   end
 
@@ -67,17 +71,33 @@ class Board < ApplicationRecord
   end
 
 
+  def replay_move(move_object)
+    if @board_object.play_move(move_object)
+      set_pieces_to_positions_array
+      self.turn = switch(self.turn)
+      return true
+    end
+    false
+  end
+
   # Executes the given move object on the board object
   # If successful, switches turn and saves Board and Move states
 
-  def play_move_and_save(move_object)
+  def play_move(move_object)
     if !move_object.piece.get_moves.include?(move_object)
-      raise IllegalMoveError
+      raise BoardObject::IllegalMoveError
     end
     if @board_object.play_move_and_generate(move_object)
       set_pieces_to_positions_array
       self.turn = switch(self.turn)
+      return true
+    end
+    false
+  end
 
+  def play_move_and_save(move_object)
+
+    if play_move(move_object)
       self.save
 
       other_piece_json = move_object.other_piece.nil? ? nil : move_object.other_piece.to_json

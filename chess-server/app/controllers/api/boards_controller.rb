@@ -3,7 +3,7 @@ class Api::BoardsController < ApplicationController
 
   def show
     begin
-      result = { board: @board, game: @game.as_json, pieces: @board.positions_array}
+      result = { board: @board, game: @game, pieces: @board.positions_array}
       result.merge! get_moves_pieces_history
       render json: result, status: :ok
     rescue Exception => e
@@ -39,20 +39,18 @@ class Api::BoardsController < ApplicationController
 
   private
 
-  def new_board
-    board = Board.new(game_id: 0, turn: "white")
-    board.init_variables
-    board
-  end
-
   def get_moves_pieces_history
-    initial_board = new_board
-    pieces_history = [initial_board.positions_array]
+    d_board = Board.new
+    d_board.init_board
+    pieces_history = [d_board.positions_array]
     moves = [nil]
-    @board.played_moves_in_order.each do |move|
-      initial_board.play_move(move)
-      pieces_history << initial_board.positions_array
-      moves << move
+    @board.played_moves_in_order.to_a.each do |move|
+      if d_board.replay_move(move.move_object)
+        pieces_history << d_board.positions_array
+        moves << move
+      else
+        break
+      end
     end
     { pieces_history: pieces_history, moves:  moves }
   end

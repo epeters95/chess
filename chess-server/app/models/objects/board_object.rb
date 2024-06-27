@@ -265,6 +265,8 @@ class BoardObject
     end
 
     piece = @pieces[move.piece.color].find {|pc| pc.position == move.piece.position}
+    piece = move.piece if piece.nil?
+    
     unless move.other_piece.nil?
       other_piece = @pieces[move.other_piece.color].find {|pc| pc.position == move.other_piece.position }
     end

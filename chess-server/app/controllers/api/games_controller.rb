@@ -76,6 +76,7 @@ class Api::GamesController < ApplicationController
           if @game.is_live?
             validate_move_access(@game, params)
             chosen_move = @game.board.get_move_by_notation(params[:move][:notation])
+            set_promotion_choice(chosen_move)
           else
 
             if @game.is_computers_turn?
@@ -83,10 +84,7 @@ class Api::GamesController < ApplicationController
               chosen_move = Computer.new(@game.board).get_move
             else
               chosen_move = @game.board.get_move_by_notation(move_params[:notation])
-              if chosen_move.move_type == "promotion"
-                chosen_move.promotion_choice = move_params[:promotion_choice]
-                chosen_move.set_notation
-              end
+              set_promotion_choice(chosen_move)
             end
           end
           success = chosen_move && @game.play_move_and_evaluate(chosen_move)
@@ -111,6 +109,14 @@ class Api::GamesController < ApplicationController
   end
 
   private
+    def set_promotion_choice(move)
+      if move.move_type == "promotion"
+        move.promotion_choice = move_params[:promotion_choice]
+        move.set_notation
+      end
+    end
+
+
     def validate_move_access(game, params)
       if game.board.turn == "white"
         return (session[:token] || params[:token]) == game.live_game.white_token
