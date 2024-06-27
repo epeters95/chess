@@ -276,6 +276,8 @@ table#game-table {
   width: 100%;
   height: 20px;
   display: flex;
+  position: absolute;
+  z-index: 2000;
 }
 .header span{
   margin-left: 80px;
