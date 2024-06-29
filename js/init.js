@@ -284,19 +284,19 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       drawCodeWindow(json)
 
       // Refresh until opponent joins the game
-      checkGameReadyLoop(id, json["access_code"])
+      checkGameReadyLoop(id, json["access_code"], json["color"])
     }
   })
 }
 
-function checkGameReadyLoop(id, accessCode) {
+function checkGameReadyLoop(id, accessCode, color='') {
   setTimeout(function() {
 
-    let params = "?access_code=" + accessCode
+    let params = "?access_code=" + accessCode + "&color=" + color
     fetchFromApi("/api/live_games/" + id + params, "GET", null, function(json) {
       if (!json["is_ready"]) {
         if (!disableGameReadyLoop) {
-          checkGameReadyLoop(id, accessCode)
+          checkGameReadyLoop(id, accessCode, color)
         }
       } else {
         modal.classList.add("hidden");
