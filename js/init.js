@@ -82,7 +82,8 @@ function refreshGame() {
 function findGame() {
   // get game from the api
   let tokenCookie = getTokenCookie()
-  let params = "?access_code=" + accessCodeInput.value + "&token=" + tokenCookie
+  let tokenColor = getTokenColor()
+  let params = "?access_code=" + accessCodeInput.value + "&token=" + tokenCookie + "&color=" + tokenColor
   fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
     drawCodeWindow(json)
   })
@@ -152,6 +153,7 @@ function drawCodeWindow(json) {
   blackPlayerInput.value = "";
 
   let tokenCookie = getTokenCookie()
+  let tokenColor = getTokenColor()
 
   if (tokenCookie && tokenCookie !== '') {
     if (json["is_ready"] && json["token"] ) {
@@ -160,7 +162,7 @@ function drawCodeWindow(json) {
       hideQuote();
 
       if (gameView === null) {
-        gameView = new GameView(canvas, json, domElements, true)
+        gameView = new GameView(canvas, json, domElements, true, tokenColor)
       }
       gameView.draw()
       return null;
@@ -270,7 +272,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
       setTokenCookie(json["token"], json["color"], json["access_code"])
 
       if (gameView === null) {
-        gameView = new GameView(canvas, json, domElements, true)
+        gameView = new GameView(canvas, json, domElements, true, json["color"])
       }
       gameView.draw()
     }
@@ -303,7 +305,7 @@ function checkGameReadyLoop(id, accessCode, color='') {
         quoteSpan.classList.add("hidden");
         alert("Game ready to begin")
         if (gameView === null) {
-          gameView = new GameView(canvas, json, domElements, true)
+          gameView = new GameView(canvas, json, domElements, true, color)
         }
         gameView.draw()
       }

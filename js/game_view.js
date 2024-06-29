@@ -1,6 +1,6 @@
 class GameView {
 
-  constructor(canvas, json, domElements, isLive=false, computerTeam=null) {
+  constructor(canvas, json, domElements, isLive=false, computerTeam=null, showTurn=null) {
 
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
@@ -15,6 +15,7 @@ class GameView {
     this.selectedPiece = "";
     this.accessCode    = "";
     this.token         = "";
+    this.color         = "";
 
     this.eventListeners = {
       "mouseenter": [],
@@ -32,7 +33,7 @@ class GameView {
     this.promotionSubmit = domElements["promotionSubmit"];
 
     this.gridShown = false;
-    this.showTurn = null;
+    this.showTurn = showTurn;
     this.refreshRateMs = 10000;
     this.promotionMove = null;
 
@@ -70,8 +71,9 @@ class GameView {
 
     this.accessCode = getAccessCookie()
     this.token = getTokenCookie()
+    this.color = getTokenColor()
 
-    let params = "?access_code=" + this.accessCode + "&token=" + this.token
+    let params = "?access_code=" + this.accessCode + "&token=" + this.token + "&color=" + this.color
     let that = this;
 
     fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
@@ -102,15 +104,14 @@ class GameView {
 
     let thisTurn = this.turn
 
-    if (this.isLive) {
-      this.showTurn  = getTokenColor()
-    } else {
+    if (!this.isLive) {
       if (this.turnName !== "") {
         this.showTurn = thisTurn;
       } else {
         this.showTurn = ["white", "black"].filter((el) => {return el !== thisTurn })[0]
       }
     }
+    console.log("this.showTurn: " + this.showTurn + ", this.turn: " + this.turn + ", this.turnName: " + this.turnName)
 
     let that = this;
 
