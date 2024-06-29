@@ -34,7 +34,7 @@ function rankOf(row) {
 
 function getAccessCookie() {
   let found = document.cookie.split("; ").find((row) => row.startsWith("accesscode"));
-  if (found !== undefined) {
+  if (found) {
     return found.split("accesscode=")[1];
   } else {
     return '';
@@ -43,7 +43,7 @@ function getAccessCookie() {
 
 function getTokenColor() {
   let found = document.cookie.split("; ").find((row) => row.startsWith("color"));
-  if (found !== undefined) {
+  if (found) {
     return found.split("color=")[1];
 
   } else {
@@ -53,14 +53,14 @@ function getTokenColor() {
 
 function getTokenCookie() {
   let found = document.cookie.split("; ").find((row) => row.startsWith("gametoken"));
-  if (found !== undefined) {
+  if (found) {
     return found.split("gametoken=")[1];
   } else {
     return '';
   }
 }
 
-function setTokenCookie(token, color=null, code=null) {
+function setTokenCookie(token, color='', code='') {
   document.cookie = 'gametoken=' + token + '; path=/'
   document.cookie = 'color=' + color + '; path=/'
   document.cookie = 'accesscode=' + code + '; path=/'

@@ -247,8 +247,8 @@ function drawCodeWindow(json) {
 
 function newLiveGame() {
   fetchFromApi("/api/live_games", "POST", null, function(json) {
-    drawCodeWindow(json)
     setTokenCookie('')
+    drawCodeWindow(json)
   })
 }
 
@@ -278,11 +278,7 @@ function updateLiveGame(playerName, playerTeam, prevJson) {
     else {
     // set token to allow future moves on the game
       if (json["token"] !== undefined) {
-
-        // No cookie set
-        if (!getTokenCookie()) {
           setTokenCookie(json["token"], json["color"], json["access_code"])
-        }
       }
       json["access_code"] = prevJson["access_code"]
       drawCodeWindow(json)
