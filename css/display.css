@@ -340,9 +340,7 @@ table.inputs-table {
   margin-bottom: 8px;
 }
 .highlighted {
-  border: 2px solid gold;
-  width: 55.5px;
-  height: 55.5px;
+  border-color: gold !important;
 }
 
 #selection-grid {
@@ -353,6 +351,32 @@ table.inputs-table {
   height: 476px;
   z-index: 100;
 }
+
+#selection-grid tbody tr:nth-child(even) {
+  :nth-child(odd) {
+    border-style: groove;
+    border-width: 3px;
+    border-color: rgba(255,255,238,.35);
+  }
+  :nth-child(even) {
+    border-style: groove;
+    border-width: 3px;
+    border-color: rgba(50,30,15,.3);
+  }
+}
+#selection-grid tbody tr:nth-child(odd) {
+  :nth-child(odd) {
+    border-style: groove;
+    border-width: 3px;
+    border-color: rgba(50,30,15,.3);
+  }
+  :nth-child(even) {
+    border-style: groove;
+    border-width: 3px;
+    border-color: rgba(255,255,238,.35);
+  }
+}
+
 
 #players-table {
   width: 50%;
