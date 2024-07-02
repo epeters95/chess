@@ -7,6 +7,7 @@ class GameView {
     this.squareSize = canvas.width / 8.0;
 
     // Set game-specific vars contained in response JSONs
+    this.showTurn = showTurn;
     this.setJsonVars(json);
 
     this.isLive = isLive;
@@ -33,8 +34,7 @@ class GameView {
     this.promotionSubmit = domElements["promotionSubmit"];
 
     this.gridShown = false;
-    this.showTurn = showTurn;
-    this.refreshRateMs = 10000;
+    this.refreshRateMs = 5000;
     this.promotionMove = null;
 
     // Set up promotion event handler once
@@ -64,7 +64,6 @@ class GameView {
     this.turnName      = json["turn_name"];
     this.pieces        = JSON.parse(json["pieces"]);
     this.moves         = json["legal_moves"].map((lm) => JSON.parse(lm));
-    this.isLive        = json["is_live"];
   }
 
   refresh() {
