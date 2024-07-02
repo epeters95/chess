@@ -133,8 +133,7 @@ class MoveObject
                         args[:new_position],
                         args[:rook_position],
                         args[:promotion_choice],
-                        args[:notation],
-                        args[:causes_check])
+                        args[:notation])
     move_obj
   end
 

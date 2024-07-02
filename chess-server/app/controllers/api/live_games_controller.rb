@@ -22,7 +22,8 @@ class Api::LiveGamesController < ApplicationController
         access_code: @livegame.access_code,
         is_ready:    @livegame.is_ready?,
         game:        @livegame.game,
-        live_game:   @livegame
+        live_game:   @livegame,
+        color:       params[:color]
       }
       if params[:token]
 
