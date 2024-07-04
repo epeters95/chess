@@ -25,10 +25,9 @@ class Api::BoardsController < ApplicationController
       unless moves.empty?
         begin
           mv = moves[0]
-          mv.board_id = initial_board.id
           initial_board.play_move_and_save(mv)
 
-        rescue IllegalMoveError => e
+        rescue BoardObject::IllegalMoveError => e
           return render json: { errors: e.message, status: :unprocessable_entity }
         end
       end
