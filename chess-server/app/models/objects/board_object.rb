@@ -271,16 +271,18 @@ class BoardObject
 
     piece = @pieces[move.piece.color].find {|pc| pc.position == move.position}
 
-    unless move.other_piece.nil?
-      other_piece = @pieces[move.other_piece.color].find {|pc| pc.position == move.new_position }
-    end
     move_piece(piece, move.new_position)
 
     if move.move_type == "attack" || move.move_type == "attack_promotion"
+      other_piece = @pieces[move.other_piece.color].find {|pc| pc.position == move.new_position }
+      if other_piece.nil?
+        other_piece = move.other_piece
+      end
       @pieces[other_piece.color].delete other_piece
       other_piece.take
     end
     if move.move_type == "castle_kingside" || move.move_type == "castle_queenside"
+      other_piece = move.other_piece
       move_piece(other_piece, move.rook_position)
       other_piece.set_played
       other_piece.set_castleable

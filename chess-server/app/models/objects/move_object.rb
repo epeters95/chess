@@ -92,12 +92,13 @@ class MoveObject
     show_rank = false
     @relatives.each do |pc|
       if @piece.file == pc.file
-        show_file = true
-      end
-      if @piece.rank == pc.rank
         show_rank = true
       end
+      if @piece.rank == pc.rank
+        show_file = true
+      end
     end
+    show_file = true if !show_file && !show_rank && !@relatives.empty?
     "#{show_file ? @piece.file : '' }#{show_rank ? @piece.rank : '' }"
 
   end

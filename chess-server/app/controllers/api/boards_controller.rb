@@ -20,14 +20,17 @@ class Api::BoardsController < ApplicationController
     game = Game.create(white_name: white_name, black_name: black_name, status: "completed")
     initial_board = game.board
 
+    last_move = nil
+
     move_list.each do |move_str|
-      moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.notation == move_str}
+      moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.notation.gsub("+", "") == move_strj}
       unless moves.empty?
         begin
           mv = moves[0]
           initial_board.play_move_and_save(mv)
+          last_move = move_str
 
-        rescue BoardObject::IllegalMoveError => e
+        rescue Exception => e
           return render json: { errors: e.message, status: :unprocessable_entity }
         end
       end
@@ -66,3 +69,4 @@ class Api::BoardsController < ApplicationController
   end
 
 end
+
