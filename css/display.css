@@ -49,6 +49,7 @@ canvas {
   margin: auto;
   height: 800px;
   border-radius: 3px;
+  z-index: 5;
 }
 
 #content form label, input {
