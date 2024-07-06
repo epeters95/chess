@@ -1,4 +1,7 @@
 class Api::BoardsController < ApplicationController
+
+  include Util
+
   before_action :set_game_board, only: [:show, :update, :destroy]
 
   def show
@@ -20,18 +23,30 @@ class Api::BoardsController < ApplicationController
     game = Game.create(white_name: white_name, black_name: black_name, status: "completed")
     initial_board = game.board
 
-    last_move = nil
-
     move_list.each do |move_str|
-      moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.notation.gsub("+", "") == move_strj}
-      unless moves.empty?
+      promotion_choice = move_str.split("=")[1]
+      move_str[-1] = '?' unless promotion_choice.nil?
+
+      moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.notation.gsub("+", "") == move_str }
+      if !moves.empty?
         begin
           mv = moves[0]
+          unless promotion_choice.nil?
+            mv.promotion_choice = promotion_map[promotion_choice]
+          end
           initial_board.play_move_and_save(mv)
-          last_move = move_str
 
         rescue Exception => e
           return render json: { errors: e.message, status: :unprocessable_entity }
+        end
+      elsif ["1/2-1/2", "1-0", "0-1"].include? move_str
+        case move_str
+        when "1/2-1/2"
+          initial_board.update(status_str: "Draw")
+        when "1-0"
+          initial_board.update(status_str: "White Wins")
+        when "0-1"
+          initial_board.update(status_str: "Black Wins")
         end
       end
     end
@@ -46,15 +61,18 @@ class Api::BoardsController < ApplicationController
     d_board.init_board
     pieces_history = [d_board.positions_array]
     moves = [nil]
-    @board.played_moves_in_order.to_a.each do |move|
-      mv = move.move_object.deep_dup
-      if d_board.replay_move(mv)
-        pieces_history << d_board.positions_array.dup
-        moves << mv
-      else
-        puts "Move replay failed on board #{@board.id}"
-        break
+    begin
+      @board.played_moves_in_order.to_a.each do |move|
+        mv = move.move_object.deep_dup
+        if d_board.replay_move(mv)
+          pieces_history << d_board.positions_array.dup
+          moves << mv
+        else
+          puts "Move replay failed on board #{@board.id}"
+          break
+        end
       end
+    rescue Exception => e
     end
     { pieces_history: pieces_history, moves:  moves }
   end

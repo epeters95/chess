@@ -282,7 +282,11 @@ class BoardObject
       other_piece.take
     end
     if move.move_type == "castle_kingside" || move.move_type == "castle_queenside"
-      other_piece = move.other_piece
+      rank = move.other_piece.color == "black" ? "8" : "1"
+      file = move.move_type == "castle_kingside" ? "h" : "a"
+      rook_pos = file + rank
+      other_piece = @pieces[move.other_piece.color].find {|pc| pc.position == rook_pos }
+
       move_piece(other_piece, move.rook_position)
       other_piece.set_played
       other_piece.set_castleable

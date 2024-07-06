@@ -69,4 +69,13 @@ module Util
   def uppercase(str)
     "#{str[0].upcase}#{str[1..]}"
   end
+
+  def promotion_map
+    {
+      "Q": "queen",
+      "R": "rook",
+      "B": "bishop",
+      "N": "knight"
+    }
+  end
 end
