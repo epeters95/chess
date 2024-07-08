@@ -1,0 +1,97 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/games":
+    get:
+      summary: List all completed games, or games matching search params
+      parameters:
+      - name: status
+        in: path
+        required: false
+        schema:
+          type: string
+      - name: white_id
+        in: path
+        required: false
+        schema:
+          type: string
+      - name: black_id
+        in: path
+        required: false
+        schema:
+          type: string
+      - name: name
+        in: path
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: Creates a game with given player names
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '422':
+          description: unprocessable entity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                white_name:
+                  type: string
+                black_name:
+                  type: string
+  "/api/games/{id}":
+    get:
+      summary: Show game by id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+    patch:
+      summary: Update game
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '422':
+          description: unprocessable entity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notation:
+                  type: string
+  "/api/quote":
+    get:
+      summary: Show a random chess quote
+      responses:
+        '200':
+          description: successful
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: chess-wpj4.onrender.com

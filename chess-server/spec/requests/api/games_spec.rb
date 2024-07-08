@@ -6,12 +6,13 @@ RSpec.describe 'Games API', type: :request do
 
     get('List all completed games, or games matching search params') do
       produces 'application/json'
-      parameter name: :status, in: :path, type: :string
+
+      parameter name: :status,   in: :path, type: :string
       parameter name: :white_id, in: :path, type: :string
       parameter name: :black_id, in: :path, type: :string
-      parameter name: :name, in: :path, type: :string
+      parameter name: :name,     in: :path, type: :string
 
-      response('200', 'successful') do
+      response(200, 'successful') do
         let(:games) { { name: 'Computer', status: 'completed' } }
         run_test!
       end
@@ -30,134 +31,69 @@ RSpec.describe 'Games API', type: :request do
         }
       }
 
-      response('200', 'successful') do
+      response(200, 'successful') do
 
-        let(:game) { { game: { white_name: 'Tester' } }
+        let(:game) { { game: { white_name: 'Tester' } } }
         run_test!
       end
 
-      response('422', 'unprocessable entity') do
-        let(:game) { game: { white_name: nil, asdf: 'bad_input' } }
+      response(422, 'unprocessable entity') do
+        let(:game) { { game: { white_name: nil, asdf: 'bad_input' } } }
         run_test!
+      end
     end
   end
 
-  # path '/api/games/new' do
+  path '/api/games/{id}' do
 
-  #   get('new game') do
-  #     response('200', 'successful') do
+    get('Show game by id') do
+      produces 'application/json'
 
-  #       after do |example|
-  #         example.metadata[:response][:content] = {
-  #           'application/json' => {
-  #             example: JSON.parse(response.body, symbolize_names: true)
-  #           }
-  #         }
-  #       end
-  #       run_test!
-  #     end
-  #   end
-  # end
+      parameter name: :id, in: :path, type: :string
 
-  # path '/api/games/{id}/edit' do
-  #   # You'll want to customize the parameter types...
-  #   parameter name: 'id', in: :path, type: :string, description: 'id'
+      response(200, 'successful') do
+        let(:id) { '1' }
+        run_test!
+      end
+    end
 
-  #   get('edit game') do
-  #     response('200', 'successful') do
-  #       let(:id) { '123' }
+    patch('Update game') do
+      produces 'application/json'
+      consumes 'application/json'
 
-  #       after do |example|
-  #         example.metadata[:response][:content] = {
-  #           'application/json' => {
-  #             example: JSON.parse(response.body, symbolize_names: true)
-  #           }
-  #         }
-  #       end
-  #       run_test!
-  #     end
-  #   end
-  # end
+      parameter name: :id, in: :path, type: :string
+      parameter name: :move, in: :body, schema: {
+        type: :object,
+        properties: {
+          notation: { type: :string }
+        }
+      }
+      parameter name: :end_game, in: :body, type: :string
 
-  # path '/api/games/{id}' do
-  #   # You'll want to customize the parameter types...
-  #   parameter name: 'id', in: :path, type: :string, description: 'id'
+      response(200, 'successful') do
+        let(:id) { '1' }
+        let(:move) { { move: { notation: 'e4' } } }
+        run_test!
+      end
 
-  #   get('show game') do
-  #     response('200', 'successful') do
-  #       let(:id) { '123' }
+      response(422, 'unprocessable entity') do
+        let(:id) { '1' }
+        let(:move) { { move: { notation: 'e4', asdf: 'bad_input' } } }
+        run_test!
+      end
+    end
 
-  #       after do |example|
-  #         example.metadata[:response][:content] = {
-  #           'application/json' => {
-  #             example: JSON.parse(response.body, symbolize_names: true)
-  #           }
-  #         }
-  #       end
-  #       run_test!
-  #     end
-  #   end
+  end
 
-  #   patch('update game') do
-  #     response('200', 'successful') do
-  #       let(:id) { '123' }
+  path '/api/quote' do
 
-  #       after do |example|
-  #         example.metadata[:response][:content] = {
-  #           'application/json' => {
-  #             example: JSON.parse(response.body, symbolize_names: true)
-  #           }
-  #         }
-  #       end
-  #       run_test!
-  #     end
-  #   end
+    get('Show a random chess quote') do
+      produces 'application/json'
 
-  #   put('update game') do
-  #     response('200', 'successful') do
-  #       let(:id) { '123' }
+      response(200, 'successful') do
+        run_test!
+      end
+    end
 
-  #       after do |example|
-  #         example.metadata[:response][:content] = {
-  #           'application/json' => {
-  #             example: JSON.parse(response.body, symbolize_names: true)
-  #           }
-  #         }
-  #       end
-  #       run_test!
-  #     end
-  #   end
-
-  #   delete('delete game') do
-  #     response('200', 'successful') do
-  #       let(:id) { '123' }
-
-  #       after do |example|
-  #         example.metadata[:response][:content] = {
-  #           'application/json' => {
-  #             example: JSON.parse(response.body, symbolize_names: true)
-  #           }
-  #         }
-  #       end
-  #       run_test!
-  #     end
-  #   end
-  # end
-
-  # path '/api/quote' do
-
-  #   get('quote game') do
-  #     response('200', 'successful') do
-
-  #       after do |example|
-  #         example.metadata[:response][:content] = {
-  #           'application/json' => {
-  #             example: JSON.parse(response.body, symbolize_names: true)
-  #           }
-  #         }
-  #       end
-  #       run_test!
-  #     end
-  #   end
-  # end
+  end
 end

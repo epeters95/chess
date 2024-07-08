@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   namespace :api do
 
-    resources :games do
+    resources :games, except: [:delete, :new, :edit] do
     # api_games GET    /api/games(.:format)                api/games#index
     #           POST   /api/games(.:format)                api/games#create
     # api_game  GET    /api/games/:id(.:format)            api/games#show
