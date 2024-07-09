@@ -2,7 +2,9 @@
 
 https://epeters95.github.io/chess
 
+
 Version: Pre-Alpha
+
 Hosted on Render
 
 This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.  It includes several features:
