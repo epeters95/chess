@@ -37,4 +37,8 @@ Rails.application.routes.draw do
   # Test status endpoint
   get '/status', to: 'test#status'
 
+  # devise_for :users, controllers: {
+  #   sessions: 'api/sessions'
+  # }
+
 end
