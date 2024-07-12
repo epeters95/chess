@@ -10,9 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_05_22_220012) do
+ActiveRecord::Schema[7.0].define(version: 2024_07_10_064636) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "authentication_tokens", force: :cascade do |t|
+    t.string "body"
+    t.bigint "user_id", null: false
+    t.datetime "last_used_at"
+    t.integer "expires_in"
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["body"], name: "index_authentication_tokens_on_body"
+    t.index ["user_id"], name: "index_authentication_tokens_on_user_id"
+  end
 
   create_table "boards", force: :cascade do |t|
     t.string "turn"
@@ -72,6 +85,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_05_22_220012) do
     t.index ["name"], name: "index_players_on_name", unique: true
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "username", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
+  add_foreign_key "authentication_tokens", "users"
   add_foreign_key "boards", "games"
   add_foreign_key "games", "players", column: "black_id"
   add_foreign_key "live_games", "games"
