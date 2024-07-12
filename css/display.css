@@ -56,6 +56,17 @@ canvas {
   color: white;
 }
 
+#content .how-to-instructions {
+  * {
+    color: wheat;
+  }
+  p, li {
+    text-align: left;
+  }
+  width: 600px;
+  margin: auto;
+}
+
 
 body {
   background-color: rgb(64, 106, 95); 
@@ -74,6 +85,9 @@ h1 {
 
 checker{
   background-color: rgb(140, 68, 96);
+}
+.player-names {
+  height: 150px ;
 }
 .player-names * {
   padding: 5px;
