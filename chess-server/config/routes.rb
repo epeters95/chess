@@ -26,7 +26,7 @@ Rails.application.routes.draw do
     resources :live_games, only: [:create, :update, :show]
     # api_live_games  PATCH    /api/      games(.:format)           api/live_games#update
 
-    resources :boards, only: [:create]
+    resources :boards, only: [:create, :show]
 
     # Viewing game via access code
     get '/live_games/', to: 'live_games#show'

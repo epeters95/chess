@@ -4,6 +4,32 @@ info:
   title: API V1
   version: v1
 paths:
+  "/api/boards/{id}":
+    get:
+      summary: Show board by id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+  "/api/boards":
+    post:
+      summary: Creates a board from pgn text
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '422':
+          description: unprocessable entity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
   "/api/games":
     get:
       summary: List all completed games, or games matching search params
