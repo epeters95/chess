@@ -42,7 +42,11 @@ class Api::GamesController < ApplicationController
   end
 
   def show
-    render json: @game, status: :ok
+    if @game.nil?
+      render json: { errors: "Not found" }, status: :not_found
+    else
+      render json: @game, status: :ok
+    end
   end
 
   def create
@@ -66,7 +70,7 @@ class Api::GamesController < ApplicationController
 
   def update
     begin
-      if @game.errors.empty?
+      if !@game.nil? && @game.errors.empty?
         if @game.status != "completed"
           if params[:end_game]
             @game.update(status: "completed")
@@ -97,7 +101,7 @@ class Api::GamesController < ApplicationController
           render json: {error: "Game is over"}, status: :unprocessable_entity
         end
       else
-        render json: {error: "Game not found"}, status: :unprocessable_entity
+        render json: {error: "Game not found"}, status: :not_found
       end
     rescue Exception => e
       render json: {errors: e.message }, status: :unprocessable_entity

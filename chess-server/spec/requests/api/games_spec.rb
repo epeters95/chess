@@ -55,6 +55,11 @@ RSpec.describe 'Games API', type: :request do
         let(:id) { '1' }
         run_test!
       end
+
+      response(404, 'not found') do
+        let(:id) { '0' }
+        run_test!
+      end
     end
 
     patch('Update game') do
@@ -79,6 +84,11 @@ RSpec.describe 'Games API', type: :request do
       response(422, 'unprocessable entity') do
         let(:id) { '1' }
         let(:move) { { move: { notation: 'e4', asdf: 'bad_input' } } }
+        run_test!
+      end
+      
+      response(404, 'not found') do
+        let(:id) { '0' }
         run_test!
       end
     end
