@@ -29,7 +29,7 @@ RSpec.describe 'Boards API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       response(200, 'successful') do
-        let(:id) { '1' }
+        let(:board) { '1' }
         run_test!
       end
     end

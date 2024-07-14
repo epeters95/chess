@@ -116,6 +116,53 @@ paths:
       responses:
         '200':
           description: successful
+  "/api/live_games":
+    post:
+      summary: Creates a live game
+      responses:
+        '200':
+          description: successful
+    get:
+      summary: Show live game by id, access_code, token, and color
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: access_code
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: color
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '404':
+          description: not found
+    patch:
+      summary: Update a live game with name and team
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '404':
+          description: not found
 servers:
 - url: https://{defaultHost}
   variables:

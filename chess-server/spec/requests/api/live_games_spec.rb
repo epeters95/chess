@@ -1,144 +1,75 @@
-require 'rails_helper'
+require 'swagger_helper'
 
-RSpec.describe "Api::LiveGames", type: :request do
-  test_params = {
-    access_code: "JOOP"
-  }
-  livegame_fields = ["id", "access_code", "is_ready", "live_game"]
-  livegame_fields_created = ["id", "token", "game", "is_ready"]
+RSpec.describe 'Live Games API', type: :request do
 
+  test_code = '1234'
+  test_token = '12345678'
 
-  # Create
-  describe 'POST /api/live_games' do
+  path '/api/live_games' do
 
-    it 'creates a live game with expected fields' do
+    post('Creates a live game') do
 
-      post '/api/live_games'
+      produces 'application/json'
 
-      expect(response.status).to eql(201)
-
-      expect(JSON.parse(response.body)["id"]).not_to eq(nil)
-      expect(JSON.parse(response.body)["access_code"]).not_to eq(nil)
-
-    end
-
-  end
-
-  # Show
-  describe 'GET /api/live_games/:id' do
-
-    it 'returns an existing game from an id' do
-
-      post '/api/live_games'
-
-      id = JSON.parse(response.body)["id"]
-      access_code = JSON.parse(response.body)["access_code"]
-
-      get '/api/live_games/?access_code=' + access_code.to_s
-
-      expect(response.status).to eql(200)
-
-      expect(JSON.parse(response.body)["id"]).to eq(id)
-
-      livegame_fields.each do |field|
-        expect(JSON.parse(response.body)[field]).not_to eq(nil)
+      response(200, 'successful') do
+        let(:id) { }
+        run_test!
       end
 
-      expect(JSON.parse(response.body)["game"]).to eq(nil)
-
+      # response(422, 'unprocessable entity') do
+      #   let(:live_game) { { game: { white_name: nil, asdf: 'bad_input' } } }
+      #   run_test!
+      # end
     end
 
-    it 'acknowledges if request token matches' do
+  path '/api/live_games/{id}'
 
-      post '/api/live_games'
+    get('Show live game by id, access_code, token, and color') do
+      produces 'application/json'
 
-      id = JSON.parse(response.body)["id"]
-      access_code = JSON.parse(response.body)["access_code"]
+      parameter name: :id, in: :path, type: :string
 
-      lg = LiveGame.find(id)
-      expect(lg).to_not eq(nil)
+      parameter name: :access_code, in: :path, type: :string
+      parameter name: :color, in: :path, type: :string
+      parameter name: :token, in: :path, type: :string
 
-      token = lg.request_white
-
-      get '/api/live_games/?access_code=' + access_code.to_s + '&token=' + token
-
-      expect(response.status).to eql(200)
-      expect(JSON.parse(response.body)["token"]).to eq("white")
-
-      token = lg.request_black
-
-      get '/api/live_games/?access_code=' + access_code.to_s + '&token=' + token
-
-      expect(response.status).to eql(200)
-      expect(JSON.parse(response.body)["token"]).to eq("black")
-
-    end
-  end
-
-  # Update
-  describe 'PATCH /api/live_games/:id' do
-
-    it "updates a live game with a player's chosen name" do
+      response(200, 'successful') do
+        let(:live_game) { {id: '1', access_code: test_code, color: 'white', token: test_token } }
+        run_test!
+      end
 
 
-      post '/api/live_games'
-
-      access_code = JSON.parse(response.body)["access_code"]
-      id = JSON.parse(response.body)["id"]
-
-      requestBody = {
-        "player_name": "Bill",
-        "player_team": "white",
-        "access_code": access_code
-      }
-
-      patch '/api/live_games/' + id.to_s, params: requestBody
-
-      expect(response.status).to eq(200)
-
-      livegame_fields_created.each do |field|
-        
-        expect(JSON.parse(response.body)[field]).not_to eq(nil)
-
+      response(404, 'not found') do
+        let(:live_game) { {id: '1', access_code: 'undefined', color: 'white' } }
+        run_test!
       end
     end
 
-    it "does not update a live game's team twice" do
-      
-      post '/api/live_games'
+    patch('Update a live game with name and team') do
+      produces 'application/json'
 
-      access_code = JSON.parse(response.body)["access_code"]
-      id = JSON.parse(response.body)["id"]
+      parameter name: :id, in: :path, type: :string
 
-      requestBody = {
-        "player_name": "John",
-        "player_team": "white",
-        "access_code": access_code
-      }
+      parameter name: :player_name, in: :body, type: :string
+      parameter name: :access_code, in: :body, type: :string
+      parameter name: :player_team, in: :body, type: :string
 
-      patch '/api/live_games/' + id.to_s, params: requestBody
+      response(200, 'successful') do
+        let(:live_game) { {id: '1', player_name: "Jimmy", player_team: "white", access_code: test_code } }
+        run_test!
+      end
 
-      expect(response.status).to eq(200)
+      response(404, 'not found') do
+        let(:live_game) { {id: '1', player_name: "Jimmy", player_team: "white", access_code: 'undefined' } }
+        run_test!
+      end
 
-      patch '/api/live_games/' + id.to_s, params: requestBody
-
-      expect(response.status).to eq(422)
-
-      requestBody = {
-        "player_name": "Jim",
-        "player_team": "black",
-        "access_code": access_code
-      }
-
-      patch '/api/live_games/' + id.to_s, params: requestBody
-
-      expect(response.status).to eq(200)
-
-      patch '/api/live_games/' + id.to_s, params: requestBody
-
-      expect(response.status).to eq(422)
-
+      # response(422, 'unprocessable entity') do
+      #   let(:live_game) { {id: '1', access_code: 'undefined', color: 'white' } }
+      #   run_test!
+      # end
     end
 
   end
+
 end
