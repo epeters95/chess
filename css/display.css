@@ -331,6 +331,10 @@ table.inputs-table {
   position: relative;
   margin: auto;
 
+  input[type="text"] {
+    margin: 4px;
+  }
+
   td {
     height: 20px;
     width: 60px;
