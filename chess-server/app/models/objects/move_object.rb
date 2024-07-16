@@ -2,8 +2,8 @@ class MoveObject
 
   include Util
 
-  attr_reader :move_type, :move_count, :position, :new_position, :rook_position, :notation
-  attr_accessor :piece, :other_piece, :completed, :relatives, :promotion_choice, :causes_check
+  attr_reader :move_type, :move_count, :position, :new_position, :rook_position
+  attr_accessor :piece, :other_piece, :completed, :relatives, :promotion_choice, :causes_check, :notation
 
   def initialize(piece,
                  other_piece,
