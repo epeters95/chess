@@ -38,6 +38,11 @@ class Game < ApplicationRecord
       self.board.update(status_str: "The game is a draw due to insufficient mating material.")
 
     elsif self.board.is_checkmate?(self.board.turn)
+      
+      # Append notation to indicate checkmate (hotfix)
+      last_move = self.board.played_moves_in_order.last
+      last_move.update(notation: "#{last_move.notation}#")
+
       self.board.update(status_str: "#{display_name_for(previous_turn)} has won by checkmate!")
 
     elsif self.board.is_nomoves_stalemate?(self.board.turn)
