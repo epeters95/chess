@@ -11,7 +11,7 @@ This is a demo of an API-only Rails app enabling users to play a game of chess v
 - Local game against computer or play as both black and white
 - Play a live game with a friend via shared access code
 - Game history and move replaying
-- Upload a PGN file to import a famous game to the game history page
+- Upload a PGN file to import any game in .pgn format and view moves in the game history page
 
 To play someone using matchmaking, follow these steps:
 
