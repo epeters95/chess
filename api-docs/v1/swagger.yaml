@@ -1,0 +1,174 @@
+---
+openapi: 3.0.1
+info:
+  title: API V1
+  version: v1
+paths:
+  "/api/boards/{id}":
+    get:
+      summary: Show board by id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+  "/api/boards":
+    post:
+      summary: Creates a board from pgn text
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '422':
+          description: unprocessable entity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+  "/api/games":
+    get:
+      summary: List all completed games, or games matching search params
+      parameters:
+      - name: status
+        in: path
+        required: false
+        schema:
+          type: string
+      - name: white_id
+        in: path
+        required: false
+        schema:
+          type: string
+      - name: black_id
+        in: path
+        required: false
+        schema:
+          type: string
+      - name: name
+        in: path
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+    post:
+      summary: Creates a game with given player names
+      parameters: []
+      responses:
+        '200':
+          description: successful
+        '422':
+          description: unprocessable entity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                white_name:
+                  type: string
+                black_name:
+                  type: string
+  "/api/games/{id}":
+    get:
+      summary: Show game by id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '404':
+          description: not found
+    patch:
+      summary: Update game
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '422':
+          description: unprocessable entity
+        '404':
+          description: not found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notation:
+                  type: string
+  "/api/quote":
+    get:
+      summary: Show a random chess quote
+      responses:
+        '200':
+          description: successful
+  "/api/live_games":
+    post:
+      summary: Creates a live game
+      responses:
+        '200':
+          description: successful
+    get:
+      summary: Show live game by id, access_code, token, and color
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: access_code
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: color
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '404':
+          description: not found
+    patch:
+      summary: Update a live game with name and team
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful
+        '404':
+          description: not found
+servers:
+- url: https://{defaultHost}
+  variables:
+    defaultHost:
+      default: chess-wpj4.onrender.com
