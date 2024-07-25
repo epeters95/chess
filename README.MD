@@ -7,7 +7,7 @@ Version: Pre-Alpha
 
 Hosted on Render
 
-This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.  It includes several features:
+This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.  It uses PostgreSQL for storage and includes several features:
 - Local game against computer or play as both black and white
 - Play a live game with a friend via shared access code
 - Game history and move replaying
