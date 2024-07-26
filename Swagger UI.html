@@ -26,7 +26,7 @@
       background: #fafafa;
     }
   </style>
-<link rel="stylesheet" type="text/css" href="./Swagger UI_files/includes.css"><script async="" type="text/javascript" src="./Swagger UI_files/vendor.js.download"></script></head>
+<link rel="stylesheet" type="text/css" href="./Swagger UI_files/includes.css"><script async="" type="text/javascript" src="./Swagger UI_files/vendor.js"></script></head>
 
 <body>
 
@@ -76,12 +76,297 @@
   }
 </script>
 
-<script src="./Swagger UI_files/swagger-ui-bundle.js.download"> </script>
-<script src="./Swagger UI_files/swagger-ui-standalone-preset.js.download"> </script>
+<script src="./Swagger UI_files/swagger-ui-bundle.js"> </script>
+<script src="./Swagger UI_files/swagger-ui-standalone-preset.js"> </script>
 <script>
   window.onload = function () {
     var configObject = JSON.parse('{"urls":[{"url":"./api-docs/v1/swagger.yaml","name":"API V1 Docs"}]}');
     var oauthConfigObject = JSON.parse('{}');
+    var swagYml = {
+      "openapi": "3.0.1",
+      "info": {
+        "title": "API V1",
+        "version": "v1"
+      },
+      "paths": {
+        "/api/boards/{id}": {
+          "get": {
+            "summary": "Show board by id",
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "successful"
+              }
+            }
+          }
+        },
+        "/api/boards": {
+          "post": {
+            "summary": "Creates a board from pgn text",
+            "parameters": [],
+            "responses": {
+              "200": {
+                "description": "successful"
+              },
+              "422": {
+                "description": "unprocessable entity"
+              }
+            },
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/api/games": {
+          "get": {
+            "summary": "List all completed games, or games matching search params",
+            "parameters": [
+              {
+                "name": "status",
+                "in": "path",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "white_id",
+                "in": "path",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "black_id",
+                "in": "path",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "name",
+                "in": "path",
+                "required": false,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "successful"
+              }
+            }
+          },
+          "post": {
+            "summary": "Creates a game with given player names",
+            "parameters": [],
+            "responses": {
+              "200": {
+                "description": "successful"
+              },
+              "422": {
+                "description": "unprocessable entity"
+              }
+            },
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string"
+                      },
+                      "white_name": {
+                        "type": "string"
+                      },
+                      "black_name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/api/games/{id}": {
+          "get": {
+            "summary": "Show game by id",
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "successful"
+              },
+              "404": {
+                "description": "not found"
+              }
+            }
+          },
+          "patch": {
+            "summary": "Update game",
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "successful"
+              },
+              "404": {
+                "description": "not found"
+              },
+              "422": {
+                "description": "unprocessable entity"
+              }
+            },
+            "requestBody": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "notation": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/api/quote": {
+          "get": {
+            "summary": "Show a random chess quote",
+            "responses": {
+              "200": {
+                "description": "successful"
+              }
+            }
+          }
+        },
+        "/api/live_games": {
+          "post": {
+            "summary": "Creates a live game",
+            "responses": {
+              "200": {
+                "description": "successful"
+              }
+            }
+          },
+          "get": {
+            "summary": "Show live game by id, access_code, token, and color",
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "access_code",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "color",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              },
+              {
+                "name": "token",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "successful"
+              },
+              "404": {
+                "description": "not found"
+              }
+            }
+          },
+          "patch": {
+            "summary": "Update a live game with name and team",
+            "parameters": [
+              {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                  "type": "string"
+                }
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "successful"
+              },
+              "404": {
+                "description": "not found"
+              }
+            }
+          }
+        }
+      },
+      "servers": [
+        {
+          "url": "https://{defaultHost}",
+          "variables": {
+            "defaultHost": {
+              "default": "chess-wpj4.onrender.com"
+            }
+          }
+        }
+      ]
+    };
 
     // Apply mandatory parameters
     configObject.dom_id = "#swagger-ui";
@@ -99,7 +384,7 @@
     ui.initOAuth(oauthConfigObject);
   }
 </script>
-<script async="" nonce="" type="text/javascript" id="mini-profiler" src="./Swagger UI_files/includes.js.download" data-css-url="/mini-profiler-resources/includes.css?v=116e2a6fd81c286e004e2a0afb03baa1" data-version="116e2a6fd81c286e004e2a0afb03baa1" data-path="/mini-profiler-resources/" data-current-id="jfdoccufg4rjtv3m69e1" data-ids="jfdoccufg4rjtv3m69e1,g9ygkmaokeo5cx53i4go,d7d10ymevob51b1y086q,u3uc6273r6q19uy6g0v3,b3yeehzvunon29ogeh77,egtl3mpfypuyiffjjxri,v7q0kmvvbiiy4aoa84pn,nmq5bv4lcbgamb4fgpao" data-horizontal-position="left" data-vertical-position="top" data-trivial="false" data-children="false" data-max-traces="20" data-controls="false" data-total-sql-count="false" data-authorized="true" data-toggle-shortcut="alt+p" data-start-hidden="false" data-collapse-results="true" data-html-container="body" data-hidden-custom-fields="" data-turbo-permanent="false"></script>
+<script async="" nonce="" type="text/javascript" id="mini-profiler" src="./Swagger UI_files/includes.js" data-css-url="/mini-profiler-resources/includes.css?v=116e2a6fd81c286e004e2a0afb03baa1" data-version="116e2a6fd81c286e004e2a0afb03baa1" data-path="/mini-profiler-resources/" data-current-id="jfdoccufg4rjtv3m69e1" data-ids="jfdoccufg4rjtv3m69e1,g9ygkmaokeo5cx53i4go,d7d10ymevob51b1y086q,u3uc6273r6q19uy6g0v3,b3yeehzvunon29ogeh77,egtl3mpfypuyiffjjxri,v7q0kmvvbiiy4aoa84pn,nmq5bv4lcbgamb4fgpao" data-horizontal-position="left" data-vertical-position="top" data-trivial="false" data-children="false" data-max-traces="20" data-controls="false" data-total-sql-count="false" data-authorized="true" data-toggle-shortcut="alt+p" data-start-hidden="false" data-collapse-results="true" data-html-container="body" data-hidden-custom-fields="" data-turbo-permanent="false"></script>
 
 
 
