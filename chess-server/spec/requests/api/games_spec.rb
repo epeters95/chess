@@ -2,7 +2,7 @@ require 'swagger_helper'
 
 RSpec.describe 'Games API', type: :request do
 
-  Game.create(white_name: "Jimmy", black_name: "John")
+  g_id = Game.create(white_name: "Jimmy", black_name: "John").id
 
   path '/api/games' do
 
@@ -57,7 +57,7 @@ RSpec.describe 'Games API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       response(200, 'successful') do
-        let(:id) { '1' }
+        let(:id) { g_id }
         run_test!
       end
 
@@ -81,13 +81,13 @@ RSpec.describe 'Games API', type: :request do
       parameter name: :end_game, in: :body, type: :string
 
       response(200, 'successful') do
-        let(:id) { '1' }
+        let(:id) { g_id }
         let(:move) { { move: { notation: 'e4' } } }
         run_test!
       end
 
       response(422, 'unprocessable entity') do
-        let(:id) { '1' }
+        let(:id) { g_id }
         let(:move) { { move: { notation: 'e4', asdf: 'bad_input' } } }
         run_test!
       end

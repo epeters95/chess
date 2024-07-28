@@ -1,5 +1,18 @@
 require 'swagger_helper'
 
+class MockFile
+
+  def initialize(file)
+    @file =file
+  end
+
+  def tempfile
+    return @file
+  end
+end
+
+g_id = Game.create(white_name: "Jimmy", black_name: "John").id
+
 RSpec.describe 'Boards API', type: :request do
 
   pgn_test = <<-PGN_TEST
@@ -21,6 +34,12 @@ RSpec.describe 'Boards API', type: :request do
   30.Bxf6 gxf6  1/2-1/2
   PGN_TEST
 
+  file = File.open('/tmp/pgn_test.pgn', 'w')
+  file.write(pgn_test)
+
+  file2 = File.open('/tmp/pgn_test2.pgn', 'w')
+  file2.write("sldkflskdfjklsd")
+
   path '/api/boards/{id}' do
 
     get('Show board by id') do
@@ -29,7 +48,8 @@ RSpec.describe 'Boards API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       response(200, 'successful') do
-        let(:id) { '1' }
+        let(:id) { g_id }
+        let(:game_id) { g_id }
         run_test!
       end
     end
@@ -45,16 +65,18 @@ RSpec.describe 'Boards API', type: :request do
       parameter name: :pgn_text, in: :body, type: :string
 
       response(200, 'successful') do
-        let(:pgn_text) { { pgn_text: pgn_test } }
+        let(:pgn_text) { { pgn_text: MockFile.new(file) } }
         run_test!
       end
 
       response(422, 'unprocessable entity') do
-        let(:pgn_text) { { asdf: 'bad_input' } }
+        let(:pgn_text) { { pgn_text: MockFile.new(file2) } }
         run_test!
       end
     end
 
   end
+
+  file.close
 
 end
