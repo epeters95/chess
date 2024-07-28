@@ -2,6 +2,8 @@ require 'swagger_helper'
 
 RSpec.describe 'Games API', type: :request do
 
+  Game.create(white_name: "Jimmy", black_name: "John")
+
   path '/api/games' do
 
     get('List all completed games, or games matching search params') do
@@ -13,7 +15,10 @@ RSpec.describe 'Games API', type: :request do
       parameter name: :name,     in: :path, type: :string
 
       response(200, 'successful') do
-        let(:games) { { name: 'Computer', status: 'completed' } }
+        let(:name) { 'Computer' }
+        let(:status) { 'completed' }
+        let(:white_id) { '1' }
+        let(:black_id) { '2' }
         run_test!
       end
     end
@@ -31,14 +36,14 @@ RSpec.describe 'Games API', type: :request do
         }
       }
 
-      response(200, 'successful') do
+      response(201, 'created') do
 
         let(:game) { { game: { white_name: 'Tester' } } }
         run_test!
       end
 
       response(422, 'unprocessable entity') do
-        let(:game) { { game: { white_name: nil, asdf: 'bad_input' } } }
+        let(:game) { { game: {  asdf: 'bad_input' } } }
         run_test!
       end
     end
@@ -86,7 +91,7 @@ RSpec.describe 'Games API', type: :request do
         let(:move) { { move: { notation: 'e4', asdf: 'bad_input' } } }
         run_test!
       end
-      
+
       response(404, 'not found') do
         let(:id) { '0' }
         run_test!

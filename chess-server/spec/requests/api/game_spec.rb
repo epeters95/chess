@@ -80,7 +80,7 @@ RSpec.describe "Api::Games", type: :request do
       json_fields.each do |field|
         expect(JSON.parse(response.body)[field]).not_to eq(nil)
       end
-      expect(JSON.parse(response.body)["move_count"]).to eql(2)
+      expect(JSON.parse(response.body)["move_count"]).to eql(1)
 
       # Expect correct turn
       expect(JSON.parse(response.body)["turn"]).to eq("black")

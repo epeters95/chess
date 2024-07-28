@@ -29,7 +29,7 @@ RSpec.describe 'Boards API', type: :request do
       parameter name: :id, in: :path, type: :string
 
       response(200, 'successful') do
-        let(:board) { '1' }
+        let(:id) { '1' }
         run_test!
       end
     end
@@ -45,12 +45,12 @@ RSpec.describe 'Boards API', type: :request do
       parameter name: :pgn_text, in: :body, type: :string
 
       response(200, 'successful') do
-        let(:board) { { pgn_text: pgn_test } }
+        let(:pgn_text) { { pgn_text: pgn_test } }
         run_test!
       end
 
       response(422, 'unprocessable entity') do
-        let(:board) { { asdf: 'bad_input' } }
+        let(:pgn_text) { { asdf: 'bad_input' } }
         run_test!
       end
     end

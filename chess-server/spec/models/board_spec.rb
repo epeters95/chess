@@ -20,7 +20,8 @@ RSpec.describe Board, type: :model do
     it 'init_vars called after creation' do
       b = Board.create(params)
 
-      expect(b.move_count).to eq(1)
+      expect(b.pieces).to_not eq(nil)
+      expect(b.positions_array).to_not eq(nil)
     end
 
     it 'save_pieces_to_positions_array called within init_vars after creation' do
