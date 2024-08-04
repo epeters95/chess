@@ -5,7 +5,7 @@ https://epeters95.github.io/chess
 
 Version: Pre-Alpha
 
-Hosted on Render
+Hosted on: Render https://chess-wpj4.onrender.com
 
 This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.  It uses PostgreSQL for storage and includes several features:
 - Local game against computer or play as both black and white
