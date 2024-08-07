@@ -212,7 +212,7 @@ table#game-table {
   min-height: 280px;
 }
 .content-container > div {
-  background-color: rgba(0,0,0,0.36);
+  background-color: rgba(20,20,20,0.6);
   margin-bottom: 30px;
 }
 
