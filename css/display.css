@@ -75,12 +75,22 @@ body {
   text-align: center;
 }
 
+body span, body p, body li {
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
 body b {
   color: white;
 }
 
 h1 {
   font-size: 72;
+}
+
+h1, h2, h3 {
+  font-family: serif !important
 }
 
 checker{
@@ -297,6 +307,7 @@ table#game-table {
 .header span{
   margin-left: 80px;
   font-size: 16pt;
+  font-family: serif;
 }
 .header span a{
   color: wheat;
