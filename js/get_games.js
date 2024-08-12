@@ -11,7 +11,6 @@ var gameView = null;
 
 // Initialize map variable
 var moveToPiecesMap = {};
-var movesMap = {};
 
 function getGames() {
 
@@ -85,7 +84,7 @@ function drawMoveList(json, selectedId) {
   movesList.innerHTML = "";
   let list = document.createElement("table");
   let row;
-  let selId = selectedId;
+
   if (json["moves"].length === 0) {
     let span = document.createElement("span");
     span.innerHTML = "No moves played";

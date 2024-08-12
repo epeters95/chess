@@ -97,7 +97,7 @@ class GameView {
 
     this.statusSpan.innerText = this.status;
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.switchSquareColor()
 
@@ -140,13 +140,13 @@ class GameView {
       if (that.isLive && that.showTurn !== that.turn && !skipLoop && that.gameStatus !== "completed") {
         that.checkForMoveLoop();
       }
-      canvas.click()
+      that.canvas.click()
     })
 
   }
 
   drawTeam(color) {
-    context.font = `50px Verdana`;
+    this.context.font = `50px Verdana`;
     let smallSize = this.squareSize * 0.9;
     let tinySize = this.squareSize * 0.1;
     let squareSize = this.squareSize;
@@ -237,8 +237,8 @@ class GameView {
 
     for (let x = 0; x <= this.canvas.width; x += this.squareSize) {
       for (let y = 0; y <= this.canvas.width; y += this.squareSize) {
-        context.fillStyle = this.switchSquareColor();
-        context.fillRect(x, y, this.squareSize, this.squareSize);
+        this.context.fillStyle = this.switchSquareColor();
+        this.context.fillRect(x, y, this.squareSize, this.squareSize);
       }
     }
   }
@@ -338,8 +338,6 @@ class GameView {
   }
 
   selectMove(move) {
-
-    let that = this;
 
     if (move["move_type"] === "promotion" || move["move_type"] === "attack_promotion") {
       this.promotionMove = move;
