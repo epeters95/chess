@@ -9,6 +9,8 @@ class PieceObject
   def self.bishop_moves; [[1,1],[1,-1],[-1,1],[-1,-1]]; end
   def self.crown_moves;  [[1,1],[1,-1],[-1,1],[-1,-1],[0,1],[1,0],[0,-1],[-1,0]]; end
 
+  def self.value_map; {'K': 100, 'Q': 9, 'R': 5, 'B': 3, 'N': 3, 'p': 1}; end
+
   attr_accessor :color, :position, :val
   attr_reader :char, :ranged, :taken
 

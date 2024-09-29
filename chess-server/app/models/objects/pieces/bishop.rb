@@ -4,7 +4,7 @@ class Bishop < PieceObject
     super
     @letter = self.class.letter
     @char = "\u265d"
-    @val = 3
+    @val = PieceObject.value_map[@letter]
   end
   def piece_directions
     PieceObject.bishop_moves

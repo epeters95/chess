@@ -6,7 +6,7 @@ class Rook < PieceObject
     @letter = self.class.letter
     @char = "\u265c"
     @castleable = castleable
-    @val = 5
+    @val = PieceObject.value_map[@letter]
   end
 
   def deep_dup

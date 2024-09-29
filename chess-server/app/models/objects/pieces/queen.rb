@@ -4,7 +4,7 @@ class Queen < PieceObject
     super
     @letter = self.class.letter
     @char = "\u265b"
-    @val = 9
+    @val = PieceObject.value_map[@letter]
   end
 
   def piece_directions

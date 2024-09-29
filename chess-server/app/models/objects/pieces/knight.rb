@@ -4,7 +4,7 @@ class Knight < PieceObject
     super
     @letter = self.class.letter
     @char = "\u265e"
-    @val = 3
+    @val = PieceObject.value_map[@letter]
   end
   def piece_directions
     PieceObject.knight_moves
