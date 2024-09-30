@@ -8,11 +8,16 @@ class Computer
     @color = board.turn
   end
 
-  def get_move # returns array of [ [piece, [row, col]], ... ]
+  # TODO: replace with Stockfish or similar chess engine
+  # Either API call or simple implementation of algorithm
+  # (Current move logic is a placeholder)
+  def get_move
     best_moves = []
     under_attack = nil
     attacker = nil
+
     # 1. Detect threats
+    
     legal_moves = @board.legal_moves
     pieces = @board.get_pieces_from_positions_array
 
@@ -28,9 +33,10 @@ class Computer
         end
       end
     end
-    # Identify counter to threat
+    
+    # 2. Identify counter to threat
     pieces[@color].shuffle.each do |my_piece|
-      # TODO: implement blocking
+      
       my_moves = legal_moves[@color].find_all{|mv| mv.piece.position == my_piece.position }
       atks = my_moves.select { |mv| !mv.other_piece.nil? }
       mvs = my_moves.select { |mv| mv.other_piece.nil? }
@@ -52,14 +58,18 @@ class Computer
         return moves[0] if my_piece == under_attack
       end
     end
-    thing = best_moves.shuffle[0]
-    if thing.nil?
-      thing = @board.legal_moves[@color].first
+
+    # 3. If 'good' move found, return it otherwise choose random move
+
+    move = best_moves.shuffle[0]
+    if move.nil?
+      move = @board.legal_moves[@color].first
     end
-    if thing.move_type == "promotion" || thing.move_type == "attack_promotion"
-      thing["promotion_choice"] = "queen"
+    if move.move_type == "promotion" || move.move_type == "attack_promotion"
+      move["promotion_choice"] = "queen"
     end
-    return thing
+    
+    move
   end
 
 end
