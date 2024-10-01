@@ -1,7 +1,6 @@
 // Common variables
 
 const baseUrl = "https://chess-wpj4.onrender.com";
-// const baseUrl = "http://localhost:3000";
 
 const canvas = document.getElementById("game-view");
 
@@ -37,7 +36,6 @@ function getAccessCookie() {
     return found.split("accesscode=")[1];
   } else {
     return '';
-    // return document.getElementById("cookieholder-accesscode").innerHTML;
   }
 }
 
@@ -48,7 +46,6 @@ function getTokenColor() {
 
   } else {
     return '';
-    // return document.getElementById("cookieholder-color").innerHTML;
   }
 }
 
@@ -58,7 +55,6 @@ function getTokenCookie() {
     return found.split("gametoken=")[1];
   } else {
     return '';
-    // return document.getElementById("cookieholder-token").innerHTML;
   }
 }
 
@@ -66,17 +62,6 @@ function setTokenCookie(token, color='', code='') {
   document.cookie = 'gametoken=' + token + '; path=/'
   document.cookie = 'color=' + color + '; path=/'
   document.cookie = 'accesscode=' + code + '; path=/'
-
-  // if (document.getElementById("cookieholder-token")) {
-  //   document.getElementById("cookieholder-token").innerHTML = token;
-  // }
-  // if (document.getElementById("cookieholder-color")) {
-  //   document.getElementById("cookieholder-color").innerHTML = color;
-  // }
-  // if (document.getElementById("cookieholder-accesscode")) {
-  //   document.getElementById("cookieholder-accesscode").innerHTML = code;
-  // }
-  // console.log("Set cookie vals: token:" + token + ", color: " + color + ", code: " + code)
 }
 
 function fetchFromApi(endpoint, method, params=null, successCallback=null) {
