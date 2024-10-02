@@ -140,7 +140,6 @@ function gameViewHtml(game) {
     moveStr = "1 move";
   }
 
-   + id + "/board";
   let htmlString = "<div class='game-thumbnail' style='width:100%; height:100%'>";
 
   htmlString += "<div style='width: 90%; height: 90%; margin: auto; position: relative; background-color: rgba(0,0,0,0.2);'>";
