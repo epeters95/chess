@@ -7,11 +7,13 @@ Version: Pre-Alpha
 
 Hosted on: Render https://chess-wpj4.onrender.com
 
-This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.  It uses PostgreSQL for storage and includes several features:
+Source: [Frontend client (Github Pages)](https://github.com/epeters95/chess/tree/gh-pages) | [Server + backend](https://github.com/epeters95/chess/tree/master)
+
+This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.   It uses PostgreSQL for storage and includes several features:
 - Local game against computer or play as both black and white
 - Play a live game with a friend via shared access code
 - Game history and move replaying
-- Upload a PGN file to import any game in .pgn format and view moves in the game history page
+- Upload a PGN file to import a famous game to the game history page
 
 To play someone using matchmaking, follow these steps:
 
