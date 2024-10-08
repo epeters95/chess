@@ -56,6 +56,13 @@ canvas {
   color: white;
 }
 
+#content.upload p {
+  color: wheat;
+  text-align: left;
+  position: relative;
+  left: 15%;
+}
+
 #content .how-to-instructions {
   * {
     color: wheat;
