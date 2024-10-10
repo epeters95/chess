@@ -6,6 +6,9 @@ modalCloseBtnGames.addEventListener("click", function() {
   modalGames.classList.add("hidden");
 })
 
+let searchForm = document.getElementById("search-games-form");
+let searchButton = document.getElementById("search-button");
+
 let movesList = document.getElementById("moves-list");
 var gameView = null;
 
