@@ -7,7 +7,12 @@ modalCloseBtnGames.addEventListener("click", function() {
 })
 
 let searchForm = document.getElementById("search-games-form");
+let searchQuery = document.getElementById("search-query");
 let searchButton = document.getElementById("search-button");
+
+searchButton.addEventListener("click", function() {
+  window.location.search = searchQuery.value;
+})
 
 let movesList = document.getElementById("moves-list");
 var gameView = null;
