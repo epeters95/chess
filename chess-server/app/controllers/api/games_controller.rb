@@ -23,8 +23,11 @@ class Api::GamesController < ApplicationController
     p_name ||= params[:name]
     if p_name
       p_name = "" if p_name == "Computer"
-      # TODO: replace exact string matching with LIKE or equivalent SQL
-      games = games.where(black_name: p_name).or(games.where(white_name: p_name))
+
+      games = games.where("black_name LIKE ?", Game.sanitize_sql_like(p_name) + "%")
+                   .or(games.where("white_name LIKE ?", Game.sanitize_sql_like(p_name) + "%")
+
+
       unless query_obj.empty?
         games = games.where(query_obj)
       end
