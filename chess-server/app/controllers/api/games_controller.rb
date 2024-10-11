@@ -1,13 +1,13 @@
 class Api::GamesController < ApplicationController
 
   include Util
-  
+
   before_action :set_game, only: [:show, :update, :destroy]
 
   def index
     given_params = search_params
-    # Includes [:status, :white_id, :black_id, :name]
-    # However, handle :name separately to cover => :white_name, :black_name
+    # Includes [:status, :white_id, :black_id, :name, :search]
+    # However, handle :name and :search separately to cover => :white_name, :black_name
     given_params.delete(:name)
 
     query_obj = {}
@@ -18,9 +18,12 @@ class Api::GamesController < ApplicationController
     end
     games = Game.all
     # Join searches of name across both color categories (initial db design)
-    p_name = params[:name]
+    # :search param has priority, defer to :name
+    p_name = params[:search]
+    p_name ||= params[:name]
     if p_name
       p_name = "" if p_name == "Computer"
+      # TODO: replace exact string matching with LIKE or equivalent SQL
       games = games.where(black_name: p_name).or(games.where(white_name: p_name))
       unless query_obj.empty?
         games = games.where(query_obj)
@@ -31,7 +34,7 @@ class Api::GamesController < ApplicationController
       end
       games = games.where(query_obj)
     end
-    
+
     games = games.map do |game|
       { id: game.id,
         white_name: game.white_name,
@@ -63,7 +66,7 @@ class Api::GamesController < ApplicationController
       else
         render json: {errors: @game.errors}, status: :unprocessable_entity
       end
-    rescue Exception => e  
+    rescue Exception => e
       render json: {errors: e.message }, status: :unprocessable_entity
     end
   end
