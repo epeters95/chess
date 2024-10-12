@@ -25,7 +25,7 @@ class Api::GamesController < ApplicationController
       p_name = "" if p_name == "Computer"
 
       games = games.where("black_name LIKE ?", Game.sanitize_sql_like(p_name) + "%")
-                   .or(games.where("white_name LIKE ?", Game.sanitize_sql_like(p_name) + "%")
+                   .or(games.where("white_name LIKE ?", Game.sanitize_sql_like(p_name) + "%"))
 
 
       unless query_obj.empty?
