@@ -7,8 +7,8 @@ class Api::GamesController < ApplicationController
   def index
     given_params = search_params
     # Includes [:status, :white_id, :black_id, :name, :search]
-    # However, handle :name and :search separately to cover => :white_name, :black_name
-    given_params.delete(:name)
+    # However, handle :search separately to cover => :white_name, :black_name
+    given_params.delete(:search)
 
     query_obj = {}
     given_params.each do |key, val|
@@ -20,15 +20,33 @@ class Api::GamesController < ApplicationController
     # Join searches of name across both color categories (initial db design)
     # :search param has priority, defer to :name
     p_name = params[:search]
-    p_name ||= params[:name]
+
     if p_name
       p_name = "" if p_name == "Computer"
 
-      games = games.where("black_name LIKE ?", Game.sanitize_sql_like(p_name) + "%")
-                   .or(games.where("white_name LIKE ?", Game.sanitize_sql_like(p_name) + "%"))
+      p_name = p_name.downcase
+
+      # games = games.where("black_name LIKE ?", Game.sanitize_sql_like(p_name) + "%")
+      #              .or(games.where("white_name LIKE ?", Game.sanitize_sql_like(p_name) + "%"))
 
 
-      unless query_obj.empty?
+      filtered_game_ids = games.pluck(:white_name, :black_name, :id).map do |g_arr|
+        white_name, black_name, id = g_arr
+
+        names = [white_name, black_name].compact.map(&:downcase)
+
+        any_matches = names.map{ |nm| nm.match? /^#{Regexp.quote(p_name)}/ }.any?
+
+        if any_matches
+          id.to_i
+        else
+          nil
+        end
+      end.compact
+
+      if query_obj.empty?
+        games = Game.find(filtered_game_ids)
+      else
         games = games.where(query_obj)
       end
     else
@@ -151,7 +169,7 @@ class Api::GamesController < ApplicationController
     end
 
     def search_params
-      params.permit(:status, :white_id, :black_id, :name)
+      params.permit(:status, :white_id, :black_id, :search)
       # TODO: allow separate white and black player search
     end
 end
