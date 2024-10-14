@@ -49,12 +49,14 @@ class Api::GamesController < ApplicationController
       else
         games = games.where(query_obj)
       end
-    else
-      if query_obj.empty?
-        query_obj = {status: "completed"}
-      end
-      games = games.where(query_obj)
     end
+
+    # By default, only search and show completed games
+    # TODO: add checkbox on UI for incompleted
+    if query_obj.empty?
+      query_obj = {status: "completed"}
+    end
+    games = games.where(query_obj)
 
     games = games.map do |game|
       { id: game.id,
