@@ -7,8 +7,9 @@ class Api::GamesController < ApplicationController
   def index
     given_params = search_params
     # Includes [:status, :white_id, :black_id, :name, :search]
-    # However, handle :search separately to cover => :white_name, :black_name
-    given_params.delete(:search)
+    # However, handle :name separately to cover => :white_name, :black_name
+    # :name param is used for an exact match (links in Players table use this param)
+    given_params.delete(:name)
 
     query_obj = {}
     given_params.each do |key, val|
@@ -18,17 +19,13 @@ class Api::GamesController < ApplicationController
     end
     games = Game.all
     # Join searches of name across both color categories (initial db design)
-    # :search param has priority, defer to :name
-    p_name = params[:search]
 
-    if p_name
-      p_name = "" if p_name == "Computer"
+    p_search = params[:search]
+    p_name = params[:name]
 
-      p_name = p_name.downcase
+    if p_search
 
-      # games = games.where("black_name LIKE ?", Game.sanitize_sql_like(p_name) + "%")
-      #              .or(games.where("white_name LIKE ?", Game.sanitize_sql_like(p_name) + "%"))
-
+      p_search = p_search.downcase
 
       filtered_game_ids = games.pluck(:white_name, :black_name, :id).map do |g_arr|
         white_name, black_name, id = g_arr
@@ -45,6 +42,12 @@ class Api::GamesController < ApplicationController
       end.compact
 
       games = Game.where(id: filtered_game_ids)
+
+    elsif p_name
+      p_name = "" if p_name == "Computer"
+
+      games = games.where(black_name: p_name)
+                   .or(games.where(white_name: p_name))
     end
 
     # By default, only search and show completed games
@@ -167,7 +170,7 @@ class Api::GamesController < ApplicationController
     end
 
     def search_params
-      params.permit(:status, :white_id, :black_id, :search)
+      params.permit(:status, :white_id, :black_id, :name, :search)
       # TODO: allow separate white and black player search
     end
 end
