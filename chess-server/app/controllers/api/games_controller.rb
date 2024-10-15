@@ -44,11 +44,7 @@ class Api::GamesController < ApplicationController
         end
       end.compact
 
-      if query_obj.empty?
-        games = Game.find(filtered_game_ids)
-      else
-        games = games.where(query_obj)
-      end
+      games = Game.where(id: filtered_game_ids)
     end
 
     # By default, only search and show completed games
