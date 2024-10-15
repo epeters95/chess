@@ -43,6 +43,12 @@ class Api::GamesController < ApplicationController
 
       games = Game.where(id: filtered_game_ids)
 
+      # By default, only search and show completed games
+      # TODO: add checkbox on UI for incompleted
+      if query_obj.empty?
+        query_obj = {status: "completed"}
+      end
+      
     elsif p_name
       p_name = "" if p_name == "Computer"
 
@@ -50,11 +56,6 @@ class Api::GamesController < ApplicationController
                    .or(games.where(white_name: p_name))
     end
 
-    # By default, only search and show completed games
-    # TODO: add checkbox on UI for incompleted
-    if query_obj.empty?
-      query_obj = {status: "completed"}
-    end
     games = games.where(query_obj)
 
     games = games.map do |game|
