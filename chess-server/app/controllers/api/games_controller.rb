@@ -48,7 +48,7 @@ class Api::GamesController < ApplicationController
       if query_obj.empty?
         query_obj = {status: "completed"}
       end
-      
+
     elsif p_name
       p_name = "" if p_name == "Computer"
 
@@ -56,7 +56,7 @@ class Api::GamesController < ApplicationController
                    .or(games.where(white_name: p_name))
     end
 
-    games = games.where(query_obj)
+    games = games.where(query_obj).joins(:board).where.not(board: {move_count: 0})
 
     games = games.map do |game|
       { id: game.id,
