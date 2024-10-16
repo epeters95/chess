@@ -143,7 +143,12 @@ function gameViewHtml(game) {
   let name1 = game["white_name"];
   let name2 = game["black_name"];
 
-  let moveStr = "" + (game.move_count - 1) + " moves";
+  let moveCt = 0;
+  if (game.move_count >= 1) {
+    moveCt = game.move_count - 1;
+  }
+  let moveStr = "" + moveCt + " moves";
+  
   if (game.move_count === 2) {
     moveStr = "1 move";
   }
