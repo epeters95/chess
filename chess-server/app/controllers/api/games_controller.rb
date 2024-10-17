@@ -54,6 +54,9 @@ class Api::GamesController < ApplicationController
 
       games = games.where(black_name: p_name)
                    .or(games.where(white_name: p_name))
+
+    elsif query_obj.empty?
+      query_obj = {status: "completed"}
     end
 
     games = games.where(query_obj).joins(:board).where.not(board: {move_count: 0})
