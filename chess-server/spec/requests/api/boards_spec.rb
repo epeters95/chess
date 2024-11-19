@@ -172,6 +172,16 @@ RSpec.describe 'Boards API', type: :request do
 
       response(200, 'successful') do
         let(:pgn_text) { { pgn_text: MockFile.new(file) } }
+        example 'application/json', :example_1, {
+          "id": 212,
+          "turn": "white",
+          "status_str": "White to move - Morphy, Paul ",
+          "move_count": 56,
+          "positions_array": "{\"white\":[{\"color\":\"white\",\"position\":\"a2\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":0,\"pawn_dir\":1,\"class_name\":\"Pawn\"},{\"color\":\"white\",\"position\":\"b4\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":1,\"pawn_dir\":1,\"class_name\":\"Pawn\"},{\"color\":\"white\",\"position\":\"f6\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":3,\"pawn_dir\":1,\"class_name\":\"Pawn\"},{\"color\":\"white\",\"position\":\"g3\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":1,\"pawn_dir\":1,\"class_name\":\"Pawn\"},{\"color\":\"white\",\"position\":\"h4\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":1,\"pawn_dir\":1,\"class_name\":\"Pawn\"},{\"color\":\"white\",\"position\":\"a1\",\"ranged\":true,\"taken\":false,\"char\":\"♜\",\"castleable\":true,\"class_name\":\"Rook\"},{\"color\":\"white\",\"position\":\"c3\",\"ranged\":false,\"taken\":false,\"char\":\"♞\",\"class_name\":\"Knight\"},{\"color\":\"white\",\"position\":\"c6\",\"ranged\":true,\"taken\":false,\"char\":\"♛\",\"class_name\":\"Queen\"},{\"color\":\"white\",\"position\":\"e3\",\"ranged\":false,\"taken\":false,\"char\":\"♚\",\"castleable\":false,\"class_name\":\"King\"},{\"color\":\"white\",\"position\":\"c7\",\"ranged\":true,\"taken\":false,\"char\":\"♜\",\"castleable\":false,\"class_name\":\"Rook\"}],\"black\":[{\"color\":\"black\",\"position\":\"a7\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":0,\"pawn_dir\":-1,\"class_name\":\"Pawn\"},{\"color\":\"black\",\"position\":\"b6\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":1,\"pawn_dir\":-1,\"class_name\":\"Pawn\"},{\"color\":\"black\",\"position\":\"f3\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":3,\"pawn_dir\":-1,\"class_name\":\"Pawn\"},{\"color\":\"black\",\"position\":\"f7\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":0,\"pawn_dir\":-1,\"class_name\":\"Pawn\"},{\"color\":\"black\",\"position\":\"g4\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":2,\"pawn_dir\":-1,\"class_name\":\"Pawn\"},{\"color\":\"black\",\"position\":\"h5\",\"ranged\":false,\"taken\":false,\"char\":\"♟\",\"move_count\":1,\"pawn_dir\":-1,\"class_name\":\"Pawn\"},{\"color\":\"black\",\"position\":\"d8\",\"ranged\":true,\"taken\":false,\"char\":\"♜\",\"castleable\":false,\"class_name\":\"Rook\"},{\"color\":\"black\",\"position\":\"c2\",\"ranged\":true,\"taken\":false,\"char\":\"♛\",\"class_name\":\"Queen\"},{\"color\":\"black\",\"position\":\"g8\",\"ranged\":false,\"taken\":false,\"char\":\"♚\",\"castleable\":false,\"class_name\":\"King\"},{\"color\":\"black\",\"position\":\"h7\",\"ranged\":true,\"taken\":false,\"char\":\"♜\",\"castleable\":false,\"class_name\":\"Rook\"}]}",
+          "game_id": 218,
+          "created_at": "2024-11-17T04:00:43.677Z",
+          "updated_at": "2024-11-17T04:01:02.242Z"
+        }
         run_test!
       end
 
