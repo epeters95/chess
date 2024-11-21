@@ -180,6 +180,7 @@ RSpec.describe 'Games API', type: :request do
       produces 'application/json'
 
       response(200, 'successful') do
+        example 'application/json', :example_1, "“Of course, errors are not good for a chess game, but errors are unavoidable and in any case, a game without errors, or as they say 'flawless game' is colorless.”     ― Mikhail Tal"
         run_test!
       end
     end

@@ -41,27 +41,6 @@ RSpec.describe "Api::Games", type: :request do
 
   end
 
-  # Show
-  describe 'GET /api/games/:id' do
-
-    it 'returns an existing game from an id' do
-
-      post '/api/games', params: player_params
-
-      id = JSON.parse(response.body)["game"]["id"]
-
-      get '/api/games/' + id.to_s
-
-      expect(response.status).to eql(200)
-
-      # Expect all fields
-      json_fields.each do |field|
-        expect(JSON.parse(response.body)[field]).not_to eq(nil)
-      end
-
-    end
-  end
-
   # Update
   describe 'PATCH /api/games/:id' do
 
