@@ -168,10 +168,11 @@ RSpec.describe 'Boards API', type: :request do
       produces 'application/json'
       consumes 'application/json'
 
-      parameter name: :pgn_text, in: :body, type: :string
+      parameter name: :pgn_text, in: :body, type: :file
 
       response(200, 'successful') do
-        let(:pgn_text) { { pgn_text: MockFile.new(file) } }
+
+        let(:pgn_text) { {pgn_text: fixture_file_upload('pgn_test.pgn') } }
         example 'application/json', :example_1, {
           "id": 212,
           "turn": "white",
@@ -186,7 +187,7 @@ RSpec.describe 'Boards API', type: :request do
       end
 
       response(422, 'unprocessable entity') do
-        let(:pgn_text) { { pgn_text: MockFile.new(file2) } }
+        let(:pgn_text) { { pgn_text: fixture_file_upload('pgn_test2.pgn') } }
         run_test!
       end
     end
