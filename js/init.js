@@ -130,15 +130,20 @@ function drawCodeWindow(json) {
   }
 
   function randColorVal() {
-    return Math.floor(Math.random() * 255).toString(16);
+    return Math.floor(Math.random() * 255);
   }
 
   let cx = canv.getContext("2d");
   cx.font = `48pt Comic Sans MS`;
-  let r = randColorVal();
-  let g = randColorVal();
-  let b = randColorVal();
-  cx.fillStyle = "#" + r + g + b;
+  let total = 255*3;
+  let r, g, b = 0;
+  while (total > 600) {
+    r = randColorVal();
+    g = randColorVal();
+    b = randColorVal();
+    total = r + g + b;
+  }
+  cx.fillStyle = "#" + r.toString(16) + g.toString(16) + b.toString(16);
   cx.fillText(json["access_code"], 5, 80);
 
   
