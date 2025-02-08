@@ -1,6 +1,7 @@
 class Computer
 
   include Util
+  require EngineInterface
 
   attr_reader :color
   def initialize(board)
@@ -11,7 +12,14 @@ class Computer
   # TODO: replace with Stockfish or similar chess engine
   # Either API call or simple implementation of algorithm
   # (Current move logic is a placeholder)
-  def get_move
+  def get_move  
+    # url = "www.example.com"  
+    # interface = EngineInterface.new(url)
+    # move = interface.send_request()
+    calculate_move
+  end
+
+  def calculate_move
     best_moves = []
     under_attack = nil
     attacker = nil
@@ -68,7 +76,7 @@ class Computer
     if move.move_type == "promotion" || move.move_type == "attack_promotion"
       move["promotion_choice"] = "queen"
     end
-    
+
     move
   end
 
