@@ -1,7 +1,6 @@
 class Computer
 
   include Util
-  require EngineInterface
 
   attr_reader :color
   def initialize(board)
