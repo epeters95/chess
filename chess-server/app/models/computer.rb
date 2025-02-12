@@ -3,18 +3,31 @@ class Computer
   include Util
 
   attr_reader :color
-  def initialize(board)
+  def initialize(board, difficulty="easy")
     @board = board
     @color = board.turn
+    @difficulty = difficulty
   end
 
   # TODO: replace with Stockfish or similar chess engine
   # Either API call or simple implementation of algorithm
   # (Current move logic is a placeholder)
   def get_move  
-    # url = "www.example.com"  
+    # url = "www.example.com" # replace with Render private server url
     # interface = EngineInterface.new(url)
-    # move = interface.send_request()
+    # level = 1
+    # case difficulty
+    # when "easy"
+    #   level = 1
+    # when "medium"
+    #   level = 4
+    # when "hard"
+    #   level = 10
+    # when "insane"
+    #   level = 20
+    # move_history = @board.played_moves.map{|mv| "#{mv.position}#{mv.new_position}" }
+    # # TODO: adjust moves for castling (king_position, rook_starting_position)
+    # move = interface.send_request(move_history, level)
     calculate_move
   end
 

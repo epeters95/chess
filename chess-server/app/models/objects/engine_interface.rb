@@ -7,8 +7,13 @@ class EngineInterface
     @api_url = URI.parse(api_url)
   end
   
-  def send_request
-    res = Net::HTTP.post_form.new(@api_url, 'move_history' => '', 'move' => '', 'game_id' => 1)
+  def send_request(move_history, level)
+    res = Net::HTTP.post_form.new(
+      @api_url,
+      'move_history' => move_history,
+      'level' => level,
+      'game_id' => 1
+    )
     if res.is_a?(Net::HTTPSuccess)
       return res.body
     end
