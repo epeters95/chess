@@ -13,7 +13,7 @@ class Computer
     url = "chess-engine-interface:10000/choose_move"
     interface = EngineInterface.new(url)
     level = 1
-    case difficulty
+    case @difficulty
     when "easy"
       level = 1
     when "medium"
@@ -22,9 +22,14 @@ class Computer
       level = 10
     when "insane"
       level = 20
-    move_history = @board.played_moves.map{|mv| "#{mv.position}#{mv.new_position}" }.join(",")
-    # TODO: adjust moves for castling (king_position, rook_starting_position)
-    move = interface.send_request(move_history, level)
+
+    # Map moves to UCI longform notation
+    move_history = @board.played_moves.map {|mv| mv.uci_notation }
+
+    move = interface.get_move(move_history, level)
+
+    # Identify legal move from UCI notation
+
     calculate_move
   end
 

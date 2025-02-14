@@ -39,6 +39,10 @@ class Move < ApplicationRecord
     @move_object.to_json(options)
   end
 
+  def uci_notation
+    @move_object.get_uci_notation
+  end
+
   # def notation_cached
   #   Rails.cache.fetch("#{cache_key_with_version}/notation", expires_in: 12.hours) do
   #     set_notation

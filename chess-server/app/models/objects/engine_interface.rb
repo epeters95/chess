@@ -14,7 +14,7 @@ class EngineInterface
     headers = {'content-type': 'application/json'}
     res = Net::HTTP.post(
       @api_url,
-      data
+      data,
       {'content-type': 'application/json'}
     )
     if res.is_a?(Net::HTTPSuccess)

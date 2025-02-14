@@ -87,6 +87,20 @@ class MoveObject
     end
   end
 
+  def get_uci_notation
+    notation = @position
+    if @move_type == "castle_kingside"
+      notation += "#{@piece.color == "white" ? "h1" : "h8"}"
+    elsif @move_type == "castle_queenside"
+      notation += "#{@piece.color == "white" ? "a1" : "a8"}"
+    elsif @move_type == "promotion" || @move_type == "attack_promotion"
+      notation += @new_position + @piece.letter.downcase
+    else
+      notation += @new_position
+    end
+    notation
+  end
+
   def disambiguated_position
     show_file = false
     show_rank = false
