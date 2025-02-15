@@ -25,15 +25,43 @@ class Computer
     end
 
     # Map moves to UCI longform notation
-    move_history = @board.played_moves.map {|mv| mv.uci_notation }
+    move_history = @board.played_moves.map {|mv| mv.uci_notation }.join(',')
 
-    move = interface.get_move(move_history, level)
-
-    puts "Move: #{move}" # debug
+    move_uci = interface.get_move(move_history, level)
 
     # Identify legal move from UCI notation
+    move = get_legal_move_from_uci(move_uci)
 
-    calculate_move
+    move
+    # calculate_move
+  end
+
+  def get_legal_move_from_uci(move_uci)
+    first_pos  = move_uci[0..1]
+    second_pos = move_uci[2..3]
+    promotion  = move_uci[4]
+
+    piece_moves = @board.legal_moves[@color].select{ |mv| mv.piece.position == first_pos }
+    pieces = @board.get_pieces_from_positions_array[@color]
+
+    # Castling
+    rooks = pieces.select{ |pc| pc.is_a?(Rook) && pc.castleable }
+    if rooks.any?
+      rook_positions = rooks.map{ |pc| pc.position }
+      castle_move = piece_moves.find{ |mv| mv.rook_position == second_pos && rook_positions.include?(second_pos) }
+      unless castle_move.nil?
+        return castle_move
+      end
+    end
+
+    # Promotions and other
+    move = piece_moves.find { |mv| mv.new_position == second_pos }
+    if !promotion.nil? && !move.nil? && move.move_type.include?("promotion")
+      move.promotion_choice = promotion_map[promotion.upcase]
+      return move
+    end
+
+    move
   end
 
   def calculate_move

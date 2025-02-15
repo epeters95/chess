@@ -72,10 +72,10 @@ module Util
 
   def promotion_map
     {
-      "Q": "queen",
-      "R": "rook",
-      "B": "bishop",
-      "N": "knight"
+      "Q" => "queen",
+      "R" => "rook",
+      "B" => "bishop",
+      "N" => "knight"
     }
   end
 end

@@ -10,7 +10,7 @@ class EngineInterface
   end
   
   def send_request
-    data = '{"move_history": "' + @move_history + '", "level": "' + @level + '"}'
+    data = "{\"move_history\": \"#{@move_history}\", \"level\": \"#{@level}\"}"
     headers = {'content-type': 'application/json'}
     res = Net::HTTP.post(
       @api_url,
@@ -29,7 +29,7 @@ class EngineInterface
     @level = level
     resp = send_request
     unless resp.nil?
-      resp["move"]
+      JSON.parse(resp)["move"]
     else
       nil
     end

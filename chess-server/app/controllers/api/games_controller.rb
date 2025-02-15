@@ -170,7 +170,7 @@ class Api::GamesController < ApplicationController
     end
 
     def move_params
-      params.require(:move).permit(Move.column_names - ["created_at", "updated_at"])
+      params.require(:move).permit(Move.column_names - ["created_at", "updated_at"] + ["causes_check"])
     end
 
     def search_params
