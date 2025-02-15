@@ -22,11 +22,14 @@ class Computer
       level = 10
     when "insane"
       level = 20
+    end
 
     # Map moves to UCI longform notation
     move_history = @board.played_moves.map {|mv| mv.uci_notation }
 
     move = interface.get_move(move_history, level)
+
+    puts "Move: #{move}" # debug
 
     # Identify legal move from UCI notation
 
