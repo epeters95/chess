@@ -43,22 +43,11 @@ class Computer
 
     piece_moves = @board.legal_moves[@color].select{ |mv| mv.piece.position == first_pos }
     pieces = @board.get_pieces_from_positions_array[@color]
-
-    # Castling
-    rooks = pieces.select{ |pc| pc.is_a?(Rook) && pc.castleable }
-    if rooks.any?
-      rook_positions = rooks.map{ |pc| pc.position }
-      castle_move = piece_moves.find{ |mv| mv.rook_position == second_pos && rook_positions.include?(second_pos) }
-      unless castle_move.nil?
-        return castle_move
-      end
-    end
-
-    # Promotions and other
     move = piece_moves.find { |mv| mv.new_position == second_pos }
+
+    # Promotions
     if !promotion.nil? && !move.nil? && move.move_type.include?("promotion")
       move.promotion_choice = promotion_map[promotion.upcase]
-      return move
     end
 
     move

@@ -114,7 +114,7 @@ class Api::GamesController < ApplicationController
 
             if @game.is_computers_turn?
               # PATCH/PUT to a game on the computer's turn will initiate a computer move
-              chosen_move = Computer.new(@game.board).get_move
+              chosen_move = Computer.new(@game.board, "medium").get_move
             else
               chosen_move = @game.board.get_move_by_notation(move_params[:notation])
               set_promotion_choice(chosen_move)
@@ -124,7 +124,9 @@ class Api::GamesController < ApplicationController
           if success
             render json: @game, status: :ok
           else
-            render json: {error: @game.errors}, status: :unprocessable_entity
+            error = "Invalid move chosen"
+            error += ", game: #{@game.errors}" if !@game.errors.empty?
+            render json: {error: error}, status: :unprocessable_entity
           end
         else
           render json: {error: "Game is over"}, status: :unprocessable_entity
