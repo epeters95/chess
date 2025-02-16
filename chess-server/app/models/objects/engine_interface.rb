@@ -3,8 +3,10 @@ require 'uri'
 
 class EngineInterface
 
-  def initialize(api_url)
-    @api_url = URI.parse(api_url)
+  def initialize(hostname, port, path)
+    @hostname = hostname
+    @port = port
+    @path = path
     @level = 20
     @move_history = ""
   end
@@ -12,8 +14,9 @@ class EngineInterface
   def send_request
     data = "{\"move_history\": \"#{@move_history}\", \"level\": \"#{@level}\"}"
     headers = {'content-type': 'application/json'}
-    res = Net::HTTP.post(
-      @api_url,
+    http = Net::HTTP.new(@hostname, @port)
+    res = http.post(
+      @path,
       data,
       {'content-type': 'application/json'}
     )
