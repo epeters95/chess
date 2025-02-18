@@ -92,7 +92,7 @@ class MoveObject
     if @move_type == "castle_kingside"
       notation += "#{@piece.color == "white" ? "g1" : "g8"}"
     elsif @move_type == "castle_queenside"
-      notation += "#{@piece.color == "white" ? "b1" : "b8"}"
+      notation += "#{@piece.color == "white" ? "c1" : "c8"}"
     elsif @move_type == "promotion" || @move_type == "attack_promotion"
       notation += @new_position + PieceObject.promotion_get_letter(@promotion_choice).downcase
     else
