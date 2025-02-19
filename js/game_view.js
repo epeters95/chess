@@ -1,6 +1,6 @@
 class GameView {
 
-  constructor(canvas, json, domElements, isLive=false, computerTeam=null, showTurn=null) {
+  constructor(canvas, json, domElements, isLive=false, computerTeam=null, showTurn=null, difficulty=null) {
 
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
@@ -12,6 +12,7 @@ class GameView {
 
     this.isLive = isLive;
     this.computerTeam  = computerTeam;
+    this.difficulty = difficulty;
     this.selectedMoves = [];
     this.selectedPiece = "";
     this.accessCode    = "";
@@ -330,7 +331,7 @@ class GameView {
 
     let that = this;
 
-    fetchFromApi("/api/games/" + this.gameId, "PATCH", null, function(json) {
+    fetchFromApi("/api/games/" + this.gameId, "PATCH", { "difficulty": this.difficulty }, function(json) {
       that.setJsonVars(json);
       that.draw();
     })

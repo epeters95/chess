@@ -110,6 +110,8 @@ function newGame() {
   }
 
   let computerTeam = null;
+  let difficulty = "medium";
+
   if (player1Name.value === "") {
     computerTeam = "white"
   } else if (player2Name.value === "") {
@@ -120,7 +122,6 @@ function newGame() {
     difficultyPopup.classList.remove("hidden")
 
     const submitDifficulty = function() {
-      let difficulty = "medium";
       let easyRadio = document.getElementById("easy-radio");
       let mediumRadio = document.getElementById("medium-radio");
       let hardRadio = document.getElementById("hard-radio");
@@ -132,8 +133,7 @@ function newGame() {
       } else if (hardRadio.checked) {
         difficulty = "hard"
       }
-      requestBody["game"]["difficulty"] = difficulty
-      newGameStart(requestBody, computerTeam)
+      newGameStart(requestBody, computerTeam, difficulty)
     }
     submitDiffEventListeners.forEach((el) => {
       difficultySubmit.removeEventListener("click", el)
@@ -143,14 +143,14 @@ function newGame() {
     difficultySubmit.addEventListener("click", submitDifficulty);
 
   } else {
-    newGameStart(requestBody, computerTeam)
+    newGameStart(requestBody, computerTeam, difficulty)
   }
 }
 
-function newGameStart(requestBody, computerTeam=null) {
+function newGameStart(requestBody, computerTeam=null, difficulty=null) {
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
     hideQuote();
-    gameView = new GameView(canvas, json, domElements, false, computerTeam)
+    gameView = new GameView(canvas, json, domElements, false, computerTeam, null, difficulty)
     gameView.draw()
     // Initiate first move if computer is white
     if (computerTeam === "white") {
