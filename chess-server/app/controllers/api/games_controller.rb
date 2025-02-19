@@ -114,7 +114,7 @@ class Api::GamesController < ApplicationController
 
             if @game.is_computers_turn?
               # PATCH/PUT to a game on the computer's turn will initiate a computer move
-              chosen_move = Computer.new(@game.board, "medium").get_move
+              chosen_move = Computer.new(@game.board, params[:difficulty]).get_move
             else
               chosen_move = @game.board.get_move_by_notation(move_params[:notation])
               set_promotion_choice(chosen_move)
