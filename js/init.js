@@ -21,6 +21,18 @@ promotionSubmit.addEventListener("click", function() {
   promotionPopup.classList.add("hidden")
 })
 
+const difficultyPopup = document.getElementById("difficulty-popup");
+const difficultySubmit = document.getElementById("difficulty-submit");
+difficultySubmit.addEventListener("click", function() {
+  difficultyPopup.classList.add("hidden")
+})
+const modalDiffCloseBtn = document.getElementById("modal-diff-close-button");
+modalDiffCloseBtn.addEventListener("click", function() {
+  difficultyPopup.classList.add("hidden");
+})
+
+var submitDiffEventListeners = []
+
 
 if (newGameSubmit !== null) {
 
@@ -103,7 +115,39 @@ function newGame() {
   } else if (player2Name.value === "") {
     computerTeam = "black"
   }
+  if (computerTeam !== null) {
 
+    difficultyPopup.classList.remove("hidden")
+
+    const submitDifficulty = function() {
+      let difficulty = "medium";
+      let easyRadio = document.getElementById("easy-radio");
+      let mediumRadio = document.getElementById("medium-radio");
+      let hardRadio = document.getElementById("hard-radio");
+
+      if (easyRadio.checked) {
+        difficulty = "easy"
+      } else if (mediumRadio.checked) {
+        difficulty = "medium"
+      } else if (hardRadio.checked) {
+        difficulty = "hard"
+      }
+      requestBody["game"]["difficulty"] = difficulty
+      newGameStart(requestBody, computerTeam)
+    }
+    submitDiffEventListeners.forEach((el) => {
+      difficultySubmit.removeEventListener("click", el)
+    })
+    submitDiffEventListeners = [];
+    submitDiffEventListeners.push(submitDifficulty);
+    difficultySubmit.addEventListener("click", submitDifficulty);
+
+  } else {
+    newGameStart(requestBody, computerTeam)
+  }
+}
+
+function newGameStart(requestBody, computerTeam=null) {
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
     hideQuote();
     gameView = new GameView(canvas, json, domElements, false, computerTeam)

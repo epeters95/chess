@@ -103,11 +103,28 @@
         <br><br><br><br>
       </div>
 
+
     </div>
     <br>
   </div>
   
   <div class="footer">
+  </div>
+  <div id="difficulty-popup" class="hidden">
+    <div id="difficulty-popup-content">
+      <p>Choose a difficulty:</p>
+      <input type="radio" id="easy-radio" name="difficulty-choice" value="easy">
+      <label for="easy-radio">Easy</label><br>
+      <input type="radio" id="medium-radio" name="difficulty-choice" value="medium" checked="checked">
+      <label for="medium-radio">Medium</label><br>
+      <input type="radio" id="hard-radio" name="difficulty-choice" value="hard">
+      <label for="hard-radio">Hard</label><br>
+      <br>
+      <button id="difficulty-submit">Start Game</button>
+      <div id="modal-diff-close-button">
+        <button>X</button>
+      </div>
+    </div>
   </div>
   
   <div class="modal code-modal hidden">
