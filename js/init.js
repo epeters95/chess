@@ -44,7 +44,9 @@ if (newGameSubmit !== null) {
     }
   }
   checkNamesNotBlank();
+  player1Name.addEventListener('keyup', checkNamesNotBlank);
   player1Name.addEventListener('change', checkNamesNotBlank);
+  player2Name.addEventListener('keyup', checkNamesNotBlank);
   player2Name.addEventListener('change', checkNamesNotBlank);
   newGameSubmit.addEventListener('click', newGame);
 }
@@ -54,6 +56,14 @@ if (newLiveGameSubmit !== null) {
 
 
 if (getAccessCode !== null) {
+
+  const checkAccessCodeFull = function() {
+    if (this.value.length === 4) {
+      getAccessCode.removeAttribute('disabled');
+    } else {
+      getAccessCode.setAttribute('disabled', true);
+    }
+  }
   
   getAccessCode.addEventListener('click', findGame);
   if (accessCodeInput.value.length !== 4) {
@@ -61,13 +71,8 @@ if (getAccessCode !== null) {
   }
 
   // Only trigger findGame on click when a full code is entered
-  accessCodeInput.addEventListener('change', function() {
-    if (this.value.length === 4) {
-      getAccessCode.removeAttribute('disabled');
-    } else {
-      getAccessCode.setAttribute('disabled', true);
-    }
-  })
+  accessCodeInput.addEventListener('keyup', checkAccessCodeFull)
+  accessCodeInput.addEventListener('change', checkAccessCodeFull)
 }
 
 var gameView = null;
