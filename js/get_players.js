@@ -18,7 +18,7 @@ fetchFromApi('/api/players', 'GET', null, function(json) {
 
     let tableCells = "<td>" + player.name + "</td><td>";
     if (player.games > 0) {
-      tableCells += "<a href='" + link + "'>" + player.games + "</a>";
+      tableCells += player.games;
     }
     tableCells += "</td><td>";
 

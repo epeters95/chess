@@ -484,8 +484,8 @@ table.inputs-table {
 
 #modal-diff-close-button {
   position: absolute;
-  top: 30px;
-  right: 30px;
+  top: 15px;
+  right: 15px;
 }
 #modal-diff-close-button button {
   cursor: pointer;
