@@ -111,7 +111,6 @@ class GameView {
         this.showTurn = ["white", "black"].filter((el) => {return el !== thisTurn })[0]
       }
     }
-    console.log("this.showTurn: " + this.showTurn + ", this.turn: " + this.turn + ", this.turnName: " + this.turnName)
 
     let that = this;
 
