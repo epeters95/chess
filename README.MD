@@ -11,8 +11,9 @@ Source: [Frontend client (Github Pages)](https://github.com/epeters95/chess/tree
 
 API docs: https://epeters95.github.io/chess/Swagger%20UI.html
 
-This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.   It uses PostgreSQL for storage and includes several features:
-- Local game against computer or play as both black and white
+This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.   It uses PostgreSQL for storage, connects to a microservice to use the Stockfish Python library, and includes several features:
+- Play as both teams
+- Play Stockfish at Easy, Medium, or Hard
 - Play a live game with a friend via shared access code
 - Game history and move replaying
 - Upload a PGN file to import a famous game to the game history page
