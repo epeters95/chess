@@ -9,7 +9,7 @@ class Api::GamesController < ApplicationController
     # Includes [:status, :white_id, :black_id, :name, :search]
     # However, handle :name separately to cover => :white_name, :black_name
     # :name param is used for an exact match (links in Players table use this param)
-    given_params.delete(:name)
+    given_params = given_params.except(:name, :search, :wins, :losses, :draws)
 
     query_obj = {}
     given_params.each do |key, val|
@@ -21,7 +21,10 @@ class Api::GamesController < ApplicationController
     # Join searches of name across both color categories (initial db design)
 
     p_search = params[:search]
-    p_name = params[:name]
+    p_name   = params[:name]
+    p_wins   = params[:wins]
+    p_losses = params[:losses]
+    p_draws  = params[:draws]
 
     if p_search
 
@@ -32,7 +35,7 @@ class Api::GamesController < ApplicationController
 
         names = [white_name, black_name].compact.map(&:downcase)
 
-        any_matches = names.map{ |nm| nm.match? /^#{Regexp.quote(p_name)}/ }.any?
+        any_matches = names.map{ |nm| nm.match? /^#{Regexp.quote(p_search)}/ }.any?
 
         if any_matches
           id.to_i
@@ -49,6 +52,18 @@ class Api::GamesController < ApplicationController
         query_obj = {status: "completed"}
       end
 
+    elsif p_wins
+      player = Player.find(p_wins)
+      games = player.win_games
+
+    elsif p_losses
+      player = Player.find(p_losses)
+      games = player.loss_games
+
+    elsif p_draws
+      player = Player.find(p_draws)
+      games = player.draw_games
+
     elsif p_name
       p_name = "" if p_name == "Computer"
 
@@ -59,7 +74,7 @@ class Api::GamesController < ApplicationController
       query_obj = {status: "completed"}
     end
 
-    games = games.where(query_obj).joins(:board).where.not(board: {move_count: 0})
+    games = games.where(query_obj).joins(:board).where.not(boards: {move_count: 0})
 
     games = games.map do |game|
       { id: game.id,
@@ -176,7 +191,7 @@ class Api::GamesController < ApplicationController
     end
 
     def search_params
-      params.permit(:status, :white_id, :black_id, :name, :search)
+      params.permit(:status, :white_id, :black_id, :name, :search, :wins, :losses)
       # TODO: allow separate white and black player search
     end
 end
