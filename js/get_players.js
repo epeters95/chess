@@ -22,10 +22,6 @@ fetchFromApi('/api/players', 'GET', null, function(json) {
     let link = 'games_index.html?name=' + player.name;
 
     let tableCells = "<td>" + player.name + "</td><td>";
-    if (player.games > 0) {
-      tableCells += player.games;
-    }
-    tableCells += "</td><td>";
 
     if (player.completed_games > 0) {
       tableCells += "<a href='" + link + "&status=completed" + "'>" + player.completed_games + "</a>"
@@ -33,17 +29,17 @@ fetchFromApi('/api/players', 'GET', null, function(json) {
     tableCells += "</td><td>";
 
     if (player.wins > 0) {
-      tableCells += "<a href='" + link + "&wins=" + player.id + "'>" + player.completed_games + "</a>"
+      tableCells += "<a href='" + link + "&wins=" + player.id + "'>" + player.wins + "</a>"
     }
     tableCells += "</td><td>";
 
     if (player.losses > 0) {
-      tableCells += "<a href='" + link + "&losses=" + player.id + "'>" + player.completed_games + "</a>"
+      tableCells += "<a href='" + link + "&losses=" + player.id + "'>" + player.losses + "</a>"
     }
     tableCells += "</td><td>";
 
     if (player.draws > 0) {
-      tableCells += "<a href='" + link + "&draws=" + player.id + "'>" + player.completed_games + "</a>"
+      tableCells += "<a href='" + link + "&draws=" + player.id + "'>" + player.draws + "</a>"
     }
     tableCells += "</td>";
 

@@ -183,6 +183,17 @@ table#game-table {
   }
 }
 
+#game-table-view input {
+  color: white;
+  background-color: black;
+  padding: 8px 5px;
+  margin: 4px;
+}
+#game-table-view button {
+  margin: 4px;
+  padding: 5px;
+}
+
 .game-thumbnail {
   top: 20%;
 }
