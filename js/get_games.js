@@ -1,9 +1,14 @@
 let table = document.getElementById("game-table");
 
+var windowKeyEventListeners = [];
+
 let modalGames = document.getElementsByClassName("modal")[0];
 let modalCloseBtnGames = document.getElementById("modal-close-button");
 modalCloseBtnGames.addEventListener("click", function() {
   modalGames.classList.add("hidden");
+  if (windowKeyEventListeners.length > 0) {
+    window.removeEventListener("keydown", windowKeyEventListeners.pop())
+  }
 })
 
 let searchForm = document.getElementById("search-games-form");
@@ -16,6 +21,8 @@ searchButton.addEventListener("click", function() {
 
 let movesList = document.getElementById("moves-list");
 var gameView = null;
+
+var currentMoveIndex = 0;
 
 // Initialize map variable
 var moveToPiecesMap = {};
@@ -69,7 +76,7 @@ function populateGameAndMoves(json) {
   json["moves"].forEach(function(move, i) {
     moveToPiecesMap[i] = json["pieces_history"][i];
   })
-
+  currentMoveIndex = 0;
   showBoardRefresh(json, null)
 }
 
@@ -98,11 +105,40 @@ function drawMoveList(json, selectedId) {
     span.innerHTML = "No moves played";
     movesList.appendChild(span);
     return;
+  } else {
+    const keydownListener = function(e) {
+      let len = json["moves"].length
+      let code = e.keyCode;
+      let newIndex = currentMoveIndex;
+      let redraw = false;
+      
+      if (code == '38' || code == '37') {       // up, or left
+        if (currentMoveIndex > 1) {
+          currentMoveIndex -= 1;
+          redraw = true;
+        }
+      }
+      else if (code == '40' || code == '39' || code == '13' ) {  // down, or right or enter
+        if (currentMoveIndex < len - 1) {
+          currentMoveIndex += 1;
+          redraw = true;
+        }
+      }
+      if (redraw) {
+        json["game"]["pieces"] = moveToPiecesMap[currentMoveIndex];
+        showBoardRefresh(json, currentMoveIndex)
+        e.preventDefault()
+      }
+    }
+    window.removeEventListener('keydown', windowKeyEventListeners.pop())
+    window.addEventListener('keydown', keydownListener)
+    windowKeyEventListeners.push(keydownListener)
   }
   json["moves"].forEach(function(move, index) {
     if (move) {
       function clickFunction(event) {
         event.target.classList.add("selected")
+        currentMoveIndex = index;
         json["game"]["pieces"] = moveToPiecesMap[index];
         showBoardRefresh(json, index)
       }
