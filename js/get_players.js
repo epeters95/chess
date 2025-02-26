@@ -22,6 +22,10 @@ fetchFromApi('/api/players', 'GET', null, function(json) {
     let link = 'games_index.html?name=' + player.name;
 
     let tableCells = "<td>" + player.name + "</td><td>";
+    if (player.games > 0) {
+      tableCells += player.games;
+    }
+    tableCells += "</td><td>";
 
     if (player.completed_games > 0) {
       tableCells += "<a href='" + link + "&status=completed" + "'>" + player.completed_games + "</a>"
