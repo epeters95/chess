@@ -168,7 +168,7 @@ function drawMoveList(json, selectedId) {
   })
   movesList.appendChild(list);
   if (selectedId) {
-    let cell = document.querySelector("[data-id='" + selectedId + "']");
+    let cell = document.querySelector("#moves-list td[data-id='" + selectedId + "']");
     cell.classList.add("selected");
   }
 }
