@@ -23,13 +23,16 @@ namespace :api do
     winlosses = compl_games.where("boards.status_str LIKE '% has won by checkmate!'")
 
     winlosses.each do |gm|
-      if gm.board.status_str == "#{gm.black_name} has won by checkmate!"
+      bl_name = (gm.black_name == "" ? "Computer" : gm.black_name)
+      wh_name = (gm.white_name == "" ? "Computer" : gm.white_name)
+      
+      if gm.board.status_str == "#{bl_name} has won by checkmate!"
 
         gm.update(winner_id: gm.black_id,
                   loser_id: gm.white_id,
                   outcome: "checkmate")
       
-      elsif gm.board.status_str == "#{gm.white_name} has won by checkmate!"
+      elsif gm.board.status_str == "#{wh_name} has won by checkmate!"
         
         gm.update(winner_id: gm.white_id,
                   loser_id: gm.black_id,
