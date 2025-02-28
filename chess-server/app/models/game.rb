@@ -9,6 +9,8 @@ class Game < ApplicationRecord
 
   include Util
 
+  OUTCOMES = ["checkmate", "resignation", "draw"]
+
   def is_computers_turn?
     is_computer?(self.board.turn)
   end
@@ -31,11 +33,22 @@ class Game < ApplicationRecord
     return result
   end
 
+  def set_outcome(outcome_str, winner_id, loser_id)
+    if OUTCOMES.include?(outcome_str)
+      self.update(outcome:   outcome_str,
+                  winner_id: winner_id,
+                  loser_id:  loser_id)
+    else
+      false
+    end
+  end
+
   def evaluate_outcomes(status_str)
     previous_turn = switch(self.board.turn)
 
     if self.board.is_insuff_material_stalemate?
       self.board.update(status_str: "The game is a draw due to insufficient mating material.")
+      self.set_outcome("draw", self.white_id, self.black_id)
 
     elsif self.board.is_checkmate?(self.board.turn)
       
@@ -45,8 +58,15 @@ class Game < ApplicationRecord
 
       self.board.update(status_str: "#{display_name_for(previous_turn)} has won by checkmate!")
 
+      win_id = (self.board.turn == "black" ? self.white_id : self.black_id)
+      los_id =  (self.board.turn == "white" ? self.white_id : self.black_id)
+
+      self.set_outcome("checkmate", win_id, los_id)
+
+
     elsif self.board.is_nomoves_stalemate?(self.board.turn)
       self.board.update(status_str: "The game is a draw. #{display_name_for(self.board.turn)} has survived by stalemate!")
+      self.set_outcome("draw", self.black_id, self.white_id)
 
     else
 

@@ -25,24 +25,17 @@ class Player < ApplicationRecord
     found
   end
 
-  # TODO: convert to migrations and add game.outcome, winner_id, loser_id
-
   def draw_games
-    compl_games = self.games.joins(:board).where(status: "completed")
-    draws = compl_games.where("boards.status_str = ?", "The game is a draw due to insufficient mating material.").or(
-            compl_games.where("boards.status_str LIKE 'The game is a draw. % has survived by stalemate!'"))
+    Game.where(status: "completed", outcome: "draw", winner_id: self.id).or(
+      Game.where(status: "completed", outcome: "draw", loser_id: self.id))
   end
 
   def loss_games
-    compl_games = self.games.joins(:board).where(status: "completed").where("boards.status_str LIKE '% has won by checkmate!'")
-    losses = compl_games.where("boards.turn = 'black'").where("black_id = ?", self.id).or(
-             compl_games.where("boards.turn = 'white'").where("white_id = ?", self.id))
+    Game.where(status: "completed", outcome: "checkmate", loser_id: self.id)
   end
 
   def win_games
-    compl_games = self.games.joins(:board).where(status: "completed").where("boards.status_str LIKE '% has won by checkmate!'")
-    wins = compl_games.where("boards.turn = 'black'").where("white_id = ?", self.id).or(
-           compl_games.where("boards.turn = 'white'").where("black_id = ?", self.id))
+    Game.where(status: "completed", outcome: "checkmate", winner_id: self.id)
   end
 
   def draws
