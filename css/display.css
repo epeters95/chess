@@ -520,9 +520,12 @@ table.inputs-table {
   position: absolute;
   top: 101px;
   height: 476px;
+  width: 10px;
+  background-color: white;
 }
 .eval-bar {
   height: 238px;
+  transition: height 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
   position: absolute;
   width: 10px;
 }

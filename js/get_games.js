@@ -15,10 +15,14 @@ modalCloseBtnGames.addEventListener("click", function() {
     let evalDiv = document.getElementById("load-eval")
     evalDiv.classList.add("hidden")
   }
-  let whiteBar = document.getElementById("eval-white")
-  whiteBar.classList.add("hidden")
-  let blackBar = document.getElementById("eval-black")
-  blackBar.classList.add("hidden")
+  let evalCont = document.getElementById("eval-container")
+  if (evalCont) {
+    evalCont.classList.add("hidden")
+    let whiteBar = document.getElementById("eval-white")
+    whiteBar.classList.add("hidden")
+    let blackBar = document.getElementById("eval-black")
+    blackBar.classList.add("hidden")
+  }
 })
 
 let searchForm = document.getElementById("search-games-form");
@@ -234,8 +238,10 @@ function drawMoveList(json, selectedId, showEval) {
   // Show eval bar
   if (showEval !== false) {
 
-    let whiteBar = document.getElementById("eval-white")
-    whiteBar.classList.remove("hidden")
+    // let whiteBar = document.getElementById("eval-white")
+    // whiteBar.classList.remove("hidden")
+    let evalCont = document.getElementById("eval-container")
+    evalCont.classList.remove("hidden")
     let blackBar = document.getElementById("eval-black")
     blackBar.classList.remove("hidden")
 
@@ -250,7 +256,7 @@ function drawMoveList(json, selectedId, showEval) {
     let heightBlack = 238 - evaluation
 
     blackBar.style = "height: " + heightBlack + "px;"
-    whiteBar.style = "height: " + heightWhite + "px; top: " + heightBlack + "px"
+    // whiteBar.style = "height: " + heightWhite + "px; top: " + heightBlack + "px"
 
   }
 }
