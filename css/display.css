@@ -506,3 +506,30 @@ table.inputs-table {
   color: white;
   border-radius: 6px;
 }
+#load-eval {
+  position: relative;
+  margin-left: -70%;
+}
+.eval-btn {
+  height: 40px;
+  background-color: black;
+  color: aliceblue;
+}
+#eval-container {
+  position: absolute;
+  top: 101px;
+  height: 476px;
+}
+.eval-bar {
+  height: 238px;
+  position: absolute;
+  width: 10px;
+}
+.eval-bar#eval-black {
+  top: 0px;
+  background-color: black;
+}
+.eval-bar#eval-white {
+  top: 238px;
+  background-color: white;
+}

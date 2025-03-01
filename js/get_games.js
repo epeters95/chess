@@ -9,6 +9,16 @@ modalCloseBtnGames.addEventListener("click", function() {
   if (windowKeyEventListeners.length > 0) {
     window.removeEventListener("keydown", windowKeyEventListeners.pop())
   }
+  let evalBtn = document.getElementById("load-eval-btn")
+  if (evalBtn) {
+    evalBtn.remove();
+    let evalDiv = document.getElementById("load-eval")
+    evalDiv.classList.add("hidden")
+  }
+  let whiteBar = document.getElementById("eval-white")
+  whiteBar.classList.add("hidden")
+  let blackBar = document.getElementById("eval-black")
+  blackBar.classList.add("hidden")
 })
 
 let searchForm = document.getElementById("search-games-form");
@@ -26,6 +36,7 @@ var currentMoveIndex = 0;
 
 // Initialize map variable
 var moveToPiecesMap = {};
+var moveToEvalMap = {};
 
 function getGames() {
 
@@ -63,24 +74,65 @@ function populateTable(json) {
     let boardUrl = "/api/games/" + id + "/board"
     boardUrl += "#with_history=true"
     el.addEventListener("click", function() {
+
       fetchFromApi(boardUrl, "GET", null, function(json) {
-        populateGameAndMoves(json);
+        populateGameAndMoves(json, id);
       })
 
     })
   });
 }
 
-function populateGameAndMoves(json) {
+function populateGameAndMoves(json, gameId) {
   // Populate snapshots of the game at each move
+  let evaluated = true;
+  moveToPiecesMap = {};
+  moveToEvalMap = {};
   json["moves"].forEach(function(move, i) {
     moveToPiecesMap[i] = json["pieces_history"][i];
+    if (move) {
+      if (move.evaluation === null || move.evaluation === undefined) {
+        evaluated = false;
+      } else {
+        moveToEvalMap[i] = move.evaluation 
+      }
+    }
   })
   currentMoveIndex = 0;
-  showBoardRefresh(json, null)
+
+  // Initiate an eval load on board#update
+  if (!evaluated) {
+    let boardUrl = "/api/boards/" + gameId
+    let evalDiv = document.getElementById("load-eval")
+    evalDiv.classList.remove("hidden")
+
+    let evalButton = document.createElement("button")
+    evalButton.classList.add("eval-btn")
+    evalButton.setAttribute("id", "load-eval-btn")
+    evalButton.innerHTML = "Load Eval"
+    
+    evalButton.addEventListener("click", () => {
+
+      fetchFromApi(boardUrl, "PATCH", null, function(evalJson) {
+        
+        if (evalJson.status === "ok") {
+          evalDiv.classList.add("hidden")
+          evalJson.move_evals.forEach((el, idx) => {
+            moveToEvalMap[idx] = el
+          })
+          showBoardRefresh(json, null, moveToEvalMap[json["moves"].length - 2])
+        }
+      })
+      evalButton.setAttribute("disabled", true)
+    })
+
+    evalDiv.appendChild(evalButton)
+
+  }
+  showBoardRefresh(json, null, moveToEvalMap[json["moves"].length - 2])
 }
 
-function showBoardRefresh(json, selectedId) {
+function showBoardRefresh(json, selectedId, showEval=false) {
   modalGames.classList.remove("hidden");
   gameView = new GameView(canvas, json, {"statusSpan": statusSpan}, false)
 
@@ -90,12 +142,12 @@ function showBoardRefresh(json, selectedId) {
 
   }).then(() => {
     // Populate moves sidebar
-    drawMoveList(json, selectedId)
+    drawMoveList(json, selectedId, showEval)
   })
   
 }
 
-function drawMoveList(json, selectedId) {
+function drawMoveList(json, selectedId, showEval) {
   movesList.innerHTML = "";
   let list = document.createElement("table");
   let row;
@@ -126,7 +178,7 @@ function drawMoveList(json, selectedId) {
       }
       if (redraw) {
         json["game"]["pieces"] = moveToPiecesMap[currentMoveIndex];
-        showBoardRefresh(json, currentMoveIndex)
+        showBoardRefresh(json, currentMoveIndex, moveToEvalMap[currentMoveIndex])
         e.preventDefault()
       }
     }
@@ -140,7 +192,7 @@ function drawMoveList(json, selectedId) {
         event.target.classList.add("selected")
         currentMoveIndex = index;
         json["game"]["pieces"] = moveToPiecesMap[index];
-        showBoardRefresh(json, index)
+        showBoardRefresh(json, index, moveToEvalMap[index])
       }
 
       // Move number
@@ -164,12 +216,35 @@ function drawMoveList(json, selectedId) {
       } else {
         row.appendChild(notationCell)
       }
+
     }
   })
   movesList.appendChild(list);
   if (selectedId) {
     let cell = document.querySelector("#moves-list td[data-id='" + selectedId + "']");
     cell.classList.add("selected");
+  }
+  // Show eval bar
+  if (showEval !== false) {
+
+    let whiteBar = document.getElementById("eval-white")
+    whiteBar.classList.remove("hidden")
+    let blackBar = document.getElementById("eval-black")
+    blackBar.classList.remove("hidden")
+
+    let cpLimit = 1000
+    let evaluation = 0;
+    if (showEval > 0) {
+      evaluation = Math.min(238, (showEval * 238 / cpLimit))
+    } else {
+      evaluation = Math.max(-238, (showEval * 238 / cpLimit))
+    }
+    let heightWhite = 238 + evaluation
+    let heightBlack = 238 - evaluation
+
+    blackBar.style = "height: " + heightBlack + "px;"
+    whiteBar.style = "height: " + heightWhite + "px; top: " + heightBlack + "px"
+
   }
 }
 
