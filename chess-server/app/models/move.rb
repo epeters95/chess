@@ -20,7 +20,8 @@ class Move < ApplicationRecord
                                   self.new_position,
                                   self.rook_position,
                                   self.promotion_choice,
-                                  self.notation)
+                                  self.notation,
+                                  self.evaluation)
   end
 
   def move_object

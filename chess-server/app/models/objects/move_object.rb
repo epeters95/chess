@@ -14,6 +14,7 @@ class MoveObject
                  rook_position=nil,
                  promotion_choice=nil,
                  notation=nil,
+                 evaluation=nil,
                  causes_check=false)
     @piece = piece
     @other_piece = other_piece
@@ -24,6 +25,7 @@ class MoveObject
     @rook_position = rook_position
     @promotion_choice = promotion_choice
     @notation = notation
+    @evaluation = evaluation
     @completed = false
     @relatives = []
     @causes_check = causes_check
@@ -47,6 +49,7 @@ class MoveObject
                    @rook_position,
                    @promotion_choice,
                    @notation,
+                   @evaluation,
                    @causes_check)
   end
 
@@ -130,6 +133,7 @@ class MoveObject
       rook_position:    @rook_position,
       promotion_choice: @promotion_choice,
       notation:         @notation,
+      evaluation:       @evaluation,
       causes_check:     @causes_check
     }
     JSON.generate(hsh, options)
