@@ -89,12 +89,16 @@ function populateGameAndMoves(json, gameId) {
   moveToPiecesMap = {};
   moveToEvalMap = {};
   json["moves"].forEach(function(move, i) {
+
     moveToPiecesMap[i] = json["pieces_history"][i];
+    
+    // Note: Because json["moves"] includes an initial null,
+    // its indexes mapped to moveToEvalMap are adjusted by -1
     if (move) {
       if (move.evaluation === null || move.evaluation === undefined) {
         evaluated = false;
       } else {
-        moveToEvalMap[i] = move.evaluation 
+        moveToEvalMap[i - 1] = move.evaluation 
       }
     }
   })
@@ -178,7 +182,10 @@ function drawMoveList(json, selectedId, showEval) {
       }
       if (redraw) {
         json["game"]["pieces"] = moveToPiecesMap[currentMoveIndex];
-        showBoardRefresh(json, currentMoveIndex, moveToEvalMap[currentMoveIndex])
+
+        // Because json["moves"] contains an initial null, idx -= 1 for modeToEvalMap
+        let moveEval = moveToEvalMap[Math.max(0, currentMoveIndex - 1)]
+        showBoardRefresh(json, currentMoveIndex, moveEval)
         e.preventDefault()
       }
     }

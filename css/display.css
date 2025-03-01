@@ -508,12 +508,13 @@ table.inputs-table {
 }
 #load-eval {
   position: relative;
-  margin-left: -70%;
+  width: 100%;
 }
 .eval-btn {
   height: 40px;
   background-color: black;
-  color: aliceblue;
+  color: wheat;
+  float: left;
 }
 #eval-container {
   position: absolute;
