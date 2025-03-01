@@ -238,13 +238,18 @@ function drawMoveList(json, selectedId, showEval) {
   // Show eval bar
   if (showEval !== false) {
 
-    // let whiteBar = document.getElementById("eval-white")
-    // whiteBar.classList.remove("hidden")
+    // Unhide elements and restore colors
+
     let evalCont = document.getElementById("eval-container")
     evalCont.classList.remove("hidden")
-    let blackBar = document.getElementById("eval-black")
-    blackBar.classList.remove("hidden")
+    evalCont.style = "background-color: white;"
 
+    let topBar = document.getElementById("eval-black")
+    topBar.classList.remove("hidden")
+    topBar.style = "background-color: black;"
+
+    // Calculate heights based on given showEval value
+    // Total scale = 20 pawns or 2000 cp units
     let cpLimit = 1000
     let evaluation = 0;
     if (showEval > 0) {
@@ -255,9 +260,15 @@ function drawMoveList(json, selectedId, showEval) {
     let heightWhite = 238 + evaluation
     let heightBlack = 238 - evaluation
 
-    blackBar.style = "height: " + heightBlack + "px;"
-    // whiteBar.style = "height: " + heightWhite + "px; top: " + heightBlack + "px"
+    // Swap if game is black-facing
 
+    if (gameView.showTurn === "black") {
+      evalCont.style = "background-color: black;"
+      topBar.style = "background-color: white; height: " + heightWhite + "px;"
+    } else {
+
+      topBar.style = "height: " + heightBlack + "px;"
+    }
   }
 }
 
