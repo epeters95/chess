@@ -2,7 +2,7 @@ class Api::BoardsController < ApplicationController
 
   include Util
 
-  before_action :set_game_board, only: [:show, :update, :destroy]
+  before_action :set_game_board, only: [:show, :destroy]
 
   def show
     begin
@@ -52,6 +52,41 @@ class Api::BoardsController < ApplicationController
       end
     end
     render json: { board: initial_board }
+  end
+
+  def update
+    # Load evaluation for board
+    @game = Game.find(params[:id])
+    if @game
+      begin
+        @board = @game.board
+        interface = EngineInterface.new("chess-engine-interface", 10000)
+        move_history = ""
+
+
+        if @board.played_moves.where(evaluation: nil).any?
+
+          moves = @board.played_moves.to_a
+          move_history = moves.map {|mv| mv.uci_notation }.join(',')
+          
+          # Get engine evaluation for each move
+          eval_list = interface.get_eval_list(move_history)
+
+          unless eval_list.nil?
+            eval_list.each_with_index do |move_eval, idx|
+              moves[idx].update(evaluation: move_eval.to_f)
+            end
+          end
+          # mv.update(evaluation: adv_white.to_f)
+        end
+
+        render json: {status: "ok", move_evals: eval_list.map{|el| el.to_f } }, status: :ok
+      rescue Exception => e
+        render json: {errors: e.message }, status: :unprocessable_entity
+      end
+    else
+      render json: {errors: "Not found"}, status: :not_found
+    end
   end
 
 
