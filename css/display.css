@@ -73,7 +73,7 @@ canvas {
   * {
     color: wheat;
   }
-  p, li {
+  p, li, h3 {
     text-align: left;
   }
   width: 600px;
@@ -104,6 +104,10 @@ h1 {
 
 h1, h2 {
   font-family: serif !important
+}
+
+h3 {
+  color: wheat;
 }
 
 checker{
@@ -381,6 +385,10 @@ table.inputs-table {
 
   td.double-width {
     min-width: 300px;
+  }
+
+  h3 {
+    margin: 0px;
   }
 }
 

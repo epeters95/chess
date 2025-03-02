@@ -50,16 +50,18 @@
       <br>
       <div class="player-names">
         <table class="inputs-table">
+          <tr><td><h3>Single player</h3></td><td></td><td><h3>Multi-player</h3></td></tr>
 
           <tr>
             <td class="double-width">
+              
               <label>White:</label>
               <input type="text" id="player1-name" placeholder="Leave blank for Computer"/>
               <br>
               <label>Black:</label>
               <input type="text" id="player2-name" placeholder="Leave blank for Computer"/>
               <div class="new-game">
-                <button id="new-game">New Local Game</button>
+                <button id="new-game">New Game</button>
               </div>
             </td>
             <td>
@@ -71,6 +73,7 @@
 
             </td>
             <td class="double-width">
+              
               <div class="new-game">
                 <button id="new-live-game">New Live Game</button>
               </div>
@@ -83,8 +86,8 @@
       </div>
 
       <div class="how-to-instructions">
+        <br><br>
         <h3>About</h3>
-        <br>
         <p>This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player.
         With the server hosted on Render, Github Pages serves the assets for the front end client.</p>
         <br>
@@ -120,6 +123,8 @@
       <label for="medium-radio">Medium</label><br>
       <input type="radio" id="hard-radio" name="difficulty-choice" value="hard">
       <label for="hard-radio">Hard</label><br>
+      <input type="radio" id="insane-radio" name="difficulty-choice" value="insane">
+      <label for="insane-radio">Insane</label><br>
       <br>
       <button id="difficulty-submit">Start Game</button>
       <div id="modal-diff-close-button">

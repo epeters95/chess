@@ -130,6 +130,7 @@ function newGame() {
       let easyRadio = document.getElementById("easy-radio");
       let mediumRadio = document.getElementById("medium-radio");
       let hardRadio = document.getElementById("hard-radio");
+      let insaneRadio = document.getElementById("insane-radio");
 
       if (easyRadio.checked) {
         difficulty = "easy"
@@ -137,6 +138,8 @@ function newGame() {
         difficulty = "medium"
       } else if (hardRadio.checked) {
         difficulty = "hard"
+      } else if (insaneRadio.checked) {
+        difficulty = "insane"
       }
       newGameStart(requestBody, computerTeam, difficulty)
     }
