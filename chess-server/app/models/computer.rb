@@ -10,7 +10,7 @@ class Computer
   end
 
   def get_move  
-    interface = EngineInterface.new("chess-engine-interface", 10000, "/choose_move")
+    interface = EngineInterface.new("chess-engine-interface", 10000)
     level = 1
     case @difficulty
     when "easy"
