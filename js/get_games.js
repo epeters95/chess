@@ -25,7 +25,6 @@ modalCloseBtnGames.addEventListener("click", function() {
   }
 })
 
-let searchForm = document.getElementById("search-games-form");
 let searchQuery = document.getElementById("search-query");
 let searchButton = document.getElementById("search-button");
 
@@ -169,7 +168,6 @@ function drawMoveList(json, selectedId, showEval) {
     const keydownListener = function(e) {
       let len = json["moves"].length
       let code = e.keyCode;
-      let newIndex = currentMoveIndex;
       let redraw = false;
       
       if (code == '38' || code == '37') {       // up, or left

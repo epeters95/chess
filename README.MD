@@ -11,7 +11,7 @@ Source: [Frontend client (Github Pages)](https://github.com/epeters95/chess/tree
 
 This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player. Github pages display an interface with plain javascript and css assets working as a front-end client.   It uses PostgreSQL for storage and includes several features:
 - Play as both teams
-- Play Stockfish at Easy, Medium, or Hard
+- Play Stockfish at Easy (1), Medium (4), Hard (10), Insane (20)
 - Play a live game with a friend via shared access code
 - Game history and move replaying
 - Upload a PGN file to import a famous game to the game history page

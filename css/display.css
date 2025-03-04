@@ -532,7 +532,7 @@ table.inputs-table {
 }
 .eval-bar {
   height: 238px;
-  transition: height 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: height 0.6s cubic-bezier(0.13, 0.67, 0.48, 1.03);
   position: absolute;
   width: 10px;
 }
