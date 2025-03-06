@@ -117,8 +117,11 @@ class Api::GamesController < ApplicationController
       if !@game.nil? && @game.errors.empty?
         if @game.status != "completed"
           if params[:end_game]
-            @game.update(status: "completed")
-            return render json: @game, status: :ok
+            if @game.resign_as(params[:end_game])
+              return render json: @game, status: :ok
+            else
+              return render json: {error: "Error resigning"}, status: :unprocessable_entity
+            end
           end
           chosen_move = nil
           if @game.is_live?

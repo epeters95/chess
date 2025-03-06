@@ -78,6 +78,17 @@ class Game < ApplicationRecord
     self.update(status: "completed")
   end
 
+  def resign_as(color)
+    win_id = (color == "black" ? self.white_id : self.black_id)
+    los_id = (color == "white" ? self.white_id : self.black_id)
+
+    # Game Over
+    self.update(outcome:   "resignation",
+                status:    "completed",
+                winner_id: win_id,
+                loser_id:  los_id)
+  end
+
   def as_json(options = {})
 
     mvs = self.board.legal_moves[self.board.turn].map{|mv| mv.to_json }
