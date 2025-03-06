@@ -33,6 +33,7 @@ class GameView {
     this.statusSpan      = domElements["statusSpan"];
     this.promotionPopup  = domElements["promotionPopup"];
     this.promotionSubmit = domElements["promotionSubmit"];
+    this.resignButton    = domElements["resignButton"];
 
     this.gridShown = false;
     this.refreshRateMs = 5000;
@@ -137,8 +138,20 @@ class GameView {
 
     }).then(() => {
 
-      if (that.isLive && that.showTurn !== that.turn && !skipLoop && that.gameStatus !== "completed") {
-        that.checkForMoveLoop();
+      if (that.gameStatus !== "completed") {
+        if (that.isLive && that.showTurn !== that.turn && !skipLoop) {
+          that.checkForMoveLoop();
+        }
+        if (that.resignButton) {
+          that.resignButton.classList.remove("hidden")
+          that.resignButton.addEventListener("click", function() {
+            that.resignButton.setAttribute("disabled", true)
+            that.resign()
+          })
+        }
+      }
+      else {
+        this.resignButton.classList.add("hidden")
       }
       that.canvas.click()
     })
@@ -349,16 +362,24 @@ class GameView {
   }
 
   playMove(move) {
+    this.sendGameUpdateAndRedraw({ "move": move })
+  }
+
+  resign() {
+    this.sendGameUpdateAndRedraw({ "end_game": this.showTurn })
+  }
+
+  sendGameUpdateAndRedraw(data) {
     let that = this;
-    fetchFromApi("/api/games/" + this.gameId, "PATCH", { "move": move }, function(json) {
+    fetchFromApi("/api/games/" + this.gameId, "PATCH", data, function(json) {
       that.promotionMove = null;
       that.selectedMoves = [];
       that.setJsonVars(json);
       that.draw();
-      if (!that.isLive && that.computerTeam === that.turn) {
+      that.clearHighlight();
+      if (!data["resign"] && !that.isLive && that.computerTeam === that.turn) {
         that.nextComputerMove();
       }
-      that.clearHighlight();
     })
   }
 

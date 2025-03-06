@@ -544,3 +544,6 @@ table.inputs-table {
   top: 238px;
   background-color: white;
 }
+#resign-button {
+  margin-left: -50px;
+}

@@ -31,6 +31,8 @@ modalDiffCloseBtn.addEventListener("click", function() {
   difficultyPopup.classList.add("hidden");
 })
 
+const resignButton = document.getElementById("resign-button");
+
 var submitDiffEventListeners = []
 
 
@@ -80,7 +82,8 @@ var gameView = null;
 const domElements = {
   "statusSpan": statusSpan,
   "promotionPopup": promotionPopup,
-  "promotionSubmit": promotionSubmit
+  "promotionSubmit": promotionSubmit,
+  "resignButton": resignButton
 }
 
 const quoteWrapper = document.getElementById("quote-wrapper");
