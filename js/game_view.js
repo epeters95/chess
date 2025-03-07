@@ -95,7 +95,7 @@ class GameView {
     }, this.refreshRateMs)
   }
 
-  draw(skipLoop=false) {
+  draw(skipLoop=false, callback=()=>{}) {
 
     this.statusSpan.innerText = this.status;
 
@@ -138,12 +138,14 @@ class GameView {
 
     }).then(() => {
 
+      callback()
+
       if (that.gameStatus !== "completed") {
         if (that.isLive && that.showTurn !== that.turn && !skipLoop) {
           that.checkForMoveLoop();
         }
         if (that.resignButton) {
-          that.resignButton.classList.remove("hidden")
+          // that.resignButton.classList.remove("hidden")
           that.resignButton.addEventListener("click", function() {
             that.resignButton.setAttribute("disabled", true)
             that.resign()
@@ -151,7 +153,9 @@ class GameView {
         }
       }
       else {
-        this.resignButton.classList.add("hidden")
+        if (this.resignButton) {
+          this.resignButton.classList.add("hidden")
+        }
       }
       that.canvas.click()
     })

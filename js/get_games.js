@@ -72,10 +72,33 @@ function populateTable(json) {
     }
   }
   table.innerHTML = htmlString;
+
   Array.from(document.getElementsByClassName("get-board")).forEach(function(el) {
     let id = el.getAttribute("data-id");
     let boardUrl = "/api/games/" + id + "/board"
-    boardUrl += "#with_history=true"
+    boardUrl += "?with_history=true"
+
+    // Get game thumbnail
+    fetchFromApi(boardUrl, "GET", null, function(json) {
+      let tempCanvas = document.createElement("canvas")
+      tempCanvas.width = 476;
+      tempCanvas.height = 476;
+      tempCanvas.classList.add("hidden")
+
+      // iterate moves to middlegame
+      let halfway = Math.floor(json["moves"].length / 2) + 1
+      json["game"]["pieces"] = json["pieces_history"][halfway]
+
+      gameView = new GameView(tempCanvas, json, {"statusSpan": statusSpan}, false)
+      gameView.draw(false, function() {
+
+        // Draw thumbnail
+        let imgDiv = el.parentElement;
+        imgDiv.style.backgroundImage = "url(" + tempCanvas.toDataURL() + ")"
+        imgDiv.style.backgroundSize = "contain"
+        imgDiv.style.backgroundBlendMode = "overlay";
+      })
+    })
     el.addEventListener("click", function() {
 
       fetchFromApi(boardUrl, "GET", null, function(json) {
@@ -286,9 +309,9 @@ function gameViewHtml(game) {
     moveStr = "1 move";
   }
 
-  let htmlString = "<div class='game-thumbnail' style='width:100%; height:100%'>";
+  let htmlString = "<div class='game-thumbnail' style='width:100%; height:100%' data-id='" + id + "'>";
 
-  htmlString += "<div style='width: 90%; height: 90%; margin: auto; position: relative; background-color: rgba(0,0,0,0.2);'>";
+  htmlString += "<div style='width: 90%; height: 90%; margin: auto; position: relative; background-color: rgba(30,8,0,0.3);'>";
   htmlString += "<span><b>" +
                 getName(name1) + " vs. " +
                 getName(name2) +
