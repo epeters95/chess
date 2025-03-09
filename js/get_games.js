@@ -78,27 +78,35 @@ function populateTable(json) {
     let boardUrl = "/api/games/" + id + "/board"
     boardUrl += "?with_history=true"
 
-    // Get game thumbnail
-    fetchFromApi(boardUrl, "GET", null, function(json) {
-      let tempCanvas = document.createElement("canvas")
-      tempCanvas.width = 476;
-      tempCanvas.height = 476;
-      tempCanvas.classList.add("hidden")
+    let imgKey = "thumbnail-" + id;
 
-      // iterate moves to middlegame
-      let halfway = Math.floor(json["moves"].length / 2) + 1
-      json["game"]["pieces"] = json["pieces_history"][halfway]
+    let cachedImg = window.localStorage.getItem(imgKey);
 
-      gameView = new GameView(tempCanvas, json, {"statusSpan": statusSpan}, false)
-      gameView.draw(false, function() {
+    if (cachedImg) {
+      drawGameThumbnail(el.parentElement, cachedImg);
+    }
+    else {
 
-        // Draw thumbnail
-        let imgDiv = el.parentElement;
-        imgDiv.style.backgroundImage = "url(" + tempCanvas.toDataURL() + ")"
-        imgDiv.style.backgroundSize = "contain"
-        imgDiv.style.backgroundBlendMode = "overlay";
+      // Get game thumbnail
+      fetchFromApi(boardUrl, "GET", null, function(json) {
+        let tempCanvas = document.createElement("canvas")
+        tempCanvas.width = 476;
+        tempCanvas.height = 476;
+        tempCanvas.classList.add("hidden")
+
+        // iterate moves to middlegame
+        let halfway = Math.floor(json["moves"].length / 2) + 1
+        json["game"]["pieces"] = json["pieces_history"][halfway]
+
+        gameView = new GameView(tempCanvas, json, {"statusSpan": statusSpan}, false)
+        gameView.draw(false, function() {
+
+          // Draw thumbnail
+          drawGameThumbnail(el.parentElement, tempCanvas.toDataURL());
+          window.localStorage.setItem(imgKey)
+        })
       })
-    })
+    }
     el.addEventListener("click", function() {
 
       fetchFromApi(boardUrl, "GET", null, function(json) {
@@ -107,6 +115,12 @@ function populateTable(json) {
 
     })
   });
+}
+
+function drawGameThumbnail(imgDiv, dataStr) {
+  imgDiv.style.backgroundImage = "url(" + dataStr + ")"
+  imgDiv.style.backgroundSize = "contain";
+  imgDiv.style.backgroundBlendMode = "overlay";
 }
 
 function populateGameAndMoves(json, gameId) {
