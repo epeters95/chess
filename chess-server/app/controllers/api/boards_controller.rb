@@ -6,8 +6,11 @@ class Api::BoardsController < ApplicationController
 
   def show
     begin
-      result = { board: @board, game: @game, pieces: @board.positions_array}
-      result.merge! get_moves_pieces_history
+      result = {}
+      if params[:with_history]
+        result = { board: @board, game: @game, pieces: @board.positions_array}
+        result.merge! get_moves_pieces_history
+      end
       render json: result, status: :ok
     rescue Exception => e
       render json: {errors: e.message }, status: :unprocessable_entity

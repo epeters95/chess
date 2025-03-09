@@ -25,10 +25,17 @@ class EngineInterface
     end
   end
 
-  def get_move(move_history, level)
+  def get_move(move_history, level, elo_rating=nil)
     move_history = move_history
     level = level
-    data = "{\"move_history\": \"#{move_history}\", \"level\": \"#{level}\"}"
+    data = "{\"move_history\": \"#{move_history}\", \"level\": \"#{level}\""
+
+    if !elo_rating.nil?
+      data += ", \"elo_rating\": #{elo_rating}}"
+    else
+      data += "}"
+    end
+
 
     resp = send_request("/choose_move", data)
     unless resp.nil?
