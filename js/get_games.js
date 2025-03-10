@@ -80,12 +80,11 @@ function populateTable(json) {
 
     let imgKey = "thumbnail-" + id;
 
+    // Check for either local or server cached image
     let cachedImg = window.localStorage.getItem(imgKey);
-
-    if (cachedImg) {
-      drawGameThumbnail(el.parentElement, cachedImg);
-    }
-    else {
+    let thumbnailDrawn = drawGameThumbnail(el.parentElement, cachedImg);
+    
+    if (!thumbnailDrawn) {
 
       // Get game thumbnail
       fetchFromApi(boardUrl, "GET", null, function(json) {
@@ -102,8 +101,15 @@ function populateTable(json) {
         gameView.draw(false, function() {
 
           // Draw thumbnail
-          drawGameThumbnail(el.parentElement, tempCanvas.toDataURL());
-          window.localStorage.setItem(imgKey)
+          let canvasImg = tempCanvas.toDataURL();
+          drawGameThumbnail(el.parentElement, canvasImg);
+          window.localStorage.setItem(imgKey, canvasImg)
+
+          // Send to server
+          let body = {"game_id": id, "img_str": canvasImg}
+          fetchFromApi("/api/thumbnail", "POST", body, function(json) {
+            console.log("Returned img thumbnail to server")
+          })
         })
       })
     }
@@ -118,9 +124,17 @@ function populateTable(json) {
 }
 
 function drawGameThumbnail(imgDiv, dataStr) {
-  imgDiv.style.backgroundImage = "url(" + dataStr + ")"
-  imgDiv.style.backgroundSize = "contain";
-  imgDiv.style.backgroundBlendMode = "overlay";
+
+  if (imgDiv.style.backgroundImage) {
+    return true;
+
+  } else if (dataStr) {
+    imgDiv.style.backgroundImage = "url(" + dataStr + ")"
+    imgDiv.style.backgroundSize = "contain";
+    imgDiv.style.backgroundBlendMode = "overlay";
+    return true;
+  }
+  return false;
 }
 
 function populateGameAndMoves(json, gameId) {
@@ -323,9 +337,20 @@ function gameViewHtml(game) {
     moveStr = "1 move";
   }
 
-  let htmlString = "<div class='game-thumbnail' style='width:100%; height:100%' data-id='" + id + "'>";
+  let divStyle = 'width: 90%; height: 90%; margin: auto; position: relative; background-color: rgba(30,8,0,0.3);';
 
-  htmlString += "<div style='width: 90%; height: 90%; margin: auto; position: relative; background-color: rgba(30,8,0,0.3);'>";
+  // Check if server returned a cached version of thumbnail
+
+  if (game.thumbnail) {
+    divStyle += 'background-image: url("' + game.thumbnail + '");';
+    divStyle += 'background-size: contain;';
+    divStyle += 'background-blend-mode: overlay;';
+  }
+
+  let htmlString = "<div class='game-thumbnail' " + 
+                        "style='width:100%; height:100%;'>";
+
+  htmlString += "<div style='" + divStyle + "'>";
   htmlString += "<span><b>" +
                 getName(name1) + " vs. " +
                 getName(name2) +
