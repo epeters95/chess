@@ -77,10 +77,17 @@ class Api::GamesController < ApplicationController
     games = games.where(query_obj).joins(:board).where.not(boards: {move_count: 0})
 
     games = games.map do |game|
-      { id: game.id,
+      obj = { id: game.id,
         white_name: game.white_name,
         black_name: game.black_name,
         move_count: game.board.move_count }
+
+      thumbnail_str = Rails.cache.read("thumbnail-#{game.id}")
+      if thumbnail_str
+        obj[:thumbnail] = thumbnail_str
+      end
+      
+      obj
     end
     render json: {games: games}, status: :ok
   end
@@ -157,6 +164,18 @@ class Api::GamesController < ApplicationController
     end
   end
 
+  def set_thumbnail
+    if thumbnail_params.any?
+      game = Game.find(thumbnail_params[:game_id])
+      if game
+        Rails.cache.write("thumbnail-#{game.id}", thumbnail_params[:img_str])
+        render json: {status: "ok"}, status: :ok
+        return
+      end
+    end
+    render json: {error: "Couldn't save game thumbnail"}, status: :unprocessable_entity
+  end
+
   def quote
     render json: {quote: get_quote_html}, status: :ok
   end
@@ -196,5 +215,9 @@ class Api::GamesController < ApplicationController
     def search_params
       params.permit(:status, :white_id, :black_id, :name, :search, :wins, :losses)
       # TODO: allow separate white and black player search
+    end
+
+    def thumbnail_params
+      params.permit(:img_str, :game_id)
     end
 end

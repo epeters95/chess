@@ -28,6 +28,8 @@ Rails.application.routes.draw do
 
     resources :boards, only: [:create, :show, :update]
 
+    post '/thumbnail', to: 'games#set_thumbnail'
+
     # Viewing game via access code
     get '/live_games/', to: 'live_games#show'
     get '/quote', to: 'games#quote'
