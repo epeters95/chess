@@ -83,10 +83,11 @@ class Api::GamesController < ApplicationController
         move_count: game.board.move_count }
 
       thumbnail_str = Rails.cache.read("thumbnail-#{game.id}")
+      
       if thumbnail_str
         obj[:thumbnail] = thumbnail_str
       end
-      
+
       obj
     end
     render json: {games: games}, status: :ok
@@ -165,7 +166,7 @@ class Api::GamesController < ApplicationController
   end
 
   def set_thumbnail
-    if thumbnail_params.any?
+    if thumbnail_params[:game_id]
       game = Game.find(thumbnail_params[:game_id])
       if game
         Rails.cache.write("thumbnail-#{game.id}", thumbnail_params[:img_str])
