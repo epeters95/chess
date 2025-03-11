@@ -139,6 +139,12 @@ class Api::GamesController < ApplicationController
           else
 
             if @game.is_computers_turn?
+              # Store difficulty used on game
+              if @game.computer_difficulty.nil?
+                level = Computer.difficulty_levels[params[:difficulty]]
+                @game.update(computer_difficulty: level)
+              end
+
               # PATCH/PUT to a game on the computer's turn will initiate a computer move
               chosen_move = Computer.new(@game.board, params[:difficulty]).get_move
             else

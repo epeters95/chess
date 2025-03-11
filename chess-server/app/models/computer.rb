@@ -9,18 +9,20 @@ class Computer
     @difficulty = difficulty
   end
 
+  def self.difficulty_levels
+    {
+      "easy" => 1,
+      "medium" => 4,
+      "hard" => 10,
+      "insane" => 20
+    }
+  end
+
   def get_move  
     interface = EngineInterface.new("chess-engine-interface", 10000)
     level = 1
-    case @difficulty
-    when "easy"
-      level = 1
-    when "medium"
-      level = 4
-    when "hard"
-      level = 10
-    when "insane"
-      level = 20
+    if difficulty_levels[@difficulty]
+      level = difficulty_levels[@difficulty]
     end
 
     # Map moves to UCI longform notation
