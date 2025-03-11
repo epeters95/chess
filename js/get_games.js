@@ -33,6 +33,7 @@ searchButton.addEventListener("click", function() {
 })
 
 let movesList = document.getElementById("moves-list");
+let gameTitle = document.getElementById("game-title");
 var gameView = null;
 
 var currentMoveIndex = 0;
@@ -138,6 +139,10 @@ function drawGameThumbnail(imgDiv, dataStr) {
 }
 
 function populateGameAndMoves(json, gameId) {
+  // Fill in title
+  if (gameTitle) {
+    gameTitle.innerHTML = getGameTitle(json["game"])
+  }
   // Populate snapshots of the game at each move
   let evaluated = true;
   moveToPiecesMap = {};
@@ -324,8 +329,6 @@ function drawMoveList(json, selectedId, showEval) {
 
 function gameViewHtml(game) {
   let id = game["id"];
-  let name1 = game["white_name"];
-  let name2 = game["black_name"];
 
   let moveCt = 0;
   if (game.move_count >= 1) {
@@ -352,8 +355,7 @@ function gameViewHtml(game) {
 
   htmlString += "<div style='" + divStyle + "'>";
   htmlString += "<span><b>" +
-                getName(name1) + " vs. " +
-                getName(name2) +
+                getGameTitle(game) +
                 "</b></span>";
   htmlString += "<br><br>"
   htmlString += "<span style='color: white;'>" + moveStr + "</span>";
@@ -372,6 +374,13 @@ function getName(name) {
     return "Computer";
   }
   return name;
+}
+
+function getGameTitle(game) {
+  let name1 = game["white_name"];
+  let name2 = game["black_name"];
+
+  return getName(name1) + " vs. " + getName(name2)
 }
 
 getGames();

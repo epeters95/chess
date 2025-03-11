@@ -86,6 +86,7 @@ body {
   background-image: url('../img/grid.png');
   background-size: 10;
   text-align: center;
+  margin: 0px;
 }
 
 body span, body p, body li, body td, body button, body h3, body input, body label {
@@ -525,7 +526,7 @@ table.inputs-table {
 }
 #eval-container {
   position: absolute;
-  top: 101px;
+  top: 125px;
   height: 476px;
   width: 10px;
   background-color: white;
@@ -546,4 +547,9 @@ table.inputs-table {
 }
 #resign-button {
   margin-left: -50px;
+}
+#game-title {
+  color: wheat;
+  font-size: 16pt;
+  font-family: serif;
 }
