@@ -21,8 +21,8 @@ class Computer
   def get_move  
     interface = EngineInterface.new("chess-engine-interface", 10000)
     level = 1
-    if difficulty_levels[@difficulty]
-      level = difficulty_levels[@difficulty]
+    if self.class.difficulty_levels[@difficulty]
+      level = self.class.difficulty_levels[@difficulty]
     end
 
     # Map moves to UCI longform notation
