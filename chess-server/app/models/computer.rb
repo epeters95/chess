@@ -33,8 +33,11 @@ class Computer
     # Identify legal move from UCI notation
     move = get_legal_move_from_uci(move_uci)
 
-    move
-    # calculate_move
+    if move
+      move
+    else
+      calculate_move
+    end
   end
 
   def get_legal_move_from_uci(move_uci)
