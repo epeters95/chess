@@ -553,3 +553,8 @@ table.inputs-table {
   font-size: 16pt;
   font-family: serif;
 }
+#resign-button {
+  font-family: serif;
+  background-color: black;
+  color: wheat;
+}

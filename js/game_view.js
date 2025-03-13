@@ -145,7 +145,7 @@ class GameView {
           that.checkForMoveLoop();
         }
         if (that.resignButton) {
-          // that.resignButton.classList.remove("hidden")
+          that.resignButton.classList.remove("hidden")
           that.resignButton.addEventListener("click", function() {
             that.resignButton.setAttribute("disabled", true)
             that.resign()
