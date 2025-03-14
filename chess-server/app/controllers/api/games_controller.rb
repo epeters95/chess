@@ -83,7 +83,7 @@ class Api::GamesController < ApplicationController
         move_count: game.board.move_count }
 
       thumbnail_str = Rails.cache.read("thumbnail-#{game.id}")
-      
+
       if thumbnail_str
         obj[:thumbnail] = thumbnail_str
       end
@@ -145,8 +145,16 @@ class Api::GamesController < ApplicationController
                 @game.update(computer_difficulty: level)
               end
 
+              elo_rating = nil
+              if params[:elo_rating]
+                elo_rating = params[:elo_rating].to_i
+              end
+
               # PATCH/PUT to a game on the computer's turn will initiate a computer move
-              chosen_move = Computer.new(@game.board, params[:difficulty]).get_move
+
+              # This makes a call to the Flask Stockfish service
+              # and if no response calculates a move
+              chosen_move = Computer.new(@game.board, params[:difficulty]).get_move(elo_rating)
             else
               chosen_move = @game.board.get_move_by_notation(move_params[:notation])
               set_promotion_choice(chosen_move)

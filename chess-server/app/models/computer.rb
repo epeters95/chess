@@ -18,7 +18,7 @@ class Computer
     }
   end
 
-  def get_move  
+  def get_move(elo_rating=nil)
     interface = EngineInterface.new("chess-engine-interface", 10000)
     level = 1
     if self.class.difficulty_levels[@difficulty]
@@ -28,7 +28,7 @@ class Computer
     # Map moves to UCI longform notation
     move_history = @board.played_moves.map {|mv| mv.uci_notation }.join(',')
 
-    move_uci = interface.get_move(move_history, level)
+    move_uci = interface.get_move(move_history, level, elo_rating)
 
     # Identify legal move from UCI notation
     move = get_legal_move_from_uci(move_uci)
