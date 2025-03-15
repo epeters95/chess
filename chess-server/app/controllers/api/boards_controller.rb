@@ -8,7 +8,7 @@ class Api::BoardsController < ApplicationController
     begin
       result = {}
       if params[:with_history]
-        result = { board: @board, game: @game, pieces: @board.positions_array}
+        result = { game: @game }
         result.merge! get_moves_pieces_history
       end
       render json: result, status: :ok
