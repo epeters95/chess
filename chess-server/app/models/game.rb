@@ -83,6 +83,7 @@ class Game < ApplicationRecord
     los_id = (color == "white" ? self.white_id : self.black_id)
 
     # Game Over
+    self.board.update(status_str: "#{display_name_for(switch(color))} wins! #{display_name_for(color)} has resigned.")
     self.update(outcome:   "resignation",
                 status:    "completed",
                 winner_id: win_id,
