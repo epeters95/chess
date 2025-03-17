@@ -5,6 +5,12 @@
   <title>Chess</title>
   <link rel="stylesheet" href="css/display.css">
   <link rel="prefetch" href="api-docs/v1/swagger.json">
+  <script
+  src="https://code.jquery.com/jquery-3.7.1.min.js"
+  integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+  crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css" />
+  <script src="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
 </head>
 <body>
   <div class="header">
@@ -31,6 +37,18 @@
 
       <div id="players-table-view">
         <table id="players-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th># Games</th>
+              <th>Completed</th>
+              <th>Wins</th>
+              <th>Losses</th>
+              <th>Draws</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
         </table>
       </div>
 
