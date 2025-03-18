@@ -452,13 +452,24 @@ table.inputs-table {
 
 
 #players-table {
+  width: 80% !important;
   border: 2px dotted gold;
+  thead tr {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
   thead tr th {
     border-bottom: 2px dotted gold;
     color: wheat;
+
+    span.dt-column-order {
+      color: white;
+    }
   }
   tbody tr td {
     color: wheat;
+  }
+  tbody tr td a {
+    color: honeydew;
   }
 }
 
