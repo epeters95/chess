@@ -1,73 +1,51 @@
 $(document).ready(function() {
 
-let table = new DataTable('#players-table', {
+  const wrapLink = function(params, playerName, data) {
+  // Currently, this client is using the initial method of linking users games
+  // which is purely by unique name usage.
+  // To support future features linking players by id, this search endpoint will
+  // also support fetching games by white_id and black_id (not yet simply "id"...)
+  // in addition to "status" and quick ability to add more in the future
+    if (data !== 0) {
+      let link = 'games_index.html?name=' + playerName;
+      return "<a href='" + link + "&status=completed" + "'>" + data + "</a>"
+    }
+    return "";
+  }
+
+  const completedLink = function(data, type, row, meta) {
+    return wrapLink("&status=completed", row.name, data)
+  };
+
+  const winsLink = function(data, type, row, meta) {
+    return wrapLink("&wins=" + row.id, row.name, data)
+  };
+
+  const lossesLink = function(data, type, row, meta) {
+    return wrapLink("&losses=" + row.id, row.name, data)
+  };
+
+  const drawsLink = function(data, type, row, meta) {
+    return wrapLink("&draws=" + row.id, row.name, data)
+  };
+
+  let table = new DataTable('#players-table', {
+    responsive: true,
     ajax: {
       "url": baseUrl + '/api/players',
       "type": "GET",
       "dataSrc": "players"
     },
     columns: [
-      { data: 'name' },
+      { data: 'name'},
       { data: 'games' },
-      { data: 'completed_games' },
-      { data: 'wins' },
-      { data: 'losses' },
-      { data: 'draws' }
-    ]
-});
+      { render: completedLink, data: 'completed_games' },
+      { render: winsLink, data: 'wins' },
+      { render: lossesLink, data: 'losses' },
+      { render: drawsLink, data: 'draws' }
+    ],
+    lengthChange: false,
+    paging: false
+  });
 
 })
-// const playersTable = document.getElementById("players-table");
-
-// let spinner = showSpinner("spinner-div");
-
-// fetchFromApi('/api/players', 'GET', null, function(json) {
-//   let tableHeader = document.createElement('tr')
-//   tableHeader.innerHTML = "<th>Name</th>" +
-//                           "<th># Games</th>" +
-//                           "<th>Completed</th>" +
-//                           "<th>Wins</th>" +
-//                           "<th>Losses</th>" +
-//                           "<th>Draws</th>";
-//   playersTable.appendChild(tableHeader);
-
-//   // Currently, this client is using the initial method of linking users games
-//   // which is purely by unique name usage.
-//   // To support future features linking players by id, this search endpoint will
-//   // also support fetching games by white_id and black_id (not yet simply "id"...)
-//   // in addition to "status" and quick ability to add more in the future
-//   json["players"].forEach(function(player) {
-//     let tableRow = document.createElement('tr');
-//     let link = 'games_index.html?name=' + player.name;
-
-//     let tableCells = "<td>" + player.name + "</td><td>";
-//     if (player.games > 0) {
-//       tableCells += player.games;
-//     }
-//     tableCells += "</td><td>";
-
-//     if (player.completed_games > 0) {
-//       tableCells += "<a href='" + link + "&status=completed" + "'>" + player.completed_games + "</a>"
-//     }
-//     tableCells += "</td><td>";
-
-//     if (player.wins > 0) {
-//       tableCells += "<a href='" + link + "&wins=" + player.id + "'>" + player.wins + "</a>"
-//     }
-//     tableCells += "</td><td>";
-
-//     if (player.losses > 0) {
-//       tableCells += "<a href='" + link + "&losses=" + player.id + "'>" + player.losses + "</a>"
-//     }
-//     tableCells += "</td><td>";
-
-//     if (player.draws > 0) {
-//       tableCells += "<a href='" + link + "&draws=" + player.id + "'>" + player.draws + "</a>"
-//     }
-//     tableCells += "</td>";
-
-//     tableRow.innerHTML = tableCells;
-//     playersTable.appendChild(tableRow)
-//   })
-//   spinner.hide();
-// })
