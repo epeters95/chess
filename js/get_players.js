@@ -38,11 +38,11 @@ $(document).ready(function() {
     },
     columns: [
       { data: 'name'},
-      { data: 'games' },
-      { render: completedLink, data: 'completed_games' },
-      { render: winsLink, data: 'wins' },
-      { render: lossesLink, data: 'losses' },
-      { render: drawsLink, data: 'draws' }
+      { data: 'games', orderSequence: ['desc', 'asc']},
+      { render: completedLink, data: 'completed_games', orderSequence: ['desc', 'asc'] },
+      { render: winsLink, data: 'wins', orderSequence: ['desc', 'asc'] },
+      { render: lossesLink, data: 'losses', orderSequence: ['desc', 'asc'] },
+      { render: drawsLink, data: 'draws', orderSequence: ['desc', 'asc'] }
     ],
     lengthChange: false,
     paging: false

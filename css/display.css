@@ -451,7 +451,7 @@ table.inputs-table {
 }
 
 
-#players-table {
+table#players-table {
   width: 80% !important;
   border: 2px dotted gold;
   thead tr {
@@ -464,6 +464,9 @@ table.inputs-table {
     span.dt-column-order {
       color: white;
     }
+  }
+  tbody tr:nth-child(odd) {
+      background-color: rgba(0, 0, 0, 0.2) !important;
   }
   tbody tr td {
     color: wheat;
