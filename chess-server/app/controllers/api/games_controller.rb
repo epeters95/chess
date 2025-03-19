@@ -77,10 +77,16 @@ class Api::GamesController < ApplicationController
     games = games.where(query_obj).joins(:board).where.not(boards: {move_count: 0})
 
     games = games.map do |game|
+      
+      difficulty = nil
+      if game.computer_difficulty
+        difficulty = Computer.levels_difficulty[game.computer_difficulty].capitalize
+      end
       obj = { id: game.id,
         white_name: game.white_name,
         black_name: game.black_name,
-        move_count: game.board.move_count }
+        move_count: game.board.move_count,
+        difficulty: difficulty }
 
       thumbnail_str = Rails.cache.read("thumbnail-#{game.id}")
 

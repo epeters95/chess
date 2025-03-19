@@ -18,6 +18,15 @@ class Computer
     }
   end
 
+  def self.levels_difficulty
+    {
+      1 => "easy",
+      4 => "medium",
+      10 => "hard",
+      20 => "insane"
+    }
+  end
+
   def get_move(elo_rating=nil)
     interface = EngineInterface.new("chess-engine-interface", 10000)
     level = 1
