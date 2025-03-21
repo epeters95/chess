@@ -79,8 +79,13 @@ class Api::GamesController < ApplicationController
     games = games.map do |game|
       
       difficulty = nil
-      if game.computer_difficulty
+      
+      # Label game difficulty 
+      if Computer.levels_difficulty.keys.include? game.computer_difficulty
         difficulty = Computer.levels_difficulty[game.computer_difficulty].capitalize
+
+      elsif game.computer_difficulty
+        difficulty = "#{game.computer_difficulty} Elo"
       end
       obj = { id: game.id,
         white_name: game.white_name,
@@ -145,22 +150,29 @@ class Api::GamesController < ApplicationController
           else
 
             if @game.is_computers_turn?
+              
+              elo_rating = nil
+              difficulty = "insane"
+              
               # Store difficulty used on game
               if @game.computer_difficulty.nil?
-                level = Computer.difficulty_levels[params[:difficulty]]
+                if (params[:difficulty] =~ /^\d+$/) != nil
+                  # Elo Rating
+                  elo_rating = params[:difficulty].to_i
+                  level = elo_rating
+                  # TODO: seperate from stockfish skill level
+                else
+                  level = Computer.difficulty_levels[params[:difficulty]]
+                  difficulty = params[:difficulty]
+                end
                 @game.update(computer_difficulty: level)
-              end
-
-              elo_rating = nil
-              if params[:elo_rating]
-                elo_rating = params[:elo_rating].to_i
               end
 
               # PATCH/PUT to a game on the computer's turn will initiate a computer move
 
               # This makes a call to the Flask Stockfish service
               # and if no response calculates a move
-              chosen_move = Computer.new(@game.board, params[:difficulty]).get_move(elo_rating)
+              chosen_move = Computer.new(@game.board, difficulty).get_move(elo_rating)
             else
               chosen_move = @game.board.get_move_by_notation(move_params[:notation])
               set_promotion_choice(chosen_move)
