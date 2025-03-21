@@ -26,6 +26,19 @@ const difficultySubmit = document.getElementById("difficulty-submit");
 difficultySubmit.addEventListener("click", function() {
   difficultyPopup.classList.add("hidden")
 })
+
+const eloValue = document.getElementById("elo-value");
+const setEloValue = function(e) {
+  if (eloValue.value < 0) {
+    eloValue.value = 0;
+  } else if (eloValue.value > 3000) {
+    eloValue.value = 3000;
+  }
+}
+eloValue.addEventListener("keydown", setEloValue)
+eloValue.addEventListener("change", setEloValue)
+
+
 const modalDiffCloseBtn = document.getElementById("modal-diff-close-button");
 modalDiffCloseBtn.addEventListener("click", function() {
   difficultyPopup.classList.add("hidden");
@@ -134,6 +147,8 @@ function newGame() {
       let mediumRadio = document.getElementById("medium-radio");
       let hardRadio = document.getElementById("hard-radio");
       let insaneRadio = document.getElementById("insane-radio");
+      let eloRadio = document.getElementById("elo-radio");
+      let eloValue = document.getElementById('elo-value');
 
       if (easyRadio.checked) {
         difficulty = "easy"
@@ -143,6 +158,8 @@ function newGame() {
         difficulty = "hard"
       } else if (insaneRadio.checked) {
         difficulty = "insane"
+      } else if (eloRadio.checked) {
+        difficulty = eloValue.value
       }
       newGameStart(requestBody, computerTeam, difficulty)
     }

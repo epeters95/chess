@@ -507,6 +507,10 @@ table#players-table {
   z-index: 1000;
 }
 
+#difficulty-popup input {
+  color: black;
+}
+
 #difficulty-popup-content {
   width: 300px;
   height: 230px;
