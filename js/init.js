@@ -31,8 +31,8 @@ const eloValue = document.getElementById("elo-value");
 const setEloValue = function(e) {
   if (eloValue.value < 0) {
     eloValue.value = 0;
-  } else if (eloValue.value > 3000) {
-    eloValue.value = 3000;
+  } else if (eloValue.value > 3200) {
+    eloValue.value = 3200;
   }
 }
 eloValue.addEventListener("keydown", setEloValue)
