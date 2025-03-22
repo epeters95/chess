@@ -362,11 +362,12 @@ function gameViewHtml(game) {
   htmlString += "<br>";
   htmlString += "<a href='#' class='get-board' id='get-board' data-id='" + id + "'>";
   htmlString += "<span>View Game</span>";
+  htmlString += "</a>";
 
   if (game.difficulty) {
     htmlString += "<br><br><span style='color: white;'>Difficulty: " + game.difficulty + "</span>";
   }
-  htmlString += "</a>";
+  htmlString += "<br><span style='color: wheat;'>" + game.date + "</span>"
   htmlString += "</div>";
 
   htmlString += "</div>";
