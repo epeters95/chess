@@ -74,12 +74,12 @@ class Api::GamesController < ApplicationController
       query_obj = {status: "completed"}
     end
 
-    games = games.where(query_obj).joins(:board).where.not(boards: {move_count: 0})
+    games = games.where(query_obj).joins(:board).where.not(boards: {move_count: 0}).order("created_at")
 
     games = games.map do |game|
       
       difficulty = nil
-      
+
       # Label game difficulty 
       if Computer.levels_difficulty.keys.include? game.computer_difficulty
         difficulty = Computer.levels_difficulty[game.computer_difficulty].capitalize
@@ -91,7 +91,8 @@ class Api::GamesController < ApplicationController
         white_name: game.white_name,
         black_name: game.black_name,
         move_count: game.board.move_count,
-        difficulty: difficulty }
+        difficulty: difficulty,
+        date: game.created_at.strftime("%-m/%-d/%Y") }
 
       thumbnail_str = Rails.cache.read("thumbnail-#{game.id}")
 
