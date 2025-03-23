@@ -36,6 +36,12 @@ $(document).ready(function() {
       "type": "GET",
       "dataSrc": "players"
     },
+    layout: {
+      topStart: 'search',
+      topEnd: null,
+      bottomStart: null,
+      bottomEnd: 'info'
+    },
     columns: [
       { data: 'name'},
       { data: 'games', orderSequence: ['desc', 'asc']},
