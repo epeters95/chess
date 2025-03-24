@@ -66,6 +66,12 @@ canvas {
   height: 100%;
 }
 
+.upload-form {
+  input, button {
+    font-size: 13pt;
+  }
+}
+
 #content .how-to-instructions {
   * {
     color: wheat;
