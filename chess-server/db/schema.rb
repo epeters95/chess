@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_03_11_055710) do
+ActiveRecord::Schema[7.0].define(version: 2025_03_25_034817) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_03_11_055710) do
     t.bigint "winner_id"
     t.bigint "loser_id"
     t.integer "computer_difficulty"
+    t.integer "elo_rating"
     t.index ["black_id"], name: "index_games_on_black_id"
     t.index ["loser_id"], name: "index_games_on_loser_id"
     t.index ["white_id"], name: "index_games_on_white_id"
