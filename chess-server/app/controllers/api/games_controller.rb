@@ -84,8 +84,8 @@ class Api::GamesController < ApplicationController
       if Computer.levels_difficulty.keys.include? game.computer_difficulty
         difficulty = Computer.levels_difficulty[game.computer_difficulty].capitalize
 
-      elsif game.computer_difficulty
-        difficulty = "#{game.computer_difficulty} Elo"
+      elsif game.elo_rating
+        difficulty = "#{game.elo_rating} Elo"
       end
       obj = { id: game.id,
         white_name: game.white_name,
@@ -156,17 +156,17 @@ class Api::GamesController < ApplicationController
               difficulty = "insane"
               
               # Store difficulty used on game
-              if @game.computer_difficulty.nil?
+              if @game.computer_difficulty.nil? && @game.elo_rating.nil?
                 if (params[:difficulty] =~ /^\d+$/) != nil
                   # Elo Rating
                   elo_rating = params[:difficulty].to_i
                   level = elo_rating
-                  # TODO: seperate from stockfish skill level
+                  @game.update(elo_rating: elo_rating)
                 else
                   level = Computer.difficulty_levels[params[:difficulty]]
                   difficulty = params[:difficulty]
+                  @game.update(computer_difficulty: level)
                 end
-                @game.update(computer_difficulty: level)
               end
 
               # PATCH/PUT to a game on the computer's turn will initiate a computer move
