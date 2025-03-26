@@ -1,6 +1,6 @@
 class GameView {
 
-  constructor(canvas, json, domElements, isLive=false, computerTeam=null, showTurn=null, difficulty=null) {
+  constructor(canvas, json, domElements, isLive=false, computerTeam=null, showTurn=null, difficulty=null, eloRating=null) {
 
     this.canvas = canvas;
     this.context = canvas.getContext("2d");
@@ -13,6 +13,9 @@ class GameView {
     this.isLive = isLive;
     this.computerTeam  = computerTeam;
     this.difficulty = difficulty;
+    if (eloRating !== null) {
+      this.difficulty = eloRating;
+    }
     this.selectedMoves = [];
     this.selectedPiece = "";
     this.accessCode    = "";

@@ -132,6 +132,7 @@ function newGame() {
 
   let computerTeam = null;
   let difficulty = "medium";
+  let elo = null;
 
   if (player1Name.value === "") {
     computerTeam = "white"
@@ -159,9 +160,9 @@ function newGame() {
       } else if (insaneRadio.checked) {
         difficulty = "insane"
       } else if (eloRadio.checked) {
-        difficulty = eloValue.value
+        elo = eloValue.value
       }
-      newGameStart(requestBody, computerTeam, difficulty)
+      newGameStart(requestBody, computerTeam, difficulty, elo)
     }
     submitDiffEventListeners.forEach((el) => {
       difficultySubmit.removeEventListener("click", el)
@@ -175,10 +176,16 @@ function newGame() {
   }
 }
 
-function newGameStart(requestBody, computerTeam=null, difficulty=null) {
+function newGameStart(requestBody, computerTeam=null, difficulty=null, eloRating=null) {
+  if (difficulty !== null) {
+    requestBody["game"]["difficulty"] = difficulty
+  }
+  if (eloRating !== null) {
+    requestBody["game"]["elo_rating"] = eloRating
+  }
   fetchFromApi("/api/games", "POST", requestBody, function(json) {
     hideQuote();
-    gameView = new GameView(canvas, json, domElements, false, computerTeam, null, difficulty)
+    gameView = new GameView(canvas, json, domElements, false, computerTeam, null, difficulty, eloRating)
     gameView.draw()
     // Initiate first move if computer is white
     if (computerTeam === "white") {
