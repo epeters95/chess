@@ -117,10 +117,14 @@ class Api::GamesController < ApplicationController
     # Get existing players
     black_player = Player.find_or_create_by_name(game_params[:black_name])
     white_player = Player.find_or_create_by_name(game_params[:white_name])
+    elo = game_params[:elo_rating]
+    difficulty = game_params[:difficulty]
     begin
       @game = Game.new(game_params)
       @game.black_id = black_player.id if black_player
       @game.white_id = white_player.id if white_player
+      @game.elo_rating = elo
+      @game.computer_difficulty = difficulty
       if @game.save
         # Game is ready for first move from white
         render json: {game: @game}, status: :created
@@ -239,7 +243,7 @@ class Api::GamesController < ApplicationController
     end
 
     def game_params
-      params.require(:game).permit(:white_name, :black_name, :status)
+      params.require(:game).permit(:white_name, :black_name, :status, :elo_rating, :difficulty)
     end
 
     def move_params
