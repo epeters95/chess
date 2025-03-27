@@ -185,6 +185,17 @@ class Api::GamesController < ApplicationController
           end
           success = chosen_move && @game.play_move_and_evaluate(chosen_move)
           if success
+            if params[:with_eval]
+              move_history = @game.board.played_moves.map {|mv| mv.uci_notation }.join(',')
+              
+              # Get engine evaluation for each move
+              interface = EngineInterface.new("chess-engine-interface", 10000)
+              adv_white = interface.get_eval(move_history)
+
+              unless adv_white.nil?
+                @game.board.played_moves.last.update(evaluation: adv_white.to_f)
+              end
+            end
             render json: @game, status: :ok
           else
             error = "Invalid move chosen"

@@ -80,7 +80,6 @@ class Api::BoardsController < ApplicationController
               moves[idx].update(evaluation: move_eval.to_f)
             end
           end
-          # mv.update(evaluation: adv_white.to_f)
         end
 
         render json: {status: "ok", move_evals: eval_list.map{|el| el.to_f } }, status: :ok
