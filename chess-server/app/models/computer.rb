@@ -34,10 +34,7 @@ class Computer
       level = self.class.difficulty_levels[@difficulty]
     end
 
-    # Map moves to UCI longform notation
-    move_history = @board.played_moves.map {|mv| mv.uci_notation }.join(',')
-
-    move_uci = interface.get_move(move_history, level, elo_rating)
+    move_uci = interface.get_move(@board.move_history_str, level, elo_rating)
 
     # Identify legal move from UCI notation
     move = get_legal_move_from_uci(move_uci)

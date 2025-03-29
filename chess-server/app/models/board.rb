@@ -146,8 +146,11 @@ class Board < ApplicationRecord
   def is_nomoves_stalemate?(color)
     @board_object.is_nomoves_stalemate?(color)
   end
-  
-  
+
+  # Played move history in comma-separated UCI for Stockfish Python
+  def move_history_str
+    self.played_moves.map {|mv| mv.uci_notation }.join(',')
+  end
 end
 
 
