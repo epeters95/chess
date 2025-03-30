@@ -204,6 +204,10 @@ table#game-table {
 
 .game-thumbnail {
   top: 20%;
+  :hover {
+    cursor: pointer;
+  }
+
 }
 
 .modal {

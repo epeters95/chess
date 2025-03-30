@@ -114,13 +114,16 @@ function populateTable(json) {
         })
       })
     }
-    el.addEventListener("click", function() {
+    let boardDiv = el.parentElement.parentElement;
+    if (boardDiv) {
+      boardDiv.addEventListener("click", function() {
 
-      fetchFromApi(boardUrl, "GET", null, function(json) {
-        populateGameAndMoves(json, id);
+        fetchFromApi(boardUrl, "GET", null, function(json) {
+          populateGameAndMoves(json, id);
+        })
+
       })
-
-    })
+    }
   });
 }
 
@@ -351,6 +354,7 @@ function gameViewHtml(game) {
   }
 
   let htmlString = "<div class='game-thumbnail' " + 
+                        "title='" + getGameTitle(game) + "' " +
                         "style='width:100%; height:100%;'>";
 
   htmlString += "<div style='" + divStyle + "'>";
