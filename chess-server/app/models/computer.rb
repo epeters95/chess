@@ -28,7 +28,7 @@ class Computer
   end
 
   def get_move(elo_rating=nil)
-    interface = EngineInterface.new("chess-engine-interface", 10000)
+    interface = EngineInterface.new(engine_interface_hostname, engine_interface_port)
     level = 1
     if self.class.difficulty_levels[@difficulty]
       level = self.class.difficulty_levels[@difficulty]

@@ -3,7 +3,7 @@ require 'uri'
 
 class EngineInterface
 
-  def initialize(hostname, port)
+  def initialize(hostname="127.0.0.1", port=5000)
     @hostname = hostname
     @port = port
     @level = 20

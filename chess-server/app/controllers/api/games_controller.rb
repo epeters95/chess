@@ -188,7 +188,7 @@ class Api::GamesController < ApplicationController
             if params[:with_eval]
               
               # Get engine evaluation for each move
-              interface = EngineInterface.new("chess-engine-interface", 10000)
+              interface = EngineInterface.new(engine_interface_hostname, engine_interface_port)
               adv_white = interface.get_eval(@game.board.move_history_str)
 
               unless adv_white.nil?

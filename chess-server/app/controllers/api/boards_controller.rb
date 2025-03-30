@@ -63,7 +63,7 @@ class Api::BoardsController < ApplicationController
     if @game
       begin
         @board = @game.board
-        interface = EngineInterface.new("chess-engine-interface", 10000)
+        interface = EngineInterface.new(engine_interface_hostname, engine_interface_port)
         move_history = ""
 
 

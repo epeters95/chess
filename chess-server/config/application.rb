@@ -25,6 +25,14 @@ module ChessServer
     # config.api_only = true
     config.autoload_paths += [config.root.join('app/models/objects')]
     config.autoload_paths += [config.root.join('app/models/objects/pieces')]
+
+    if Rails.env.production?
+      engine_interface_hostname = "chess-engine-interface"
+      engine_interface_port = 10000
+    else
+      engine_interface_hostname = "127.0.0.1"
+      engine_interface_port = 5000
+    end
   end
 end
 
