@@ -118,7 +118,7 @@ class Api::GamesController < ApplicationController
     black_player = Player.find_or_create_by_name(game_params[:black_name])
     white_player = Player.find_or_create_by_name(game_params[:white_name])
     elo = game_params[:elo_rating]
-    difficulty = game_params[:difficulty]
+    difficulty = game_params[:computer_difficulty]
     begin
       @game = Game.new(game_params)
       @game.black_id = black_player.id if black_player
@@ -161,14 +161,14 @@ class Api::GamesController < ApplicationController
               
               # Store difficulty used on game
               if @game.computer_difficulty.nil? && @game.elo_rating.nil?
-                if (params[:difficulty] =~ /^\d+$/) != nil
+                if (params[:computer_difficulty] =~ /^\d+$/) != nil
                   # Elo Rating
-                  elo_rating = params[:difficulty].to_i
+                  elo_rating = params[:computer_difficulty].to_i
                   level = elo_rating
                   @game.update(elo_rating: elo_rating)
                 else
-                  level = Computer.difficulty_levels[params[:difficulty]]
-                  difficulty = params[:difficulty]
+                  level = Computer.difficulty_levels[params[:computer_difficulty]]
+                  difficulty = params[:computer_difficulty]
                   @game.update(computer_difficulty: level)
                 end
               end
@@ -253,7 +253,7 @@ class Api::GamesController < ApplicationController
     end
 
     def game_params
-      params.require(:game).permit(:white_name, :black_name, :status, :elo_rating, :difficulty)
+      params.require(:game).permit(:white_name, :black_name, :status, :elo_rating, :computer_difficulty)
     end
 
     def move_params
