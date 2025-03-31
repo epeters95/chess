@@ -13,23 +13,23 @@ $(document).ready(function() {
     return "";
   }
 
-  const completedLink = function(data, type, row, meta) {
+  const completedLink = function(data, type, row) {
     return wrapLink("&status=completed", row.name, data)
   };
 
-  const winsLink = function(data, type, row, meta) {
+  const winsLink = function(data, type, row) {
     return wrapLink("&wins=" + row.id, row.name, data)
   };
 
-  const lossesLink = function(data, type, row, meta) {
+  const lossesLink = function(data, type, row) {
     return wrapLink("&losses=" + row.id, row.name, data)
   };
 
-  const drawsLink = function(data, type, row, meta) {
+  const drawsLink = function(data, type, row) {
     return wrapLink("&draws=" + row.id, row.name, data)
   };
 
-  let table = new DataTable('#players-table', {
+  new DataTable('#players-table', {
     responsive: true,
     ajax: {
       "url": baseUrl + '/api/players',

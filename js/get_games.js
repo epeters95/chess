@@ -108,7 +108,7 @@ function populateTable(json) {
 
           // Send to server
           let body = {"game_id": id, "img_str": canvasImg}
-          fetchFromApi("/api/thumbnail", "POST", body, function(json) {
+          fetchFromApi("/api/thumbnail", "POST", body, function() {
             console.log("Returned img thumbnail to server")
           })
         })

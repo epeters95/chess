@@ -28,7 +28,7 @@ difficultySubmit.addEventListener("click", function() {
 })
 
 const eloValue = document.getElementById("elo-value");
-const setEloValue = function(e) {
+const setEloValue = function() {
   if (eloValue.value < 0) {
     eloValue.value = 0;
   } else if (eloValue.value > 3200) {
@@ -107,10 +107,6 @@ fetchFromApi("/api/quote", "GET", null, function(json) {
   quoteSpan.innerText = json["quote"];
   quoteWrapper.appendChild(quoteSpan);
 })
-
-function refreshGame() {
-  gameView.refresh()
-}
 
 function findGame() {
   // get game from the api
