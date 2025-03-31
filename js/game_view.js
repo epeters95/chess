@@ -350,7 +350,7 @@ class GameView {
 
     let that = this;
 
-    fetchFromApi("/api/games/" + this.gameId, "PATCH", { "difficulty": this.difficulty }, function(json) {
+    fetchFromApi("/api/games/" + this.gameId, "PATCH", { "computer_difficulty": this.difficulty }, function(json) {
       that.setJsonVars(json);
       that.draw();
     })

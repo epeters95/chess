@@ -174,7 +174,7 @@ function newGame() {
 
 function newGameStart(requestBody, computerTeam=null, difficulty=null, eloRating=null) {
   if (difficulty !== null) {
-    requestBody["game"]["difficulty"] = difficulty
+    requestBody["game"]["computer_difficulty"] = difficulty
   }
   if (eloRating !== null) {
     requestBody["game"]["elo_rating"] = eloRating
