@@ -117,9 +117,7 @@ h3 {
 checker{
   background-color: rgb(140, 68, 96);
 }
-.player-names {
-  height: 150px ;
-}
+
 .player-names * {
   padding: 5px;
 }
@@ -500,6 +498,16 @@ table#players-table {
 
 #players-table-view label, #players-table-view input, #players-table-view select, #players-table-view div {
   color: wheat;
+  font-family: "Nunito", sans-serif;
+  font-size: 14pt;
+}
+
+#players-table-view .dt-info {
+  font-family: "Nunito", sans-serif;
+}
+
+#players-table td {
+  font-family: serif;
 }
 
 #upload-status-span {
