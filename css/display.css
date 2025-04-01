@@ -35,7 +35,7 @@ canvas {
 
 .main {
   position: absolute;
-  width: 90%;
+  width: 100%;
   text-align: center;
 }
 
@@ -128,7 +128,8 @@ checker{
 }
 
 .player-names input {
-  background-color: black;
+  color: white !important;
+  background-color: black !important;
   padding-top: 8px;
 }
 
@@ -233,7 +234,7 @@ table#game-table {
 }
 #content #quote-wrapper {
   width: 473px !important;
-  max-width: 460px;
+  max-width: 450px;
   margin: auto;
 }
 
@@ -245,6 +246,10 @@ table#game-table {
   top: -300px;
   max-width: inherit;
   overflow-wrap: normal;
+}
+
+canvas#game-view {
+  margin-left: -8px;
 }
 
 .content-container {
@@ -433,6 +438,7 @@ table.inputs-table {
   width: 476px;
   height: 476px;
   z-index: 100;
+  margin-left: -8px;
 }
 
 #selection-grid tbody tr:nth-child(even) {
@@ -484,6 +490,12 @@ table#players-table {
   tbody tr td a {
     color: honeydew;
   }
+}
+
+#players-table-view {
+  position: relative;
+  width: 80%;
+  margin: auto;
 }
 
 #players-table-view label, #players-table-view input, #players-table-view select, #players-table-view div {
