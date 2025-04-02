@@ -238,8 +238,8 @@ table#game-table {
 
 #quote-wrapper .quote-span{
   color: white;
-  font-size: 14pt;
-  font-family: serif;
+  font-size: 13pt;
+  font-family: Garamond, Book Antiqua, serif;
   position: relative;
   top: -300px;
   max-width: inherit;
