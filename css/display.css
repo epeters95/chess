@@ -190,6 +190,10 @@ table#game-table {
   }
 }
 
+#game-table td a, #game-table td span {
+  font-family: "Nunito", sans-serif;
+}
+
 #game-table-view input {
   color: white;
   background-color: black;
