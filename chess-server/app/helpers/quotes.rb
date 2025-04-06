@@ -84,6 +84,8 @@ module Quotes
     ― Vineet Raj Kapoor",
     "\“Checkers is for tramps.\”
     ― Paul Charles Morphy",
+    "\“The ability to play chess is the sign of a gentleman. The ability to play chess well is a sign of a wasted life.\”
+    ― Paul Charles Morphy",
     "\“Don't you get bored sometimes?”, she asked.
     “What else is there?”, Benny replied.\”
     ― Walter Tevis, The Queen's Gambit",
@@ -97,8 +99,6 @@ module Quotes
     ― Alice Feeney, Rock Paper Scissors",
     "\“Many have become chess masters; no one has become the master of chess.\”
     - Siegbert Tarrasch",
-    "\“Can we go to chessy now?\”
-    ― Greyson Sweeny",
     "\“You’re just a pawn on the chessboard, Leo Valdez. I was referring to the player who set this ridiculous quest in motion, bringing the Greeks and Romans together.\”
     ― Rick Riordan, The Mark of Athena",
     "\“Excelling at chess has long been considered a symbol of more general intelligence. That is an incorrect assumption in my view, as pleasant as it might be.\”
@@ -148,9 +148,8 @@ module Quotes
     ― G H Hardy, A Mathematician's Apology",
     "\“If you don’t know how to move, move with the last pawn. The position won't change, but you seem to have done something.\”
     ― Paúliuk Bykoúski",
-    "\“The Beauty of the Chess Set is of no import to the Player
-    //Lessons in Aesthetics\”
-    ― Vineet Raj Kapoor",
+    "\“The Beauty of the Chess Set is of no import to the Player.\”
+    ― Vineet Raj Kapoor, Lessons in Aesthetics",
     "\“In life, as in chess, it is always better to analyze one's motives and intentions.\”
     ― Vladimir Nabokov, Pnin",
     "\“Life is a Game of Chess Between Me and God; Let the Best Player Win\”
@@ -286,7 +285,10 @@ module Quotes
     "\“No one ever won a game by resigning.\”
     ― Savielly Tartakower",
     "\“Self-confidence is very important. If you don’t think you can win, you will take cowardly decisions in the crucial moments, out of sheer respect for your opponent.\”
-    ― Magnus Carlsen"
-
+    ― Magnus Carlsen",
+    "\“When I am white, I win because I am white. When I am black, I win because I am Bogoljubov.\”
+    ― Efim Bogoljubov",
+    "\“All chess players should have a hobby.\”
+    ― Savielly Tartakower"
   ]
 end
