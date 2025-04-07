@@ -87,12 +87,15 @@ class Api::GamesController < ApplicationController
       elsif game.elo_rating
         difficulty = "#{game.elo_rating} Elo"
       end
-      obj = { id: game.id,
+      obj = {
+        id:         game.id,
         white_name: game.white_name,
         black_name: game.black_name,
         move_count: game.board.move_count,
         difficulty: difficulty,
-        date: game.created_at.strftime("%-m/%-d/%Y") }
+        uploaded:   game.uploaded,
+        date:       game.created_at.strftime("%-m/%-d/%Y")
+      }
 
       thumbnail_str = Rails.cache.read("thumbnail-#{game.id}")
 
