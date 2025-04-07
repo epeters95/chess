@@ -23,7 +23,7 @@ class Api::BoardsController < ApplicationController
     white_name = get_name_from_pgn(pgn_text, "white")
     black_name = get_name_from_pgn(pgn_text, "black")
 
-    game = Game.create(white_name: white_name, black_name: black_name, status: "completed")
+    game = Game.create(white_name: white_name, black_name: black_name, status: "completed", uploaded: true)
     initial_board = game.board
 
     move_list.each do |move_str|
