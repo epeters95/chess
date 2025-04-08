@@ -353,6 +353,13 @@ function gameViewHtml(game) {
     divStyle += 'background-blend-mode: overlay;';
   }
 
+  let lowerStr = '';
+
+  if (game.uploaded) {
+    divStyle += 'border: 1px solid lightgrey;border-radius: 3px;'
+    lowerStr = "<br><span style='color: lightgrey;'>Uploaded</span>";
+  }
+
   let htmlString = "<div class='game-thumbnail' " + 
                         "title='" + getGameTitle(game) + "' " +
                         "style='width:100%; height:100%;'>";
@@ -370,8 +377,9 @@ function gameViewHtml(game) {
   htmlString += "<br><span style='color: white;'>" + game.date + "</span>"
 
   if (game.difficulty) {
-    htmlString += "<br><br><span style='color: white;'>Difficulty: " + game.difficulty + "</span>";
+    lowerStr = "<br><span style='color: white;'>Difficulty: " + game.difficulty + "</span>";
   }
+  htmlString += lowerStr;
   htmlString += "</div>";
 
   htmlString += "</div>";
