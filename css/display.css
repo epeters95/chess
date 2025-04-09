@@ -313,6 +313,8 @@ canvas#game-view {
   border-bottom: 1px wheat dotted;
   padding-bottom: 8px;
   cursor: pointer;
+  background-color: rgba(0,0,0,0);
+  transition: background-color 0.8s ease-out, color 0.8s ease-out;
 }
 
 #moves-list * {
@@ -321,7 +323,8 @@ canvas#game-view {
   font-size: 14pt;
 }
 
-#moves-list .selected {
+#moves-list table td.selected {
+  transition: background-color 0.8s ease-out, color 0.8s ease-out;
   background-color: rgb(221, 193, 98);
   color: black;
 }
