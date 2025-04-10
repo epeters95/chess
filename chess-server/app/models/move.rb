@@ -1,5 +1,3 @@
-
-
 class Move < ApplicationRecord
 
   # The entirety of the board's history will be represented by rows of moves belonging to that board
@@ -43,11 +41,5 @@ class Move < ApplicationRecord
   def uci_notation
     @move_object.get_uci_notation
   end
-
-  # def notation_cached
-  #   Rails.cache.fetch("#{cache_key_with_version}/notation", expires_in: 12.hours) do
-  #     set_notation
-  #   end
-  # end
 
 end

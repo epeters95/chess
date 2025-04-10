@@ -1,6 +1,4 @@
 class Player < ApplicationRecord
-  # has_many :games, through: :games_players
-
   validates :name, uniqueness: true
 
   def is_active_token?(token)
