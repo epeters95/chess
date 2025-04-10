@@ -54,7 +54,10 @@ class Game < ApplicationRecord
       
       # Append notation to indicate checkmate (hotfix)
       last_move = self.board.played_moves_in_order.last
-      last_move.update(notation: "#{last_move.notation}#")
+
+      new_notation = last_move.notation
+      new_notation.slice!("+") # Remove check indication
+      last_move.update(notation: "#{new_notation}#")
 
       self.board.update(status_str: "#{display_name_for(previous_turn)} has won by checkmate!")
 
