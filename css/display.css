@@ -176,6 +176,10 @@ checker{
   margin-right: 80px;
 }
 
+.game-tile {
+  border-radius: 3px;
+}
+
 table#game-table {
   margin: auto;
 

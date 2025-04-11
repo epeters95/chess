@@ -364,7 +364,7 @@ function gameViewHtml(game) {
                         "title='" + getGameTitle(game) + "' " +
                         "style='width:100%; height:100%;'>";
 
-  htmlString += "<div style='" + divStyle + "'>";
+  htmlString += "<div class='game-tile' style='" + divStyle + "'>";
   htmlString += "<span><b>" +
                 getGameTitle(game) +
                 "</b></span>";
