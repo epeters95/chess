@@ -144,7 +144,11 @@ function drawGameThumbnail(imgDiv, dataStr) {
 function populateGameAndMoves(json, gameId) {
   // Fill in title
   if (gameTitle) {
-    gameTitle.innerHTML = getGameTitle(json["game"])
+    let title = getGameTitle(json["game"])
+    if (json["game"]["uploaded"]) {
+      title += " (Uploaded)"
+    }
+    gameTitle.innerHTML = title;
   }
   // Populate snapshots of the game at each move
   let evaluated = true;

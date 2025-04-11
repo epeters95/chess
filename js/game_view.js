@@ -69,6 +69,7 @@ class GameView {
     this.turnName      = json["turn_name"];
     this.pieces        = JSON.parse(json["pieces"]);
     this.moves         = json["legal_moves"].map((lm) => JSON.parse(lm));
+    this.uploaded      = json["uploaded"];
   }
 
   refresh() {
