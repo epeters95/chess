@@ -238,6 +238,12 @@ table#game-table {
   width: 48%;
 
 }
+
+.modal-content.success-popup {
+  width: 35%;
+  min-width: 200px;
+}
+
 #content #quote-wrapper {
   width: 473px !important;
   max-width: 450px;
