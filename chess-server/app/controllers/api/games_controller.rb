@@ -159,20 +159,20 @@ class Api::GamesController < ApplicationController
 
             if @game.is_computers_turn?
               
-              elo_rating = nil
-              difficulty = "insane"
+              elo_rating = @game.elo_rating
+              difficulty = @game.computer_difficulty || "insane" # placeholder value to initialize computer,
+                                                                 # overridden by get_move(elo_rating=<number>)
               
               # Store difficulty used on game
               if @game.computer_difficulty.nil? && @game.elo_rating.nil?
-                if (params[:computer_difficulty] =~ /^\d+$/) != nil
-                  # Elo Rating
-                  elo_rating = params[:computer_difficulty].to_i
-                  level = elo_rating
-                  @game.update(elo_rating: elo_rating)
-                else
+                if params[:computer_difficulty]
                   level = Computer.difficulty_levels[params[:computer_difficulty]]
                   difficulty = params[:computer_difficulty]
                   @game.update(computer_difficulty: level)
+                elsif params[:elo_rating]
+                  # Elo Rating
+                  elo_rating = params[:elo_rating].to_i
+                  @game.update(elo_rating: elo_rating)
                 end
               end
 
