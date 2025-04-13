@@ -13,9 +13,7 @@ class GameView {
     this.isLive = isLive;
     this.computerTeam  = computerTeam;
     this.difficulty = difficulty;
-    if (eloRating !== null) {
-      this.difficulty = eloRating;
-    }
+    this.eloRating = eloRating;
     this.selectedMoves = [];
     this.selectedPiece = "";
     this.accessCode    = "";
@@ -351,7 +349,15 @@ class GameView {
 
     let that = this;
 
-    fetchFromApi("/api/games/" + this.gameId, "PATCH", { "computer_difficulty": this.difficulty }, function(json) {
+    let reqBody = {};
+    if (this.difficulty) {
+      reqBody["computer_difficulty"] = this.difficulty;
+    }
+    else if (this.eloRating) {
+      reqBody["elo_rating"] = this.eloRating;
+    }
+
+    fetchFromApi("/api/games/" + this.gameId, "PATCH", reqBody, function(json) {
       that.setJsonVars(json);
       that.draw();
     })
