@@ -97,7 +97,7 @@ class GameView {
     }, this.refreshRateMs)
   }
 
-  draw(skipLoop=false, callback=()=>{}, animatePiece=null, animatePos=null) {
+  draw(skipLoop=false, callback=()=>{}, animatePiecePos=null, animatePos=null) {
 
     this.statusSpan.innerText = this.status;
 
@@ -124,11 +124,11 @@ class GameView {
 
     }).then(() => {
 
-      that.drawTeam("white", animatePiece, animatePos)
+      that.drawTeam("white", animatePiecePos, animatePos)
 
     }).then(() => {
 
-      that.drawTeam("black", animatePiece, animatePos)
+      that.drawTeam("black", animatePiecePos, animatePos)
 
     }).then(() => {
 
@@ -175,7 +175,7 @@ class GameView {
     return showWhite;
   }
 
-  drawTeam(color, animatePiece=null, animatePos=null) {
+  drawTeam(color, animatePiecePos=null, animatePos=null) {
     this.context.font = `50px Verdana`;
     let smallSize = this.squareSize * 0.9;
     let tinySize = this.squareSize * 0.1;
@@ -193,7 +193,7 @@ class GameView {
         x = (7 - fileIndexOf(el.position[0])) * squareSize;
         y = rankIndexOf(el.position[1]) * squareSize;
       }
-      if (animatePiece !== null && el.position === animatePiece.position) {
+      if (animatePiecePos !== null && el.position === animatePiecePos) {
         that.context.fillText(el.char, animatePos[0] + tinySize, animatePos[1] + smallSize)
       }
       else {
@@ -394,43 +394,51 @@ class GameView {
 
   sendGameUpdateAndRedraw(data) {
     let that = this;
-    fetchFromApi("/api/games/" + this.gameId, "PATCH", data, function(json) {
-      that.promotionMove = null;
-      that.selectedMoves = [];
-      that.setJsonVars(json);
-      // that.playMoveAnimation(data["move"], function() {
+    this.clearHighlight();
+
+    const sendGameUpdate = function() {
+      fetchFromApi("/api/games/" + that.gameId, "PATCH", data, function(json) {
+        that.promotionMove = null;
+        that.selectedMoves = [];
+        that.setJsonVars(json);
         that.draw();
-        that.clearHighlight();
         if (!data["resign"] && !that.isLive && that.computerTeam === that.turn) {
           that.nextComputerMove();
         }
-      // })
-    })
+      })
+    }
+
+    // if (data["move"] !== undefined ) {
+    //   this.playMoveAnimation(data["move"], sendGameUpdate)
+    // } else {
+      sendGameUpdate()
+    // }
+
   }
 
   xToCanvasPosition(file) {
     if (this.getShowWhite()) {
-      return fileIndexOf(file) * this.squareSize;
-    } else {
       return (7 - fileIndexOf(file)) * this.squareSize;
+    } else {
+      return fileIndexOf(file) * this.squareSize;
     }
   }
 
   yToCanvasPosition(rank) {
     if (this.getShowWhite()) {
-      return rankIndexOf(rank) * this.squareSize;
-    } else {
       return (7 - rankIndexOf(rank)) * this.squareSize;
+    } else {
+      return rankIndexOf(rank) * this.squareSize;
     }
   }
 
   playMoveAnimation(move, callback) {
     let steps = 30;
 
-    let oldX = xToCanvasPosition(move.position[0]);
-    let newX = xToCanvasPosition(move.new_position[0]);
-    let oldY = yToCanvasPosition(move.position[1]);
-    let newY = yToCanvasPosition(move.new_position[1]);
+    let oldX = this.xToCanvasPosition(move.position[0]);
+    let newX = this.xToCanvasPosition(move.new_position[0]);
+    let oldY = this.yToCanvasPosition(move.position[1]);
+    let newY = this.yToCanvasPosition(move.new_position[1]);
 
     let xDiff = newX - oldX;
     let yDiff = newY - oldY;
@@ -448,11 +456,12 @@ class GameView {
         totalX += incrX
         totalY += incrY
 
-        if (totalX >= newX && totalY >= newY) {
+        if (totalX === newX && totalY === newY) {
+          callback();
           return;
 
         } else {
-          that.draw(true, loopAnimate, move.piece, [totalX, totalY])
+          that.draw(true, loopAnimate, move.position, [totalX, totalY])
         }
       }, 24)
     }
