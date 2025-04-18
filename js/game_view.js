@@ -97,7 +97,7 @@ class GameView {
     }, this.refreshRateMs)
   }
 
-  draw(skipLoop=false, callback=()=>{}) {
+  draw(skipLoop=false, callback=()=>{}, animatePiece=null, animatePos=null) {
 
     this.statusSpan.innerText = this.status;
 
@@ -124,11 +124,11 @@ class GameView {
 
     }).then(() => {
 
-      that.drawTeam("white")
+      that.drawTeam("white", animatePiece, animatePos)
 
     }).then(() => {
 
-      that.drawTeam("black")
+      that.drawTeam("black", animatePiece, animatePos)
 
     }).then(() => {
 
@@ -164,7 +164,18 @@ class GameView {
 
   }
 
-  drawTeam(color) {
+  getShowWhite() {
+    let showWhite;
+
+    if (this.showTurn !== null) {
+      showWhite = (this.showTurn === "white");
+    } else {
+      showWhite = (this.turn === "white" || this.turnName === "");
+    }
+    return showWhite;
+  }
+
+  drawTeam(color, animatePiece=null, animatePos=null) {
     this.context.font = `50px Verdana`;
     let smallSize = this.squareSize * 0.9;
     let tinySize = this.squareSize * 0.1;
@@ -174,22 +185,20 @@ class GameView {
     this.pieces[color].forEach(function(el) {
       that.context.fillStyle = color;
       let x, y;
-      let showWhite;
 
-      if (that.showTurn !== null) {
-        showWhite = (that.showTurn === "white");
-      } else {
-        showWhite = (that.turn === "white" || that.turnName === "");
-      }
-
-      if (showWhite) {
+      if (that.getShowWhite()) {
         x = fileIndexOf(el.position[0]) * squareSize;
         y = (7 - rankIndexOf(el.position[1])) * squareSize;
       } else {
         x = (7 - fileIndexOf(el.position[0])) * squareSize;
         y = rankIndexOf(el.position[1]) * squareSize;
       }
-      that.context.fillText(el.char, x + tinySize, y + smallSize);
+      if (animatePiece !== null && el.position === animatePiece.position) {
+        that.context.fillText(el.char, animatePos[0] + tinySize, animatePos[1] + smallSize)
+      }
+      else {
+        that.context.fillText(el.char, x + tinySize, y + smallSize);
+      }
     })
   }
 
@@ -389,12 +398,66 @@ class GameView {
       that.promotionMove = null;
       that.selectedMoves = [];
       that.setJsonVars(json);
-      that.draw();
-      that.clearHighlight();
-      if (!data["resign"] && !that.isLive && that.computerTeam === that.turn) {
-        that.nextComputerMove();
-      }
+      // that.playMoveAnimation(data["move"], function() {
+        that.draw();
+        that.clearHighlight();
+        if (!data["resign"] && !that.isLive && that.computerTeam === that.turn) {
+          that.nextComputerMove();
+        }
+      // })
     })
+  }
+
+  xToCanvasPosition(file) {
+    if (this.getShowWhite()) {
+      return fileIndexOf(file) * this.squareSize;
+    } else {
+      return (7 - fileIndexOf(file)) * this.squareSize;
+    }
+  }
+
+  yToCanvasPosition(rank) {
+    if (this.getShowWhite()) {
+      return rankIndexOf(rank) * this.squareSize;
+    } else {
+      return (7 - rankIndexOf(rank)) * this.squareSize;
+    }
+  }
+
+  playMoveAnimation(move, callback) {
+    let steps = 30;
+
+    let oldX = xToCanvasPosition(move.position[0]);
+    let newX = xToCanvasPosition(move.new_position[0]);
+    let oldY = yToCanvasPosition(move.position[1]);
+    let newY = yToCanvasPosition(move.new_position[1]);
+
+    let xDiff = newX - oldX;
+    let yDiff = newY - oldY;
+
+    let incrX = xDiff / steps;
+    let incrY = yDiff / steps;
+
+    let totalX = oldX;
+    let totalY = oldY;
+
+    let that = this;
+
+    const loopAnimate = function() {
+      setTimeout(function() {
+        totalX += incrX
+        totalY += incrY
+
+        if (totalX >= newX && totalY >= newY) {
+          return;
+
+        } else {
+          that.draw(true, loopAnimate, move.piece, [totalX, totalY])
+        }
+      }, 24)
+    }
+
+    loopAnimate();
   }
 
   clearHighlight() {
