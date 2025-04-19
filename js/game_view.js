@@ -367,8 +367,10 @@ class GameView {
     }
 
     fetchFromApi("/api/games/" + this.gameId, "PATCH", reqBody, function(json) {
-      that.setJsonVars(json);
-      that.draw();
+      that.setJsonVars(json["game"]);
+      that.playMoveAnimation(json["move"], true, function() {
+        that.draw()
+      })
     })
 
   }
@@ -415,29 +417,37 @@ class GameView {
 
   }
 
-  xToCanvasPosition(file) {
-    if (this.getShowWhite()) {
+  xToCanvasPosition(file, reverse) {
+    let show = this.getShowWhite()
+    if (reverse) {
+      show = !show;
+    }
+    if (show) {
       return fileIndexOf(file) * this.squareSize;
     } else {
       return (7 - fileIndexOf(file)) * this.squareSize;
     }
   }
 
-  yToCanvasPosition(rank) {
-    if (this.getShowWhite()) {
+  yToCanvasPosition(rank, reverse) {
+    let show = this.getShowWhite()
+    if (reverse) {
+      show = !show;
+    }
+    if (show) {
       return (7 - rankIndexOf(rank)) * this.squareSize;
     } else {
       return rankIndexOf(rank) * this.squareSize;
     }
   }
 
-  playMoveAnimation(move) {
+  playMoveAnimation(move, reverse=false, callback=null) {
     let steps = 30;
 
-    let oldX = this.xToCanvasPosition(move.position[0]);
-    let newX = this.xToCanvasPosition(move.new_position[0]);
-    let oldY = this.yToCanvasPosition(move.position[1]);
-    let newY = this.yToCanvasPosition(move.new_position[1]);
+    let oldX = this.xToCanvasPosition(move.position[0], reverse);
+    let newX = this.xToCanvasPosition(move.new_position[0], reverse);
+    let oldY = this.yToCanvasPosition(move.position[1], reverse);
+    let newY = this.yToCanvasPosition(move.new_position[1], reverse);
 
     let xDiff = newX - oldX;
     let yDiff = newY - oldY;
@@ -459,6 +469,9 @@ class GameView {
              ( incrX < 0  && totalX <= newX)) &&
              (( incrY >= 0 && totalY >= newY) ||
               ( incrY < 0  && totalY <= newY)) ) {
+          if (callback !== null) {
+            callback()
+          }
           return;
 
         } else {
