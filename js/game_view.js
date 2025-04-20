@@ -97,7 +97,7 @@ class GameView {
     }, this.refreshRateMs)
   }
 
-  draw(skipLoop=false, callback=()=>{}, animatePiecePos=null, animatePos=null) {
+  draw(skipLoop=false, callback=()=>{}, animatePiecePos=null, animatePos=null, oldPieces=null) {
 
     this.statusSpan.innerText = this.status;
 
@@ -124,11 +124,11 @@ class GameView {
 
     }).then(() => {
 
-      that.drawTeam("white", animatePiecePos, animatePos)
+      that.drawTeam("white", animatePiecePos, animatePos, oldPieces)
 
     }).then(() => {
 
-      that.drawTeam("black", animatePiecePos, animatePos)
+      that.drawTeam("black", animatePiecePos, animatePos, oldPieces)
 
     }).then(() => {
 
@@ -175,14 +175,19 @@ class GameView {
     return showWhite;
   }
 
-  drawTeam(color, animatePiecePos=null, animatePos=null) {
+  drawTeam(color, animatePiecePos=null, animatePos=null, oldPieces=null) {
     this.context.font = `50px Verdana`;
     let smallSize = this.squareSize * 0.9;
     let tinySize = this.squareSize * 0.1;
     let squareSize = this.squareSize;
     let that = this;
 
-    this.pieces[color].forEach(function(el) {
+    let pieces = this.pieces[color];
+    if (oldPieces !== null) {
+      pieces = oldPieces[color];
+    }
+
+    pieces.forEach(function(el) {
       that.context.fillStyle = color;
       let x, y;
 
@@ -366,11 +371,14 @@ class GameView {
       reqBody["elo_rating"] = this.eloRating;
     }
 
+    // Retain previous game state for animating
+    let oldPieces = JSON.parse(JSON.stringify(this.pieces));
+
     fetchFromApi("/api/games/" + this.gameId, "PATCH", reqBody, function(json) {
       that.setJsonVars(json["game"]);
-      that.playMoveAnimation(json["move"], true, function() {
+      that.playMoveAnimation(json["move"], false, function() {
         that.draw()
-      })
+      }, oldPieces);
     })
 
   }
@@ -441,7 +449,7 @@ class GameView {
     }
   }
 
-  playMoveAnimation(move, reverse=false, callback=null) {
+  playMoveAnimation(move, reverse=false, callback=null, oldPieces=null) {
     let steps = 30;
 
     let oldX = this.xToCanvasPosition(move.position[0], reverse);
@@ -475,7 +483,7 @@ class GameView {
           return;
 
         } else {
-          that.draw(true, loopAnimate, move.position, [totalX, totalY])
+          that.draw(true, loopAnimate, move.position, [totalX, totalY], oldPieces)
         }
       }, 8)
     }
