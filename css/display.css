@@ -136,7 +136,8 @@ checker{
 }
 
 .hidden {
-  display: none;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
 
 #loading-spinner {
@@ -231,6 +232,9 @@ table#game-table {
   width: 60%;
   height: 100%;
   padding-top: 40px;
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s, opacity 0.5s linear;
 }
 
 .modal-content.code-modal {
