@@ -38,6 +38,23 @@ const setEloValue = function() {
 eloValue.addEventListener("keydown", setEloValue)
 eloValue.addEventListener("change", setEloValue)
 
+const difficultyPopupContent = document.getElementById("difficulty-popup-content");
+const eloRadio = document.getElementById("elo-radio");
+const radios = Array.from(difficultyPopupContent.querySelectorAll("[type=radio]"))
+
+// Clear Elo Rating value if other difficulty selected
+radios.forEach((el) => {
+  el.addEventListener("change", (event) => {
+
+    if (eloRadio.checked && eloValue.value === '') {
+      eloValue.value = 1500
+
+    } else if (!eloRadio.checked) {
+      eloValue.value = ''
+    }
+  })
+})
+
 
 const modalDiffCloseBtn = document.getElementById("modal-diff-close-button");
 modalDiffCloseBtn.addEventListener("click", function() {
