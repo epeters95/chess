@@ -81,6 +81,7 @@ canvas {
   }
   width: 600px;
   margin: auto;
+  z-index: 500;
 }
 
 
@@ -138,6 +139,9 @@ checker{
 .hidden {
   visibility: hidden !important;
   opacity: 0 !important;
+  z-index: 0;
+  position: absolute;
+  transition: visibility 0s, opacity 0.5s linear;
 }
 
 #loading-spinner {
@@ -224,6 +228,11 @@ table#game-table {
   overflow: hidden;
   position: fixed;
   z-index: 1000;
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0s, opacity 0.5s linear;
+  position: absolute;
+  top: 200px;
 }
 
 .modal-content {
@@ -232,9 +241,6 @@ table#game-table {
   width: 60%;
   height: 100%;
   padding-top: 40px;
-  visibility: visible;
-  opacity: 1;
-  transition: visibility 0s, opacity 0.5s linear;
 }
 
 .modal-content.code-modal {
@@ -258,10 +264,12 @@ table#game-table {
   color: white;
   font-size: 13pt;
   font-family: Garamond, Book Antiqua, serif;
-  position: relative;
-  top: -300px;
+  position: absolute;
+  top: 200px;
+  display: block;
   max-width: inherit;
   overflow-wrap: normal;
+  width: 100%;
 }
 
 canvas#game-view {
