@@ -29,11 +29,13 @@ class Player < ApplicationRecord
   end
 
   def loss_games
-    Game.where(status: "completed", outcome: "checkmate", loser_id: self.id)
+    Game.where(status: "completed", outcome: "checkmate", loser_id: self.id).or(
+      Game.where(status: "completed", outcome: "resignation", loser_id: self.id))
   end
 
   def win_games
-    Game.where(status: "completed", outcome: "checkmate", winner_id: self.id)
+    Game.where(status: "completed", outcome: "checkmate", winner_id: self.id).or(
+      Game.where(status: "completed", outcome: "resignation", winner_id: self.id))
   end
 
   def draws
@@ -48,5 +50,11 @@ class Player < ApplicationRecord
     win_games.size
   end
 
+  def highest_elo_win
+    win = win_games.where.not(elo_rating: nil).order(elo_rating: :desc).first
+    if win
+      win.elo_rating
+    end
+  end
 
 end

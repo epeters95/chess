@@ -11,7 +11,8 @@ class Api::PlayersController < ApplicationController
         completed_games: player.games.where(status: "completed").length,
         wins: player.wins,
         losses:player.losses,
-        draws: player.draws
+        draws: player.draws,
+        highest_elo_win: player.highest_elo_win
       }
     end.compact.select{ |pl| pl[:games] != 0 }
 
