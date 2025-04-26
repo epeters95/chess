@@ -37,10 +37,12 @@ $(document).ready(function() {
       "dataSrc": "players"
     },
     layout: {
-      topStart: 'search',
+      top: 'search',
+      bottom: 'info',
       topEnd: null,
+      topStart: null,
       bottomStart: null,
-      bottomEnd: 'info'
+      bottomEnd: null
     },
     columns: [
       { data: 'name'},
