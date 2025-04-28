@@ -64,8 +64,11 @@ function setTokenCookie(token, color='', code='') {
   document.cookie = 'accesscode=' + code + '; path=/'
 }
 
-function fetchFromApi(endpoint, method, params=null, successCallback=null) {
-  let spinner = showSpinner("spinner-div");
+function fetchFromApi(endpoint, method, params=null, successCallback=null, hideSpinner=false) {
+  let spinner;
+  if (!hideSpinner) {
+    spinner = showSpinner("spinner-div");
+  }
   let apiUrl = baseUrl + endpoint;
   let requestObj = {
     method: method
@@ -97,11 +100,15 @@ function fetchFromApi(endpoint, method, params=null, successCallback=null) {
     } else {
       console.log("Error:" + json.error + " " + json.errors)
     }
-    spinner.hide()
   })
   .catch(function(error) {
     console.log("Error: " + error)
-    spinner.hide()
+  })
+  .finally(function() {
+
+    if (spinner !== undefined) {
+      spinner.hide()
+    }
   })
 }
 

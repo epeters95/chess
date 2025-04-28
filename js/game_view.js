@@ -82,7 +82,7 @@ class GameView {
     fetchFromApi("/api/live_games/" + params, "GET", null, function(json) {
       that.setJsonVars(json);
       that.draw()
-    })
+    }, true)
 
   }
 
@@ -379,7 +379,7 @@ class GameView {
       that.playMoveAnimation(json["move"], false, function() {
         that.draw()
       }, oldPieces);
-    })
+    }, true)
 
   }
 
