@@ -107,7 +107,7 @@ function fetchFromApi(endpoint, method, params=null, successCallback=null, hideS
   .finally(function() {
 
     if (spinner !== undefined) {
-      spinner.hide()
+      spinner.classList.add("hidden");
     }
   })
 }
@@ -119,10 +119,6 @@ function showSpinner(canvasParentId) {
     spinner.id = "loading";
     spinner.innerHTML = '<div id="loading-spinner"><img src="img/spinner2.gif"></div>';
     document.getElementById(canvasParentId).appendChild(spinner);
-    // Add hide function for spinner
-    spinner.hide = function() {
-      spinner.classList.add("hidden");
-    }
     return spinner
   } else {
     let spinner = document.getElementById("loading");
