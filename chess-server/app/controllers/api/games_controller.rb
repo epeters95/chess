@@ -199,7 +199,7 @@ class Api::GamesController < ApplicationController
                 @game.board.played_moves.last.update(evaluation: adv_white.to_f)
               end
             end
-            render json: @game, status: :ok
+            render json: { game: @game, move: JSON.parse(chosen_move.to_json) }, status: :ok
           else
             error = "Invalid move chosen"
             error += ", game: #{@game.errors}" if !@game.errors.empty?

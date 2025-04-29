@@ -65,16 +65,13 @@ class Api::BoardsController < ApplicationController
         @board = @game.board
         interface = EngineInterface.new(ChessServer::Application.engine_interface_hostname,
                                         ChessServer::Application.engine_interface_port)
-        move_history = ""
-
 
         if @board.played_moves.where(evaluation: nil).any?
 
           moves = @board.played_moves.to_a
-          move_history = moves.map {|mv| mv.uci_notation }.join(',')
           
           # Get engine evaluation for each move
-          eval_list = interface.get_eval_list(move_history)
+          eval_list = interface.get_eval_list(@board.move_history_str)
 
           unless eval_list.nil?
             eval_list.each_with_index do |move_eval, idx|
