@@ -36,8 +36,9 @@ Rails.application.routes.draw do
   end
 
 
-  # Test status endpoint
+  # Test status endpoints
   get '/status', to: 'test#status'
+  get '/status_interface', to: 'test#status_interface'
 
   # devise_for :users, controllers: {
   #   sessions: 'api/sessions'

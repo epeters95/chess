@@ -10,14 +10,22 @@ class EngineInterface
     @move_history = ""
   end
   
-  def send_request(path, data)
+  def send_request(path, data={})
     headers = {'content-type': 'application/json'}
     http = Net::HTTP.new(@hostname, @port)
-    res = http.post(
-      path,
-      data,
-      headers
-    )
+    if data.empty?
+      res = http.get(
+        path,
+        data,
+        headers
+      )
+    else
+      res = http.post(
+        path,
+        data,
+        headers
+      )
+    end
     if res.is_a?(Net::HTTPSuccess)
       res.body
     else
