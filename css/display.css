@@ -544,6 +544,16 @@ table#players-table {
   font-family: "Nunito", sans-serif;
 }
 
+#players-table-view .dt-search label {
+  visibility: hidden;
+}
+#players-table-view .dt-search input {
+  color: white;
+  background-color: black;
+  padding: 8px 5px;
+  margin: 4px;
+}
+
 #players-table td {
   font-family: serif;
 }

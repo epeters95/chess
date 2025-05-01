@@ -37,7 +37,11 @@ $(document).ready(function() {
       "dataSrc": "players"
     },
     layout: {
-      top: 'search',
+      top: {
+        search: {
+          placeholder: 'Search'
+        }
+      },
       bottom: 'info',
       topEnd: null,
       topStart: null,
