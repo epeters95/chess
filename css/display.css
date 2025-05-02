@@ -554,7 +554,7 @@ table#players-table {
   margin: 4px;
 }
 
-#players-table td {
+#players-table td[tabindex=0] {
   font-family: serif;
 }
 
