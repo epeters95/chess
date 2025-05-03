@@ -5,6 +5,7 @@ const newLiveGameSubmit = document.getElementById("new-live-game");
 const accessCodeInput   = document.getElementById("access-code-input");
 const getAccessCode     = document.getElementById("get-access-code");
 const requestCodeSubmit = document.getElementById("request-code-button");
+const statusSpan        = document.getElementById("status");
 var submitEventListeners = [];
 var disableGameReadyLoop = false;
 
@@ -44,7 +45,7 @@ const radios = Array.from(difficultyPopupContent.querySelectorAll("[type=radio]"
 
 // Clear Elo Rating value if other difficulty selected
 radios.forEach((el) => {
-  el.addEventListener("change", (event) => {
+  el.addEventListener("change", () => {
 
     if (eloRadio.checked && eloValue.value === '') {
       eloValue.value = 1500

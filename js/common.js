@@ -10,9 +10,6 @@ if (canvas) {
 }
 
 
-const statusSpan = document.getElementById("status");
-
-
 // Common functions
 
 function fileIndexOf(letter) {

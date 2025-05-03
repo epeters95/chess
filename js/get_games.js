@@ -2,6 +2,8 @@ let table = document.getElementById("game-table");
 
 var windowKeyEventListeners = [];
 
+const statusSpan = document.getElementById("status");
+
 let modalGames = document.getElementsByClassName("modal")[0];
 let modalCloseBtnGames = document.getElementById("modal-close-button");
 modalCloseBtnGames.addEventListener("click", function() {
