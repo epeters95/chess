@@ -394,6 +394,10 @@ canvas#game-view {
   margin: 10px 6px;
   color: wheat;
 }
+.header .status-wrapper {
+  float: right;
+  color: wheat;
+}
 
 .code-background {
   width: 100%;

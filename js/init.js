@@ -6,8 +6,24 @@ const accessCodeInput   = document.getElementById("access-code-input");
 const getAccessCode     = document.getElementById("get-access-code");
 const requestCodeSubmit = document.getElementById("request-code-button");
 const statusSpan        = document.getElementById("status");
+const computerStatus    = document.getElementById("computer-status");
 var submitEventListeners = [];
 var disableGameReadyLoop = false;
+
+// Check if Flask service is on
+
+fetchFromApi("/api/status_interface", "GET", null, function(json) {
+
+  // Expected response from server
+  if (json["message"] === "Chess Engine is live!") {
+    
+    computerStatus.innerText = "Online"
+    computerStatus.style = "color: lightgreen;"
+  } else {
+    computerStatus.innerText = "Offline"
+    computerStatus.style = "color: red;"
+  }
+});
 
 const modal = document.getElementsByClassName("modal")[0];
 const modalCloseBtn = document.getElementById("modal-close-button");
