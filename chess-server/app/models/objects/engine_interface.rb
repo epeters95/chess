@@ -14,11 +14,7 @@ class EngineInterface
     headers = {'content-type': 'application/json'}
     http = Net::HTTP.new(@hostname, @port)
     if data.empty?
-      res = http.get(
-        path,
-        data,
-        headers
-      )
+      res = http.get(path)
     else
       res = http.post(
         path,

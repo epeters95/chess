@@ -1,5 +1,7 @@
 class TestController < ApplicationController
 
+  require 'engine_interface'
+
   def status
     render json: { message: "Latest service is live!" }, status: :ok
   end
