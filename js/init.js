@@ -12,18 +12,25 @@ var disableGameReadyLoop = false;
 
 // Check if Flask service is on
 
-fetchFromApi("/api/status_interface", "GET", null, function(json) {
+let apiUrl = baseUrl + "/status_interface";
+let requestObj = {
+  method: "GET"
+}
 
-  // Expected response from server
-  if (json["message"] === "Chess Engine is live!") {
-    
-    computerStatus.innerText = "Online"
-    computerStatus.style = "color: lightgreen;"
-  } else {
+fetch(apiUrl, requestObj).then(function(response) {
+  if (response.status !== 200) {
     computerStatus.innerText = "Offline"
     computerStatus.style = "color: red;"
+  } else {
+    computerStatus.innerText = "Online"
+    computerStatus.style = "color: lightgreen;"
   }
-});
+})
+
+
+
+// Expected response from server
+
 
 const modal = document.getElementsByClassName("modal")[0];
 const modalCloseBtn = document.getElementById("modal-close-button");
