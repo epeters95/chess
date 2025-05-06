@@ -108,7 +108,7 @@ h1 {
 }
 
 h1, h2 {
-  font-family: serif !important
+  font-family: "Book Antiqua", serif !important;
 }
 
 h3 {
@@ -263,7 +263,7 @@ table#game-table {
 #quote-wrapper .quote-span{
   color: white;
   font-size: 13pt;
-  font-family: Baskerville, Garamond, Book Antiqua, serif;
+  font-family: "Garamond", "Book Antiqua", serif;
   position: absolute;
   top: 200px;
   display: block;
@@ -388,7 +388,7 @@ canvas#game-view {
 }
 .header span{
   font-size: 16pt;
-  font-family: serif;
+  font-family: "Book Antiqua", serif;
 }
 .header span a{
   margin: 10px 6px;
@@ -658,7 +658,7 @@ table#players-table {
 #game-title {
   color: wheat;
   font-size: 16pt;
-  font-family: serif;
+  font-family: "Book Antiqua", serif;
 }
 #resign-button {
   font-family: serif;
