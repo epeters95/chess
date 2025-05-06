@@ -300,8 +300,7 @@ canvas#game-view {
 }
 
 .content-container .mainbar #canvas-window{
-  float: right;
-  margin-right: 80px;
+  float: left;
 }
 .content-container .sidebar {
   width: 40%;
