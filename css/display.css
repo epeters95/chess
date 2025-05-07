@@ -526,6 +526,9 @@ table#players-table {
   tbody tr td {
     color: wheat;
   }
+  tbody tr td:nth-child(1) {
+    font-family: "Garamond", "Book Antiqua", serif;
+  }
   tbody tr td a {
     color: honeydew;
   }
@@ -548,7 +551,7 @@ table#players-table {
 }
 
 #players-table-view .dt-search label {
-  visibility: hidden;
+  display: none;
 }
 #players-table-view .dt-search input {
   color: white;
