@@ -58,8 +58,6 @@ module Quotes
     ― Emanuel Lasker",
     "\“Fighting was chess, anticipating the move of one's opponent and countering it before one got hit.\”
     ― Holly Black, The Wicked King",
-    "\“Personally I rather look forward to a computer program winning the world championship. Humanitiy needs a lesson in humility.\”
-    ― Richard Dawkins",
     "\“Chess does not only teach us to analyse the present situation, but it also enables us to think about the possibilities and consequences. This is the art of forward-thinking.\”
     ― Shivanshu K. Srivastava",
     "\“He sacrificed the ROOOK\”
@@ -70,8 +68,6 @@ module Quotes
     ― Robert Hess",
     "\“Behind every move I make on the chess board lies a story of calculation, intuition, and passion. With every game, I discover more about myself and the endless possibilities of the game\”
     ― medicosaurabh",
-    "\“Don't hate the person, hate the action.\”
-    ― Mitta Xinindlu",
     "\“The winner of the game is the player who makes the next-to-last mistake.\”
     ― Savielly Tartakower",
     "\“Attempting to win with last year's moves is like playing chess with a rubber chicken - entertaining, but not effective!\”
@@ -93,14 +89,10 @@ module Quotes
     ― Elizabeth Acevedo, Clap When You Land",
     "\“There is no moral outcome of a chess match or a poker game as long as skill and stealth rather than cheating have been used.\”
     ― Francis P. Karam, The Truth Engine: Cross-Examination Outside the Box",
-    "\“Coaching is more like chess; it’s about out-thinking and outsmarting the other team.\”
-    ― C. Vivian Stringer, Standing Tall: A Memoir of Tragedy and Triumph",
     "\“Life is like a game where pawns can become queens, but not everyone knows how to play. Some people stay pawn their whole lives because they never learned to make the right moves.\”
     ― Alice Feeney, Rock Paper Scissors",
     "\“Many have become chess masters; no one has become the master of chess.\”
     - Siegbert Tarrasch",
-    "\“You’re just a pawn on the chessboard, Leo Valdez. I was referring to the player who set this ridiculous quest in motion, bringing the Greeks and Romans together.\”
-    ― Rick Riordan, The Mark of Athena",
     "\“Excelling at chess has long been considered a symbol of more general intelligence. That is an incorrect assumption in my view, as pleasant as it might be.\”
     ― Garry Kasparov",
     "\“I am not the piece, I am not of the piece, I am not in the piece. I am the move\”
@@ -127,10 +119,6 @@ module Quotes
     ― Joshua the poetic penguin",
     "\“I always plan for longterm, life to me is a never ending chess match\”
     ― James D. Wilson",
-    "\“Our parting was like a stalemate….
-    Neither of us won. Yet both of us lost.
-    And worse still … that unshakable feeling that nothing was ever really finished.\”
-    ― Ranata Suzuki",
     "\“I used to attack because it was the only thing I knew. Now I attack because I know it works.\”
     ― Garry Kasparov, How Life Imitates Chess: Making the Right Moves, from the Board to the Boardroom",
     "\“As a rule, the more mistakes there are in a game, the more memorable it remains, because you have suffered and worried over each mistake at the board.\”
@@ -141,7 +129,6 @@ module Quotes
     "\“I learned about opening moves and why it's important to control the center early on; the shortest distance between two points is straight down the middle.\”
     ― Amy Tan, The Joy Luck Club",
     "\“Once the game is over,’” he says, “‘the king and the pawn go back in the same box.’”
-
     “In life and death we are equal.\”
     ― Lisa Renee Jones, Demand",
     "\“Chess problems are the hymn-tunes of mathematics.\”
@@ -154,23 +141,12 @@ module Quotes
     ― Vladimir Nabokov, Pnin",
     "\“Life is a Game of Chess Between Me and God; Let the Best Player Win\”
     ― Ashu Gaur",
-    "\“...That is my biography from the first day of my chess life to the present.
-
-    JOURNALIST. And your plans.
-    PLAYER. To play!\”
-    ― Mikhail Tal, The Life and Games of Mikhail Tal",
-    "\“...why did you stick with me?”
-
-    “That’s easy, Alice,” he said. His amber eyes melted into hers. “It’s the first rule of chess: always protect your queen.\”
-    ― J.M. Sullivan, Alice",
     "\“Chess is a miniature version of life. To be successful, you need to be disciplined, assess resources, consider responsible choices and adjust when circumstances change.\”
     ― Susan Polgar",
     "\“Chess competitions have a women’s and men’s division. The ego is a very powerful thing.\”
     ― Freequill",
     "\“All that matters on the chessboard is good moves.\”
     ― Bobby Fischer",
-    "\“If I had wanted to be a pawn in a game, I would have taken up chess...\”
-    ― Virginia Alison",
     "\“You have good instincts,trust them. Thinking through every step is fine if you're playing chess, but this isn't chess.\”
     ― Rick Yancey, The 5th Wave",
     "\“Of course, errors are not good for a chess game, but errors are unavoidable and in any case, a game without errors, or as they say 'flawless game' is colorless.\”
@@ -191,10 +167,6 @@ module Quotes
     ― Mark Miller, Chess, Not Checkers: Elevate Your Leadership Game",
     "\“The art of chess is in knowing which is the most valuable piece in play, then having the courage to sacrifice it for the win.\”
     ― Thomm Quackenbush, Flies to Wanton Boys",
-    "\“You can win in business by playing checkers until someone sneaks in one night after you’ve closed for the day and flips the board.\”
-    ― Mark Miller, Chess, Not Checkers: Elevate Your Leadership Game",
-    "\“Bridget did not budge, and her face was without expression. She sat, quietly defeated like a chess player who lost a career match in less than four moves.\”
-    ― Emmie White, Captive",
     "\“Tactics is knowing what to do when there is something to do.
     Strategy is knowing what to do when there is nothing to do.\”
     ― Savielly Tartakower",

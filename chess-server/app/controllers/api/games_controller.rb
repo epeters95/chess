@@ -47,7 +47,6 @@ class Api::GamesController < ApplicationController
       games = Game.where(id: filtered_game_ids)
 
       # By default, only search and show completed games
-      # TODO: add checkbox on UI for incompleted
       if query_obj.empty?
         query_obj = {status: "completed"}
       end
@@ -266,7 +265,6 @@ class Api::GamesController < ApplicationController
 
     def search_params
       params.permit(:status, :white_id, :black_id, :name, :search, :wins, :losses)
-      # TODO: allow separate white and black player search
     end
 
     def thumbnail_params
