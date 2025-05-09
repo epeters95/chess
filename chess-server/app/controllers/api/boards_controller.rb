@@ -28,12 +28,12 @@ class Api::BoardsController < ApplicationController
 
     move_list.each do |move_str|
       promotion_choice = move_str.split("=")[1]
-      move_str[-1] = '?' unless promotion_choice.nil?
+      move_str.last = '?' unless promotion_choice.nil?
 
       moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.notation.gsub("+", "") == move_str.gsub("#", "") }
       if !moves.empty?
         begin
-          mv = moves[0]
+          mv = moves.first
           unless promotion_choice.nil?
             mv.promotion_choice = promotion_map[promotion_choice]
           end
