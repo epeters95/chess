@@ -42,4 +42,8 @@ class Move < ApplicationRecord
     @move_object.get_uci_notation
   end
 
+  def color
+    @move_count % 2 == 0 ? "white" : "black"
+  end
+
 end

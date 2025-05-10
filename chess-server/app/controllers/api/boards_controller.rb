@@ -30,6 +30,8 @@ class Api::BoardsController < ApplicationController
       promotion_choice = move_str.split("=")[1]
       move_str[-1] = '?' unless promotion_choice.nil?
 
+      checkmater = nil
+
       moves = initial_board.legal_moves[initial_board.turn].filter{|mv| mv.notation.gsub("+", "") == move_str.gsub("#", "") }
       if !moves.empty?
         begin
@@ -38,19 +40,38 @@ class Api::BoardsController < ApplicationController
             mv.promotion_choice = promotion_map[promotion_choice]
           end
           mv.notation = move_str
+          if move_str.include? "#"
+            checkmater = mv.color
+          end
           initial_board.play_move_and_save(mv)
 
         rescue Exception => e
           return render json: { errors: e.message, status: :unprocessable_entity }
         end
+
+      # Detect outcomes
+      # TODO: detect stalemate
+
       elsif ["1/2-1/2", "1-0", "0-1"].include? move_str
         case move_str
         when "1/2-1/2"
           initial_board.update(status_str: "Draw")
         when "1-0"
-          initial_board.update(status_str: "White Wins")
+          status = "#{white_name} wins "
+          if checkmater == "white"
+            status += "by checkmate!"
+          else
+            status += "by resignation."
+          end
+          initial_board.update(status_str: status)
         when "0-1"
-          initial_board.update(status_str: "Black Wins")
+          status = "#{black_name} wins "
+          if checkmater == "black"
+            status += "by checkmate!"
+          else
+            status += "by resignation."
+          end
+          initial_board.update(status_str: status)
         end
       end
     end
