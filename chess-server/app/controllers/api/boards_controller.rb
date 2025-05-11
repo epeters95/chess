@@ -55,7 +55,16 @@ class Api::BoardsController < ApplicationController
       elsif ["1/2-1/2", "1-0", "0-1"].include? move_str
         case move_str
         when "1/2-1/2"
-          initial_board.update(status_str: "Draw")
+          if initial_board.is_insuff_material_stalemate?(mv.color)
+            status = "The game is a draw due to insufficient mating material.")
+
+          else
+            status = "Draw"
+
+            # TODO: get previous player name and add nomoves stalemate
+            # TODO: move display_name_for method to utils
+          end
+          initial_board.update(status_str: status)
         when "1-0"
           status = "#{white_name} wins "
           if checkmater == "white"
