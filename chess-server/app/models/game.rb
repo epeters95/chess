@@ -24,7 +24,7 @@ class Game < ApplicationRecord
 
     status_str = "#{display_name_for(switch(self.board.turn))} made move #{move_object.notation}"
     status_str += ". #{uppercase(self.board.turn)} to move."
-    
+
     if !result
       self.errors.add self.board.errors
     else
@@ -43,7 +43,7 @@ class Game < ApplicationRecord
     end
   end
 
-  def evaluate_outcomes(status_str)
+  def evaluate_outcomes(status_str="unknown")
     previous_turn = switch(self.board.turn)
 
     if self.board.is_insuff_material_stalemate?
@@ -51,7 +51,7 @@ class Game < ApplicationRecord
       self.set_outcome("draw", self.white_id, self.black_id)
 
     elsif self.board.is_checkmate?(self.board.turn)
-      
+
       # Append notation to indicate checkmate (hotfix)
       last_move = self.board.played_moves_in_order.last
 
@@ -140,7 +140,7 @@ class Game < ApplicationRecord
   end
 
   def is_computer?(color)
-    name_for(color).to_s == "" 
+    name_for(color).to_s == ""
   end
 
   def name_for(color)
