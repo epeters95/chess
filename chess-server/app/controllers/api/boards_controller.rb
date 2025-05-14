@@ -56,7 +56,7 @@ class Api::BoardsController < ApplicationController
         case move_str
         when "1/2-1/2"
           if initial_board.is_insuff_material_stalemate?(mv.color)
-            status = "The game is a draw due to insufficient mating material.")
+            status = "The game is a draw due to insufficient mating material."
 
           else
             status = "Draw"
@@ -99,7 +99,7 @@ class Api::BoardsController < ApplicationController
         if @board.played_moves.where(evaluation: nil).any?
 
           moves = @board.played_moves.to_a
-          
+
           # Get engine evaluation for each move
           eval_list = interface.get_eval_list(@board.move_history_str)
 
