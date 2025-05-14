@@ -38,6 +38,22 @@ class Player < ApplicationRecord
       Game.where(status: "completed", outcome: "resignation", winner_id: self.id))
   end
 
+  def checkmate_games
+    Game.where(status: "completed", outcome: "checkmate", winner_id: self.id)
+  end
+
+  def resignation_games
+    Game.where(status: "completed", outcome: "resignation", winner_id: self.id)
+  end
+
+  def checkmated_games
+    Game.where(status: "completed", outcome: "checkmate", loser_id: self.id)
+  end
+
+  def resigned_games
+    Game.where(status: "completed", outcome: "resignation", loser_id: self.id)
+  end
+
   def draws
     draw_games.size
   end
