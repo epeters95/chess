@@ -92,7 +92,9 @@
         <br>
         <h3>About</h3>
         <p>This is a demo of an API-only Rails app enabling users to play a game of chess via API with a computer or player.
-        With the server hosted on Render, Github Pages serves the assets for the front end client.</p>
+        With the server hosted on Render, Github Pages serves the assets for the front end client.
+        The app connects to a Flask microservice serving <a href="https://github.com/zhelyabuzhsky/stockfish">Stockfish for Python</a>
+        to calculate computer moves and game evaluation.</p>
         <br>
         <p>To play locally in the browser, enter your name next to White or Black and click 'New Local Game'.
           This will initiate a game with the computer and a choice of difficulty -
@@ -107,7 +109,10 @@
             <li>Wait for the friend to enter their name and submit and the game will begin</li> 
           </ol>
         </p>
-        <br><br><br><br>
+        <br>
+        <p>When a game is completed, it will be saved in the Game History where you can replay moves.
+        To generate a move-by-move game evaluation of white vs. black, click 'Load Eval' on the game replay screen.</p>
+        <br><br><br>
       </div>
 
 
