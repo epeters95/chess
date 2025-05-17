@@ -12,6 +12,8 @@ class Api::PlayersController < ApplicationController
         wins: player.wins,
         losses:player.losses,
         draws: player.draws,
+        checkmates: player.checkmate_games.size,
+        resignations: player.resigned_games.size,
         highest_elo_win: player.highest_elo_win
       }
     end.compact.select{ |pl| pl[:games] != 0 }
