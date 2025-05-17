@@ -20,11 +20,15 @@ class Api::GamesController < ApplicationController
     games = Game.all
     # Join searches of name across both color categories (initial db design)
 
+    # TODO: Rename params for clarity (add _id)
+
     p_search = params[:search]
     p_name   = params[:name]
     p_wins   = params[:wins]
     p_losses = params[:losses]
     p_draws  = params[:draws]
+    p_checkmates  = params[:checkmates]
+    p_resignations  = params[:resignations]
 
     if p_search
 
@@ -62,6 +66,14 @@ class Api::GamesController < ApplicationController
     elsif p_draws
       player = Player.find(p_draws)
       games = player.draw_games
+
+    elsif p_checkmates
+      player = Player.find(p_checkmates)
+      games = player.checkmate_games
+
+    elsif p_resignations
+      player = Player.find(p_resignations)
+      games = player.resigned_games
 
     elsif p_name
       p_name = "" if p_name == "Computer"
