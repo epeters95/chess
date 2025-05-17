@@ -55,6 +55,8 @@ $(document).ready(function() {
       { render: winsLink, data: 'wins', orderSequence: ['desc', 'asc'] },
       { render: lossesLink, data: 'losses', orderSequence: ['desc', 'asc'] },
       { render: drawsLink, data: 'draws', orderSequence: ['desc', 'asc'] },
+      { data: 'checkmates', orderSequence: ['desc', 'asc'] },
+      { data: 'resignations', orderSequence: ['desc', 'asc'] },
       { data: 'highest_elo_win', orderSequence: ['desc', 'asc'] }
     ],
     lengthChange: false,
