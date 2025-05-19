@@ -17,17 +17,17 @@ $(document).ready(function() {
     return wrapLink("&status=completed", row.name, data)
   };
 
-  const winsLink = function(data, type, row) {
-    return wrapLink("&wins=" + row.id, row.name, data)
-  };
+  // These DataTable row keys are /?search query parameters
+  // E.g. 'wins', 'losses', 'draws', 'checkmates', 'resignations'
 
-  const lossesLink = function(data, type, row) {
-    return wrapLink("&losses=" + row.id, row.name, data)
-  };
+  const renderLinkByFilter = function(data, type, row, meta) {
 
-  const drawsLink = function(data, type, row) {
-    return wrapLink("&draws=" + row.id, row.name, data)
-  };
+    // Grab the name of the filter by adding 1 to the idx because DT excludes id :'(
+    let filterName = Object.getOwnPropertyNames(row)[meta.col + 1]
+    let filter = "&" + filterName + "="
+
+    return wrapLink(filter, row.name, data)
+  }
 
   new DataTable('#players-table', {
     responsive: true,
@@ -52,9 +52,11 @@ $(document).ready(function() {
       { data: 'name'},
       { data: 'games', orderSequence: ['desc', 'asc']},
       { render: completedLink, data: 'completed_games', orderSequence: ['desc', 'asc'] },
-      { render: winsLink, data: 'wins', orderSequence: ['desc', 'asc'] },
-      { render: lossesLink, data: 'losses', orderSequence: ['desc', 'asc'] },
-      { render: drawsLink, data: 'draws', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'wins', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'losses', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'draws', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'checkmates', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'resignations', orderSequence: ['desc', 'asc'] },
       { data: 'highest_elo_win', orderSequence: ['desc', 'asc'] }
     ],
     lengthChange: false,
