@@ -17,8 +17,8 @@ $(document).ready(function() {
     return wrapLink("&status=completed", row.name, data)
   };
 
-  // These DataTable row keys are /?search query parameters
-  // E.g. 'wins', 'losses', 'draws', 'checkmates', 'resignations'
+  // These DataTable row keys are /?search query parameters representing the player's id
+  // E.g. 'wins_id', 'losses_id', 'draws_id', 'checkmates_id', 'resignations_id'
 
   const renderLinkByFilter = function(data, type, row, meta) {
 
@@ -52,11 +52,11 @@ $(document).ready(function() {
       { data: 'name'},
       { data: 'games', orderSequence: ['desc', 'asc']},
       { render: completedLink, data: 'completed_games', orderSequence: ['desc', 'asc'] },
-      { render: renderLinkByFilter, data: 'wins', orderSequence: ['desc', 'asc'] },
-      { render: renderLinkByFilter, data: 'losses', orderSequence: ['desc', 'asc'] },
-      { render: renderLinkByFilter, data: 'draws', orderSequence: ['desc', 'asc'] },
-      { render: renderLinkByFilter, data: 'checkmates', orderSequence: ['desc', 'asc'] },
-      { render: renderLinkByFilter, data: 'resignations', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'wins_id', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'losses_id', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'draws_id', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'checkmates_id', orderSequence: ['desc', 'asc'] },
+      { render: renderLinkByFilter, data: 'resignations_id', orderSequence: ['desc', 'asc'] },
       { data: 'highest_elo_win', orderSequence: ['desc', 'asc'] }
     ],
     lengthChange: false,
