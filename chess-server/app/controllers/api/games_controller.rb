@@ -24,11 +24,11 @@ class Api::GamesController < ApplicationController
 
     p_search = params[:search]
     p_name   = params[:name]
-    p_wins   = params[:wins]
-    p_losses = params[:losses]
-    p_draws  = params[:draws]
-    p_checkmates  = params[:checkmates]
-    p_resignations  = params[:resignations]
+    p_wins   = params[:wins_id]
+    p_losses = params[:losses_id]
+    p_draws  = params[:draws_id]
+    p_checkmates  = params[:checkmates_id]
+    p_resignations  = params[:resignations_id]
 
     if p_search
 
