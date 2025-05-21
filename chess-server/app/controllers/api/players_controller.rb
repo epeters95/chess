@@ -9,11 +9,11 @@ class Api::PlayersController < ApplicationController
         name: display_name(player.name),
         games: player.games.length,
         completed_games: player.games.where(status: "completed").length,
-        wins: player.wins,
-        losses:player.losses,
-        draws: player.draws,
-        checkmates: player.checkmate_games.size,
-        resignations: player.resigned_games.size,
+        wins_id: player.wins,
+        losses_id:player.losses,
+        draws_id: player.draws,
+        checkmates_id: player.checkmate_games.size,
+        resignations_id: player.resigned_games.size,
         highest_elo_win: player.highest_elo_win
       }
     end.compact.select{ |pl| pl[:games] != 0 }
