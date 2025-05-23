@@ -8,7 +8,7 @@ $(document).ready(function() {
   // in addition to "status" and quick ability to add more in the future
     if (data !== 0) {
       let link = 'games_index.html?name=' + playerName;
-      return "<a href='" + link + "&status=completed" + "'>" + data + "</a>"
+      return "<a href='" + link + params + "'>" + data + "</a>"
     }
     return "";
   }
@@ -24,7 +24,7 @@ $(document).ready(function() {
 
     // Grab the name of the filter by adding 1 to the idx because DT excludes id :'(
     let filterName = Object.getOwnPropertyNames(row)[meta.col + 1]
-    let filter = "&" + filterName + "="
+    let filter = "&" + filterName + "=" + row.id
 
     return wrapLink(filter, row.name, data)
   }
