@@ -28,9 +28,12 @@ fetch(apiUrl, requestObj).then(function(response) {
 })
 
 
+const canvas = document.getElementById("game-view");
 
-// Expected response from server
-
+if (canvas) {
+  canvas.width = 476;
+  canvas.height = 476;
+}
 
 const modal = document.getElementsByClassName("modal")[0];
 const modalCloseBtn = document.getElementById("modal-close-button");

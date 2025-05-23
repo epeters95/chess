@@ -2,13 +2,6 @@
 
 const baseUrl = "https://chess-wpj4.onrender.com";
 
-const canvas = document.getElementById("game-view");
-
-if (canvas) {
-  canvas.width = 476;
-  canvas.height = 476;
-}
-
 
 // Common functions
 

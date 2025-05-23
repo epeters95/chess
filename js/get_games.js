@@ -4,6 +4,13 @@ var windowKeyEventListeners = [];
 
 const statusSpan = document.getElementById("status");
 
+const canvas = document.getElementById("game-view");
+
+if (canvas) {
+  canvas.width = 476;
+  canvas.height = 476;
+}
+
 let modalGames = document.getElementsByClassName("modal")[0];
 let modalCloseBtnGames = document.getElementById("modal-close-button");
 modalCloseBtnGames.addEventListener("click", function() {
