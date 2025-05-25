@@ -199,6 +199,16 @@ table#game-table {
   }
 }
 
+table#game-table.games-table-list {
+  max-width: 400px;
+}
+
+/* TODO: remove javascript html-building logic, replace */
+table#game-table.games-table-3col {
+}
+table#game-table.games-table-5col {
+}
+
 #game-table td a, #game-table td span {
   font-family: "Nunito", sans-serif;
 }

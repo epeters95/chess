@@ -41,6 +41,23 @@ searchButton.addEventListener("click", function() {
   window.location.search = searchQuery.value;
 })
 
+let searchViewSelector = document.getElementbyId("search-games-view-selector")
+searchViewSelector.addEventListener("select", function(opt) {
+  table.classList.remove("games-table-list")
+  table.classList.remove("games-table-3col")
+  table.classList.remove("games-table-5col")
+
+  if (opt.value === "3col") {
+    table.classList.add("games-table-3col")
+  }
+  else if (opt.value === "5col") {
+    table.classList.add("games-table-5col")
+  }
+  else {
+    table.classList.add("games-table-list")
+  }
+})
+
 let movesList = document.getElementById("moves-list");
 let gameTitle = document.getElementById("game-title");
 var gameView = null;
