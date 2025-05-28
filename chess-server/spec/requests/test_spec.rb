@@ -7,13 +7,9 @@ RSpec.describe 'test', type: :request do
     get('status test') do
       response(200, 'successful') do
 
-        after do |example|
-          example.metadata[:response][:content] = {
-            'application/json' => {
-              example: JSON.parse(response.body, symbolize_names: true)
-            }
-          }
-        end
+        example 'application/json', :example_1, {
+           message: "Latest test service is live!"
+        }
         run_test!
       end
     end
@@ -32,7 +28,9 @@ RSpec.describe 'test', type: :request do
 
       response(404, 'not_found') do
 
-        let(:message) { "Failed to test Chess Engine service" }
+        example 'application/json', :example_1, {
+           message: "Failed to test Chess Engine service!"
+        }
         run_test!
       end
     end
