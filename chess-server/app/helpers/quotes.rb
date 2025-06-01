@@ -89,8 +89,6 @@ module Quotes
     ― Elizabeth Acevedo, Clap When You Land",
     "\“There is no moral outcome of a chess match or a poker game as long as skill and stealth rather than cheating have been used.\”
     ― Francis P. Karam, The Truth Engine: Cross-Examination Outside the Box",
-    "\“Life is like a game where pawns can become queens, but not everyone knows how to play. Some people stay pawn their whole lives because they never learned to make the right moves.\”
-    ― Alice Feeney, Rock Paper Scissors",
     "\“Many have become chess masters; no one has become the master of chess.\”
     - Siegbert Tarrasch",
     "\“Excelling at chess has long been considered a symbol of more general intelligence. That is an incorrect assumption in my view, as pleasant as it might be.\”
@@ -105,12 +103,6 @@ module Quotes
     ― Irving Chernev, The Most Instructive Games of Chess Ever Played: 62 Masterpieces of Chess Strategy",
     "\“They say that chess was born in bloodshed.\”
     ― Paolo Maurensig, La variante di Lüneburg",
-    "\“Do not expect Ordinary Gameplay on the upside of Life.\”
-    ― Vineet Raj Kapoor, UNCHESS: Untie Your Shoes and Walk on the Chessboard of Life",
-    "\“The final aim of all of us playing on the board of life is to somehow break out of this board and be free\”
-    ― Vineet Raj Kapoor, UNCHESS: Untie Your Shoes and Walk on the Chessboard of Life",
-    "\“Gameplay is all our life. Either we guard, attack or develop pieces.\”
-    ― Vineet Raj Kapoor, UNCHESS: Untie Your Shoes and Walk on the Chessboard of Life",
     "\“I am not the piece, I am not of the piece, I am not in the piece. I am the move!\”
     ― Niranjan Navalgund",
     "\“The King in chess is indeed a symbol of unity and wholeness and the other pieces are not separate entities but rather parts of “the One Thing”, as Campbell put it.\”
@@ -188,8 +180,6 @@ module Quotes
     ― Ljupka Cvetanova, The New Land",
     "\“The art of chess is akin to the art of war itself; full of strategy and cunning, yet clever placements.\”
     ― Jennifer Megan Varnadore",
-    "\“Life is like playing the game of chess against yourself, to win, you must beat the blacks of you.\”
-    ― Hassaan Ali",
     "\“I much preferred winning to thinking and I didn't like losing at all.\”
     ― Aleksandar Hemon, The Book of My Lives",
     "\“To many people chess is an extreme sport. It requires thinking.\”
@@ -198,7 +188,7 @@ module Quotes
     ― Mikhail Tal",
     "\“I'm playing chess while everyone else is playing checkers, that's why I always lose\”
     ― Josh Stern",
-    "\“I want to be an aggressive player;One who always find joy in every move.\”
+    "\“I want to be an aggressive player; One who always find joy in every move.\”
     ― Kenneth de Guzman",
     "\“The laws of Chess do not permit a free choice: you have to move whether you like it or not.\”
     ― Emanuel Lasker",
