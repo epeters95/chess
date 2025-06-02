@@ -27,6 +27,25 @@ class Computer
     }
   end
 
+  def self.level_elos
+    # Source: Rough estimates comparing Stockfish 16 vs CCRL rating pool, adjusted for low compute
+    {
+      1 => 1000,
+      4 => 1500,
+      10 => 2500,
+      20 => 3000
+    }
+  end
+
+  def self.elo_levels
+    {
+      1000 => 1,
+      1500 => 4,
+      2500 => 10,
+      3000 => 20
+    }
+  end
+
   def get_move(elo_rating=nil)
     interface = EngineInterface.new(ChessServer::Application.engine_interface_hostname,
                                     ChessServer::Application.engine_interface_port)

@@ -178,8 +178,10 @@ class Api::GamesController < ApplicationController
               if @game.computer_difficulty.nil? && @game.elo_rating.nil?
                 if params[:computer_difficulty]
                   level = Computer.difficulty_levels[params[:computer_difficulty]]
+                  elo_rating = Computer.level_elos[level]
                   difficulty = params[:computer_difficulty]
                   @game.update(computer_difficulty: level)
+                  @game.update(elo_rating: elo_rating)
                 elsif params[:elo_rating]
                   # Elo Rating
                   elo_rating = params[:elo_rating].to_i
