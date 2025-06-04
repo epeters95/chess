@@ -176,12 +176,13 @@ class Api::GamesController < ApplicationController
               
               # Store difficulty used on game
               if @game.computer_difficulty.nil? && @game.elo_rating.nil?
+
                 if params[:computer_difficulty]
+
                   level = Computer.difficulty_levels[params[:computer_difficulty]]
-                  elo_rating = Computer.level_elos[level]
                   difficulty = params[:computer_difficulty]
                   @game.update(computer_difficulty: level)
-                  @game.update(elo_rating: elo_rating)
+
                 elsif params[:elo_rating]
                   # Elo Rating
                   elo_rating = params[:elo_rating].to_i
@@ -219,6 +220,9 @@ class Api::GamesController < ApplicationController
             render json: {error: error}, status: :unprocessable_entity
           end
         else
+
+          # TODO: save computer difficulty -> elo estimate here
+
           render json: {error: "Game is over"}, status: :unprocessable_entity
         end
       else
