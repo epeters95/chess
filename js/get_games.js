@@ -41,7 +41,7 @@ searchButton.addEventListener("click", function() {
   window.location.search = searchQuery.value;
 })
 
-let searchViewSelector = document.getElementbyId("search-games-view-selector")
+let searchViewSelector = document.getElementById("search-games-view-selector")
 searchViewSelector.addEventListener("select", function(opt) {
   table.classList.remove("games-table-list")
   table.classList.remove("games-table-3col")
