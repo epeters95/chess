@@ -383,6 +383,7 @@ canvas#game-view {
   width: 100%;
   height: 20px;
   display: flex;
+  flex-wrap: nowrap;
   position: absolute;
   z-index: 2000;
 }
@@ -669,6 +670,8 @@ table#players-table {
 }
 #resign-button {
   margin-left: -50px;
+  font-size: 14pt;
+  margin-top: 8px;
 }
 #game-title {
   color: wheat;
