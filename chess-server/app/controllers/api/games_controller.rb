@@ -167,11 +167,22 @@ class Api::GamesController < ApplicationController
             unless params[:move].nil?
               chosen_move = @game.board.get_move_by_notation(params[:move][:notation])
               set_promotion_choice(chosen_move)
-            elsif params[:offer] == "takeback"
-              if @game.set_takeback_offer!
-                return render json: { game: @game }, status: :ok # Client should handle no move
-              else
-                return render json: {error: "Error offering takeback" }, status: :unprocessable_entity
+            else
+              unless params[:offer].nil?
+                if params[:offer] == "takeback"
+                  if @game.set_takeback_offer!
+                    return render json: { game: @game }, status: :ok # Client should handle no move
+                  end
+                elsif params[:offer] == "accept_takeback"
+                  if @game.set_takeback_accepted!
+                    return render json: { game: @game }, status: :ok
+                  end
+                elsif params[:offer] == "reject_takeback"
+                  if @game.set_takeback_rejected!
+                    return render json: { game: @game }, status: :ok
+                  end
+                end
+                return render json: { error: "Error saving takeback" }, status: :unprocessable_entity
               end
             end
             # TODO: implement draw offers
