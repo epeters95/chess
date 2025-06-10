@@ -125,6 +125,18 @@ class Game < ApplicationRecord
       ).uniq.sort
   end
 
+  def set_takeback_offer!
+    self.update(takeback_status: "offered")
+  end
+
+  def set_takeback_accept!
+    self.update(takeback_status: "accepted")
+  end
+
+  def set_takeback_reject!
+    self.update(takeback_status: "rejected")
+  end
+
   private
 
   def init_board

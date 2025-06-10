@@ -164,8 +164,18 @@ class Api::GamesController < ApplicationController
           chosen_move = nil
           if @game.is_live?
             validate_move_access(@game, params)
-            chosen_move = @game.board.get_move_by_notation(params[:move][:notation])
-            set_promotion_choice(chosen_move)
+            unless params[:move].nil?
+              chosen_move = @game.board.get_move_by_notation(params[:move][:notation])
+              set_promotion_choice(chosen_move)
+            elsif params[:offer] == "takeback"
+              if @game.set_takeback_offer!
+                return render json: { game: @game }, status: :ok # Client should handle no move
+              else
+                return render json: {error: "Error offering takeback" }, status: :unprocessable_entity
+              end
+            end
+            # TODO: implement draw offers
+            # elsif params[:offer] == "draw"
           else
 
             if @game.is_computers_turn?
