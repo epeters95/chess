@@ -89,6 +89,7 @@ modalDiffCloseBtn.addEventListener("click", function() {
 })
 
 const resignButton = document.getElementById("resign-button");
+const takebackButton = document.getElementById("takeback-button");
 
 var submitDiffEventListeners = []
 
@@ -140,7 +141,8 @@ const domElements = {
   "statusSpan": statusSpan,
   "promotionPopup": promotionPopup,
   "promotionSubmit": promotionSubmit,
-  "resignButton": resignButton
+  "resignButton": resignButton,
+  "takebackButton": takebackButton
 }
 
 const quoteWrapper = document.getElementById("quote-wrapper");

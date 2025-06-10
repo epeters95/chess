@@ -35,6 +35,7 @@ class GameView {
     this.promotionPopup  = domElements["promotionPopup"];
     this.promotionSubmit = domElements["promotionSubmit"];
     this.resignButton    = domElements["resignButton"];
+    this.takebackButton  = domElements["takebackButton"];
 
     this.gridShown = false;
     this.refreshRateMs = 5000;
@@ -68,6 +69,7 @@ class GameView {
     this.pieces        = JSON.parse(json["pieces"]);
     this.moves         = json["legal_moves"].map((lm) => JSON.parse(lm));
     this.uploaded      = json["uploaded"];
+   this.takebackStatus = json["takeback_status"];
   }
 
   refresh() {
@@ -144,6 +146,15 @@ class GameView {
 
       if (that.gameStatus !== "completed") {
         if (that.isLive && that.showTurn !== that.turn && !skipLoop) {
+
+          // Allow takeback
+          if (that.takebackButton) {
+            that.takebackButton.classList.remove("hidden")
+            that.takebackButton.addEventListener("click", function() {
+              that.takebackButton.setAttribute("disabled", true)
+              that.offerTakeback()
+            })
+          }
           that.checkForMoveLoop();
         }
         if (that.resignButton) {
@@ -155,8 +166,11 @@ class GameView {
         }
       }
       else {
-        if (this.resignButton) {
-          this.resignButton.classList.add("hidden")
+        if (that.resignButton) {
+          that.resignButton.classList.add("hidden")
+        }
+        if (that.takebackButton) {
+          that.takebackButton.classList.add("hidden")
         }
       }
       that.canvas.click()
@@ -400,6 +414,18 @@ class GameView {
 
   resign() {
     this.sendGameUpdateAndRedraw({ "end_game": this.showTurn })
+  }
+
+  offerTakeback() {
+    this.sendGameUpdateAndRedraw({ "offer": "takeback" })
+  }
+
+  acceptTakeback() {
+    this.sendGameUpdateAndRedraw({ "offer": "accept_takeback" })
+  }
+
+  rejectTakeback() {
+    this.sendGameUpdateAndRedraw({ "offer": "reject_takeback" })
   }
 
   sendGameUpdateAndRedraw(data) {
