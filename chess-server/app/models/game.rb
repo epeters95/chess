@@ -107,7 +107,8 @@ class Game < ApplicationRecord
       pieces:         self.board.positions_array,
       legal_moves:    mvs,
       move_count:     self.board.move_count,
-      status:         self.status
+      status:         self.status,
+     takeback_status: self.takeback_status
     }
   end
 
