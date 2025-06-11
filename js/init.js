@@ -54,6 +54,8 @@ difficultySubmit.addEventListener("click", function() {
   difficultyPopup.classList.add("hidden")
 })
 
+const takebackPopup = document.getElementById("takeback-popup");
+
 const eloValue = document.getElementById("elo-value");
 const setEloValue = function() {
   if (eloValue.value < 0) {
@@ -91,7 +93,12 @@ modalDiffCloseBtn.addEventListener("click", function() {
 const resignButton = document.getElementById("resign-button");
 const takebackButton = document.getElementById("takeback-button");
 
-var submitDiffEventListeners = []
+var gameviewEventListeners = []
+// {
+//   element: <HTML element>
+//   action: "click"
+//   func: <handler function>
+//  }
 
 
 if (newGameSubmit !== null) {
@@ -142,7 +149,8 @@ const domElements = {
   "promotionPopup": promotionPopup,
   "promotionSubmit": promotionSubmit,
   "resignButton": resignButton,
-  "takebackButton": takebackButton
+  "takebackButton": takebackButton,
+  "takebackPopup": takebackPopup
 }
 
 const quoteWrapper = document.getElementById("quote-wrapper");
@@ -206,11 +214,18 @@ function newGame() {
       }
       newGameStart(requestBody, computerTeam, difficulty, elo)
     }
-    submitDiffEventListeners.forEach((el) => {
-      difficultySubmit.removeEventListener("click", el)
+
+    // Reset event listeners
+    gameviewEventListeners.forEach((obj) => {
+      obj.element.removeEventListener(obj.action, obj.func)
     })
-    submitDiffEventListeners = [];
-    submitDiffEventListeners.push(submitDifficulty);
+    gameviewEventListeners = [];
+
+    gameviewEventListeners.push({
+      element: difficultySubmit,
+      action: "click",
+      func: submitDifficulty
+    });
     difficultySubmit.addEventListener("click", submitDifficulty);
 
   } else {
