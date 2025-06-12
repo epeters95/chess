@@ -36,6 +36,7 @@ class GameView {
     this.promotionSubmit = domElements["promotionSubmit"];
     this.resignButton    = domElements["resignButton"];
     this.takebackButton  = domElements["takebackButton"];
+    this.takebackPopup   = domElements["takebackPopup"];
 
     this.gridShown = false;
     this.refreshRateMs = 5000;
@@ -87,6 +88,31 @@ class GameView {
     }, true)
 
   }
+
+
+  checkForTakebackStatusLoop() {
+    let that = this;
+    let prevStatus = this.takebackStatus;
+    setTimeout(function() {
+
+      if (prevStatus === that.takebackStatus) {
+        that.refresh()
+      }
+      else {
+        if (that.takebackStatus === "offered") {
+          that.takebackPopup.classList.remove("hidden");
+
+          // add event listener to accept reject buttons
+
+          let acceptBtn = that.takebackPopup.querySelector("#takeback-accept");
+          let rejectBtn = that.takebackPopup.querySelector("#takeback-reject");
+        }
+      }
+
+    }, this.refreshRateMs)
+  }
+
+  // TODO: combine with above by passing function for condition
 
   checkForMoveLoop() {
     let that = this;
