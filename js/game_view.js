@@ -28,7 +28,7 @@ class GameView {
 
     this.colorW = "#97aaac";
     this.colorB = "#556567";
-    this.squareColor = this.colorB;
+    this.squareColor = this.colorW;
 
     // DOM elements
     this.statusSpan      = domElements["statusSpan"];
@@ -282,7 +282,7 @@ class GameView {
         }
         let halfSquare = squareSize / 2.0;
         let tinySize = squareSize * 0.1;
-        let bgColor = ( (fileIndexOf(move.new_position[0]) + rankIndexOf(move.new_position[1])) % 2 === 1) ? that.colorB : that.colorW;
+        let bgColor = ( (fileIndexOf(move.new_position[0]) + rankIndexOf(move.new_position[1])) % 2 === 1) ? that.colorW : that.colorB;
         const grd = that.context.createRadialGradient(
           x + halfSquare,
           y + halfSquare,
@@ -317,7 +317,7 @@ class GameView {
   }
 
   switchSquareColor() {
-    this.squareColor = (this.squareColor === this.colorW ? this.colorB : this.colorW);
+    this.squareColor = (this.squareColor === this.colorB ? this.colorW : this.colorB);
     return this.squareColor;
   }
 
