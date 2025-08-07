@@ -171,7 +171,8 @@ class Api::GamesController < ApplicationController
               unless params[:offer].nil?
                 if params[:offer] == "takeback"
                   if @game.set_takeback_offer!
-                    return render json: { game: @game }, status: :ok # Client should handle no move
+                    return render json: { game: @game }, status: :ok
+                    # Client should handle no move
                   end
                 elsif params[:offer] == "accept_takeback"
                   if @game.set_takeback_accepted!
@@ -192,8 +193,9 @@ class Api::GamesController < ApplicationController
             if @game.is_computers_turn?
               
               elo_rating = @game.elo_rating
-              difficulty = @game.computer_difficulty || "insane" # placeholder value to initialize computer,
-                                                                 # overridden by get_move(elo_rating=<number>)
+              difficulty = @game.computer_difficulty || "insane"
+              # placeholder value to initialize computer,
+              # overridden by get_move(elo_rating=<number>)
               
               # Store difficulty used on game
               if @game.computer_difficulty.nil? && @game.elo_rating.nil?
