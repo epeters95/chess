@@ -5,6 +5,8 @@ Rails.application.routes.draw do
 
   get '/404', to: 'errors#not_found'
   get '/500', to: 'errors#server_error'
+  get '/401', to: 'errors#unauthorized'
+  get '/304', to: 'errors#not_modified'
 
   namespace :api do
 
