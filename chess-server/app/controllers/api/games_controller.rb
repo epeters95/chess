@@ -6,9 +6,11 @@ class Api::GamesController < ApplicationController
 
   def index
     given_params = search_params
+
     # Includes [:status, :white_id, :black_id, :name, :search]
     # However, handle :name separately to cover => :white_name, :black_name
     # :name param is used for an exact match (links in Players table use this param)
+
     given_params = given_params.except(:name, :search, :wins, :losses, :draws)
 
     query_obj = {}
@@ -20,15 +22,13 @@ class Api::GamesController < ApplicationController
     games = Game.all
     # Join searches of name across both color categories (initial db design)
 
-    # TODO: Rename params for clarity (add _id)
-
-    p_search = params[:search]
-    p_name   = params[:name]
-    p_wins   = params[:wins_id]
-    p_losses = params[:losses_id]
-    p_draws  = params[:draws_id]
-    p_checkmates  = params[:checkmates_id]
-    p_resignations  = params[:resignations_id]
+    p_search          = params[:search]
+    p_name            = params[:name]
+    p_wins_id         = params[:wins_id]
+    p_losses_id       = params[:losses_id]
+    p_draws_id        = params[:draws_id]
+    p_checkmates_id   = params[:checkmates_id]
+    p_resignations_id = params[:resignations_id]
 
     if p_search
 
@@ -55,24 +55,26 @@ class Api::GamesController < ApplicationController
         query_obj = {status: "completed"}
       end
 
-    elsif p_wins
-      player = Player.find(p_wins)
+      # TODO: use better syntax (shorter)
+
+    elsif p_wins_id
+      player = Player.find(p_wins_id)
       games = player.win_games
 
-    elsif p_losses
-      player = Player.find(p_losses)
+    elsif p_losses_id
+      player = Player.find(p_losses_id)
       games = player.loss_games
 
-    elsif p_draws
-      player = Player.find(p_draws)
+    elsif p_draws_id
+      player = Player.find(p_draws_id)
       games = player.draw_games
 
-    elsif p_checkmates
-      player = Player.find(p_checkmates)
+    elsif p_checkmates_id
+      player = Player.find(p_checkmates_id)
       games = player.checkmate_games
 
-    elsif p_resignations
-      player = Player.find(p_resignations)
+    elsif p_resignations_id
+      player = Player.find(p_resignations_id)
       games = player.resigned_games
 
     elsif p_name
