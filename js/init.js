@@ -18,7 +18,7 @@ let requestObj = {
 }
 
 fetch(apiUrl, requestObj).then(function(response) {
-  if (response.status !== 200) {
+  if (response.status !== 200 && response.body.message === "Chess Engine is live!") {
     computerStatus.innerText = "Offline"
     computerStatus.style = "color: red;"
   } else {
