@@ -1,7 +1,5 @@
 module Api::BoardsHelper
 
-  # TODO: for now this only handles one game per file
-  # add extra function to split multiple games
   def get_move_list_from_pgn(pgn_text)
     text_split = pgn_text.gsub("\r", "").split("\n\n")
     moves = text_split[1].gsub("\n", " ")

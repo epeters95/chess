@@ -3,16 +3,93 @@ class Computer
   include Util
 
   attr_reader :color
-  def initialize(board)
+  def initialize(board, difficulty="easy")
     @board = board
     @color = board.turn
+    @difficulty = difficulty
   end
 
-  def get_move # returns array of [ [piece, [row, col]], ... ]
+  def self.difficulty_levels
+    {
+      "easy" => 1,
+      "medium" => 4,
+      "hard" => 10,
+      "insane" => 20
+    }
+  end
+
+  def self.levels_difficulty
+    {
+      1 => "easy",
+      4 => "medium",
+      10 => "hard",
+      20 => "insane"
+    }
+  end
+
+  def self.level_elos
+    # Source: Rough estimates comparing Stockfish 16 vs CCRL rating pool, adjusted for low compute
+    {
+      1 => 1000,
+      4 => 1500,
+      10 => 2500,
+      20 => 3000
+    }
+  end
+
+  def self.elo_levels
+    {
+      1000 => 1,
+      1500 => 4,
+      2500 => 10,
+      3000 => 20
+    }
+  end
+
+  def get_move(elo_rating=nil)
+    interface = EngineInterface.new(ChessServer::Application.engine_interface_hostname,
+                                    ChessServer::Application.engine_interface_port)
+    level = 1
+    if self.class.difficulty_levels[@difficulty]
+      level = self.class.difficulty_levels[@difficulty]
+    end
+
+    move_uci = interface.get_move(@board.move_history_str, level, elo_rating)
+
+    # Identify legal move from UCI notation
+    move = get_legal_move_from_uci(move_uci)
+
+    if move
+      move
+    else
+      calculate_move
+    end
+  end
+
+  def get_legal_move_from_uci(move_uci)
+    first_pos  = move_uci[0..1]
+    second_pos = move_uci[2..3]
+    promotion  = move_uci[4]
+
+    piece_moves = @board.legal_moves[@color].select{ |mv| mv.piece.position == first_pos }
+    pieces = @board.get_pieces_from_positions_array[@color]
+    move = piece_moves.find { |mv| mv.new_position == second_pos }
+
+    # Promotions
+    if !promotion.nil? && !move.nil? && move.move_type.include?("promotion")
+      move.promotion_choice = promotion_map[promotion.upcase]
+    end
+
+    move
+  end
+
+  def calculate_move
     best_moves = []
     under_attack = nil
     attacker = nil
+
     # 1. Detect threats
+    
     legal_moves = @board.legal_moves
     pieces = @board.get_pieces_from_positions_array
 
@@ -28,9 +105,10 @@ class Computer
         end
       end
     end
-    # Identify counter to threat
+    
+    # 2. Identify counter to threat
     pieces[@color].shuffle.each do |my_piece|
-      # TODO: implement blocking
+      
       my_moves = legal_moves[@color].find_all{|mv| mv.piece.position == my_piece.position }
       atks = my_moves.select { |mv| !mv.other_piece.nil? }
       mvs = my_moves.select { |mv| mv.other_piece.nil? }
@@ -52,14 +130,18 @@ class Computer
         return moves[0] if my_piece == under_attack
       end
     end
-    thing = best_moves.shuffle[0]
-    if thing.nil?
-      thing = @board.legal_moves[@color].first
+
+    # 3. If 'good' move found, return it otherwise choose random move
+
+    move = best_moves.shuffle[0]
+    if move.nil?
+      move = @board.legal_moves[@color].first
     end
-    if thing.move_type == "promotion" || thing.move_type == "attack_promotion"
-      thing["promotion_choice"] = "queen"
+    if move.move_type == "promotion" || move.move_type == "attack_promotion"
+      move["promotion_choice"] = "queen"
     end
-    return thing
+
+    move
   end
 
 end

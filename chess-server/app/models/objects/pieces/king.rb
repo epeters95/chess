@@ -5,7 +5,7 @@ class King < PieceObject
     super(color, position)
     @letter = self.class.letter
     @char = "\u265a"
-    @val = 77
+    @val = PieceObject.value_map[@letter]
     @castleable = castleable
   end
   def set_played

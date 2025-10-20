@@ -2,8 +2,8 @@ class MoveObject
 
   include Util
 
-  attr_reader :move_type, :move_count, :position, :new_position, :rook_position, :notation
-  attr_accessor :piece, :other_piece, :completed, :relatives, :promotion_choice, :causes_check
+  attr_reader :move_type, :move_count, :position, :new_position, :rook_position
+  attr_accessor :piece, :other_piece, :completed, :relatives, :promotion_choice, :causes_check, :notation
 
   def initialize(piece,
                  other_piece,
@@ -14,6 +14,7 @@ class MoveObject
                  rook_position=nil,
                  promotion_choice=nil,
                  notation=nil,
+                 evaluation=nil,
                  causes_check=false)
     @piece = piece
     @other_piece = other_piece
@@ -24,6 +25,7 @@ class MoveObject
     @rook_position = rook_position
     @promotion_choice = promotion_choice
     @notation = notation
+    @evaluation = evaluation
     @completed = false
     @relatives = []
     @causes_check = causes_check
@@ -47,6 +49,7 @@ class MoveObject
                    @rook_position,
                    @promotion_choice,
                    @notation,
+                   @evaluation,
                    @causes_check)
   end
 
@@ -87,17 +90,32 @@ class MoveObject
     end
   end
 
+  def get_uci_notation
+    notation = @position
+    if @move_type == "castle_kingside"
+      notation += "#{@piece.color == "white" ? "g1" : "g8"}"
+    elsif @move_type == "castle_queenside"
+      notation += "#{@piece.color == "white" ? "c1" : "c8"}"
+    elsif @move_type == "promotion" || @move_type == "attack_promotion"
+      notation += @new_position + PieceObject.promotion_get_letter(@promotion_choice).downcase
+    else
+      notation += @new_position
+    end
+    notation
+  end
+
   def disambiguated_position
     show_file = false
     show_rank = false
     @relatives.each do |pc|
       if @piece.file == pc.file
-        show_file = true
-      end
-      if @piece.rank == pc.rank
         show_rank = true
       end
+      if @piece.rank == pc.rank
+        show_file = true
+      end
     end
+    show_file = true if !show_file && !show_rank && !@relatives.empty?
     "#{show_file ? @piece.file : '' }#{show_rank ? @piece.rank : '' }"
 
   end
@@ -115,6 +133,7 @@ class MoveObject
       rook_position:    @rook_position,
       promotion_choice: @promotion_choice,
       notation:         @notation,
+      evaluation:       @evaluation,
       causes_check:     @causes_check
     }
     JSON.generate(hsh, options)

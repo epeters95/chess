@@ -2,12 +2,23 @@ class Api::PlayersController < ApplicationController
   before_action :set_player, only: [:show, :update, :destroy]
 
   def index
-    render json: { players: Player.all.map do |player| 
-      { name: display_name(player.name),
+    players = Player.all.map do |player|
+      next if player.name == ""
+      {
+        id: player.id,
+        name: display_name(player.name),
         games: player.games.length,
-        completed_games: player.games.where(status: "completed").length
+        completed_games: player.games.where(status: "completed").length,
+        wins_id: player.wins,
+        losses_id:player.losses,
+        draws_id: player.draws,
+        checkmates_id: player.checkmate_games.size,
+        resignations_id: player.resigned_games.size,
+        highest_elo_win: player.highest_elo_win
       }
-    end }
+    end.compact.select{ |pl| pl[:games] != 0 }
+
+    render json: { players: players }
   end
 
   private

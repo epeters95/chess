@@ -6,7 +6,7 @@ class Pawn < PieceObject
     super
     @letter = self.class.letter
     @char = "\u265f"
-    @val = 1
+    @val = PieceObject.value_map[@letter]
     @move_count = 0
   end
 

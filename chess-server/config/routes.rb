@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
   root "test#status"
 
   get '/404', to: 'errors#not_found'
   get '/500', to: 'errors#server_error'
+  get '/401', to: 'errors#unauthorized'
+  get '/304', to: 'errors#not_modified'
 
   namespace :api do
 
-    resources :games do
+    resources :games, except: [:delete, :new, :edit] do
     # api_games GET    /api/games(.:format)                api/games#index
     #           POST   /api/games(.:format)                api/games#create
     # api_game  GET    /api/games/:id(.:format)            api/games#show
@@ -24,7 +28,9 @@ Rails.application.routes.draw do
     resources :live_games, only: [:create, :update, :show]
     # api_live_games  PATCH    /api/      games(.:format)           api/live_games#update
 
-    resources :boards, only: [:create]
+    resources :boards, only: [:create, :show, :update]
+
+    post '/thumbnail', to: 'games#set_thumbnail'
 
     # Viewing game via access code
     get '/live_games/', to: 'live_games#show'
@@ -32,7 +38,8 @@ Rails.application.routes.draw do
   end
 
 
-  # Test status endpoint
+  # Test status endpoints
   get '/status', to: 'test#status'
+  get '/status_interface', to: 'test#status_interface'
 
 end

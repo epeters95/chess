@@ -1,6 +1,4 @@
 class Player < ApplicationRecord
-  # has_many :games, through: :games_players
-
   validates :name, uniqueness: true
 
   def is_active_token?(token)
@@ -23,6 +21,56 @@ class Player < ApplicationRecord
       found = self.create(name: name)
     end
     found
+  end
+
+  def draw_games
+    Game.where(status: "completed", outcome: "draw", winner_id: self.id).or(
+      Game.where(status: "completed", outcome: "draw", loser_id: self.id))
+  end
+
+  def loss_games
+    Game.where(status: "completed", outcome: "checkmate", loser_id: self.id).or(
+      Game.where(status: "completed", outcome: "resignation", loser_id: self.id))
+  end
+
+  def win_games
+    Game.where(status: "completed", outcome: "checkmate", winner_id: self.id).or(
+      Game.where(status: "completed", outcome: "resignation", winner_id: self.id))
+  end
+
+  def checkmate_games
+    Game.where(status: "completed", outcome: "checkmate", winner_id: self.id)
+  end
+
+  def resignation_games
+    Game.where(status: "completed", outcome: "resignation", winner_id: self.id)
+  end
+
+  def checkmated_games
+    Game.where(status: "completed", outcome: "checkmate", loser_id: self.id)
+  end
+
+  def resigned_games
+    Game.where(status: "completed", outcome: "resignation", loser_id: self.id)
+  end
+
+  def draws
+    draw_games.size
+  end
+
+  def losses
+    loss_games.size
+  end
+
+  def wins
+    win_games.size
+  end
+
+  def highest_elo_win
+    win = win_games.where.not(elo_rating: nil).order(elo_rating: :desc).first
+    if win
+      win.elo_rating
+    end
   end
 
 end

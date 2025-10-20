@@ -7,7 +7,11 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins 'https://epeters95.github.io'
+    if Rails.env.production?
+      origins 'https://epeters95.github.io'
+    else
+      origins '*'
+    end
 
     resource "*",
       headers: :any,

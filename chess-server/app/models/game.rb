@@ -9,6 +9,8 @@ class Game < ApplicationRecord
 
   include Util
 
+  OUTCOMES = ["checkmate", "resignation", "draw"]
+
   def is_computers_turn?
     is_computer?(self.board.turn)
   end
@@ -22,7 +24,7 @@ class Game < ApplicationRecord
 
     status_str = "#{display_name_for(switch(self.board.turn))} made move #{move_object.notation}"
     status_str += ". #{uppercase(self.board.turn)} to move."
-    
+
     if !result
       self.errors.add self.board.errors
     else
@@ -31,17 +33,43 @@ class Game < ApplicationRecord
     return result
   end
 
-  def evaluate_outcomes(status_str)
+  def set_outcome(outcome_str, winner_id, loser_id)
+    if OUTCOMES.include?(outcome_str)
+      self.update(outcome:   outcome_str,
+                  winner_id: winner_id,
+                  loser_id:  loser_id)
+    else
+      false
+    end
+  end
+
+  def evaluate_outcomes(status_str="unknown")
     previous_turn = switch(self.board.turn)
 
     if self.board.is_insuff_material_stalemate?
       self.board.update(status_str: "The game is a draw due to insufficient mating material.")
+      self.set_outcome("draw", self.white_id, self.black_id)
 
     elsif self.board.is_checkmate?(self.board.turn)
+
+      # Append notation to indicate checkmate (hotfix)
+      last_move = self.board.played_moves_in_order.last
+
+      new_notation = last_move.notation
+      new_notation.slice!("+") # Remove check indication
+      last_move.update(notation: "#{new_notation}#")
+
       self.board.update(status_str: "#{display_name_for(previous_turn)} has won by checkmate!")
+
+      win_id = (self.board.turn == "black" ? self.white_id : self.black_id)
+      los_id =  (self.board.turn == "white" ? self.white_id : self.black_id)
+
+      self.set_outcome("checkmate", win_id, los_id)
+
 
     elsif self.board.is_nomoves_stalemate?(self.board.turn)
       self.board.update(status_str: "The game is a draw. #{display_name_for(self.board.turn)} has survived by stalemate!")
+      self.set_outcome("draw", self.black_id, self.white_id)
 
     else
 
@@ -51,6 +79,18 @@ class Game < ApplicationRecord
     end
     # Game Over
     self.update(status: "completed")
+  end
+
+  def resign_as(color)
+    win_id = (color == "black" ? self.white_id : self.black_id)
+    los_id = (color == "white" ? self.white_id : self.black_id)
+
+    # Game Over
+    self.board.update(status_str: "#{display_name_for(switch(color))} wins! #{display_name_for(color)} has resigned.")
+    self.update(outcome:   "resignation",
+                status:    "completed",
+                winner_id: win_id,
+                loser_id:  los_id)
   end
 
   def as_json(options = {})
@@ -67,7 +107,8 @@ class Game < ApplicationRecord
       pieces:         self.board.positions_array,
       legal_moves:    mvs,
       move_count:     self.board.move_count,
-      status:         self.status
+      status:         self.status,
+     takeback_status: self.takeback_status
     }
   end
 
@@ -85,6 +126,18 @@ class Game < ApplicationRecord
       ).uniq.sort
   end
 
+  def set_takeback_offer!
+    self.update(takeback_status: "offered")
+  end
+
+  def set_takeback_accept!
+    self.update(takeback_status: "accepted")
+  end
+
+  def set_takeback_reject!
+    self.update(takeback_status: "rejected")
+  end
+
   private
 
   def init_board
@@ -100,7 +153,7 @@ class Game < ApplicationRecord
   end
 
   def is_computer?(color)
-    name_for(color).to_s == "" 
+    name_for(color).to_s == ""
   end
 
   def name_for(color)

@@ -9,7 +9,9 @@ class PieceObject
   def self.bishop_moves; [[1,1],[1,-1],[-1,1],[-1,-1]]; end
   def self.crown_moves;  [[1,1],[1,-1],[-1,1],[-1,-1],[0,1],[1,0],[0,-1],[-1,0]]; end
 
-  attr_accessor :color, :position, :val
+  def self.value_map; {'K': 100, 'Q': 9, 'R': 5, 'B': 3, 'N': 3, 'p': 1}; end
+
+  attr_accessor :color, :position
   attr_reader :char, :ranged, :taken
 
   def initialize(color, position)
@@ -20,6 +22,10 @@ class PieceObject
     @taken = false
     @char = "?"
     @val = 0
+  end
+
+  def val
+    @val || PieceObject.value_map[self.letter]
   end
 
   def clear_moves

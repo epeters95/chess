@@ -1,5 +1,3 @@
-
-
 class Move < ApplicationRecord
 
   # The entirety of the board's history will be represented by rows of moves belonging to that board
@@ -20,7 +18,8 @@ class Move < ApplicationRecord
                                   self.new_position,
                                   self.rook_position,
                                   self.promotion_choice,
-                                  self.notation)
+                                  self.notation,
+                                  self.evaluation)
   end
 
   def move_object
@@ -39,10 +38,12 @@ class Move < ApplicationRecord
     @move_object.to_json(options)
   end
 
-  # def notation_cached
-  #   Rails.cache.fetch("#{cache_key_with_version}/notation", expires_in: 12.hours) do
-  #     set_notation
-  #   end
-  # end
+  def uci_notation
+    @move_object.get_uci_notation
+  end
+
+  def color
+    @move_count % 2 == 0 ? "white" : "black"
+  end
 
 end

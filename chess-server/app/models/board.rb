@@ -1,7 +1,11 @@
 class Board < ApplicationRecord
 
   belongs_to :game, optional: true
-  has_many   :played_moves, -> { where "completed = true" }, class_name: "Move", dependent: :destroy
+
+  has_many   :played_moves,
+             -> { where("completed = true").order(:id) },
+             class_name: "Move",
+             dependent: :destroy
 
   after_create :init_board_and_save
   after_find  :build_object
@@ -142,8 +146,11 @@ class Board < ApplicationRecord
   def is_nomoves_stalemate?(color)
     @board_object.is_nomoves_stalemate?(color)
   end
-  
-  
+
+  # Played move history in comma-separated UCI for Stockfish Python
+  def move_history_str
+    self.played_moves.map {|mv| mv.uci_notation }.join(',')
+  end
 end
 
 
