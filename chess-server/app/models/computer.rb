@@ -47,14 +47,23 @@ class Computer
   end
 
   def get_move(elo_rating=nil)
-    interface = EngineInterface.new(ChessServer::Application.engine_interface_hostname,
-                                    ChessServer::Application.engine_interface_port)
-    level = 1
-    if self.class.difficulty_levels[@difficulty]
-      level = self.class.difficulty_levels[@difficulty]
-    end
 
-    move_uci = interface.get_move(@board.move_history_str, level, elo_rating)
+    begin
+      interface = EngineInterface.new(ChessServer::Application.engine_interface_hostname,
+                                      ChessServer::Application.engine_interface_port)
+      level = 1
+      if self.class.difficulty_levels[@difficulty]
+        level = self.class.difficulty_levels[@difficulty]
+      end
+
+      move_uci = interface.get_move(@board.move_history_str, level, elo_rating)
+
+    rescue => e
+      puts "interface error: #{e}"
+
+      calculate_move
+      return
+    end
 
     # Identify legal move from UCI notation
     move = get_legal_move_from_uci(move_uci)
