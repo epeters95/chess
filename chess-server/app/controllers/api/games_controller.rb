@@ -223,10 +223,12 @@ class Api::GamesController < ApplicationController
             else
               chosen_move = @game.board.get_move_by_notation(move_params[:notation])
               set_promotion_choice(chosen_move)
+              if chosen_move.nil?
+                return render json: {error: "Computer move failed"}, status: :service_unavailable
+              end
             end
           end
-          success = chosen_move && @game.play_move_and_evaluate(chosen_move)
-          if success
+          if chosen_move && @game.play_move_and_evaluate(chosen_move)
             if params[:with_eval]
               
               # Get engine evaluation for each move
