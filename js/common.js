@@ -88,7 +88,7 @@ function fetchFromApi(endpoint, method, params=null, successCallback=null, hideS
       }
 
     } else {
-      console.log("Error:" + json.error + " " + json.errors)
+      console.log("Error:" + json.error)
     }
   })
   .catch(function(error) {
