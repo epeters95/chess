@@ -62,7 +62,6 @@ class Api::BoardsController < ApplicationController
             status = "Draw"
 
             # TODO: get previous player name and add nomoves stalemate
-            # TODO: move display_name_for method to utils
           end
           initial_board.update(status_str: status)
         when "1-0"
