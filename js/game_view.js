@@ -216,33 +216,37 @@ class GameView {
   }
 
   drawTeam(color, animatePiecePos=null, animatePos=null, oldPieces=null) {
-    this.context.font = `50px Verdana`;
+
     let smallSize = this.squareSize * 0.9;
     let tinySize = this.squareSize * 0.1;
     let squareSize = this.squareSize;
-    let that = this;
 
     let pieces = this.pieces[color];
     if (oldPieces !== null) {
       pieces = oldPieces[color];
     }
 
-    pieces.forEach(function(el) {
-      that.context.fillStyle = color;
+    pieces.forEach((el) => {
       let x, y;
 
-      if (that.getShowWhite()) {
+      if (this.getShowWhite()) {
         x = fileIndexOf(el.position[0]) * squareSize;
         y = (7 - rankIndexOf(el.position[1])) * squareSize;
       } else {
         x = (7 - fileIndexOf(el.position[0])) * squareSize;
         y = rankIndexOf(el.position[1]) * squareSize;
       }
+
+      // Draw chess piece
+
+      this.context.fillStyle = color;
+      this.context.font = `50px Verdana`; // Test font
+
       if (animatePiecePos !== null && el.position === animatePiecePos) {
-        that.context.fillText(el.char, animatePos[0] + tinySize, animatePos[1] + smallSize)
+        this.context.fillText(el.char, animatePos[0] + tinySize, animatePos[1] + smallSize)
       }
       else {
-        that.context.fillText(el.char, x + tinySize, y + smallSize);
+        this.context.fillText(el.char, x + tinySize, y + smallSize);
       }
     })
   }
