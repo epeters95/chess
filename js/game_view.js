@@ -471,6 +471,14 @@ class GameView {
         if (!data["resign"] && !that.isLive && that.computerTeam === that.turn) {
           that.nextComputerMove();
         }
+        else if (data["resign"]) {
+          // TODO: switch turn on server end after resign
+          if (that.turn === "black") {
+            that.turn = "white"
+          } else {
+            that.turn = "black"
+          }
+        }
       })
     }
 
